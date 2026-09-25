@@ -1,0 +1,534 @@
+[
+  {
+    "path": ".gitattributes",
+    "sha256": "E5ACB45DE14E7A02E24C1AA7248E56335D9CB61334E7B229D6095432513774AE"
+  },
+  {
+    "path": ".gitignore",
+    "sha256": "A1D6EA4BCDA9E713E27884401A9BD4A3A89131A6DACD7CE7F2DD5467858935C0"
+  },
+  {
+    "path": "AGENTS.md",
+    "sha256": "DBF90C98CDE43895242B6C2CD9B793CD738CDDACBA4DB48A86E8EB4BBAF72A36"
+  },
+  {
+    "path": "block.json",
+    "sha256": "28D4DD9C0F051A91E2B656C4A039E878B17B4D134567949900016EDBA87EBCBB"
+  },
+  {
+    "path": "build-release.ps1",
+    "sha256": "2126184A8796276589D1A0A77C6804518A054BAFC4ED9EEB01DAAB22EFEA0BC5"
+  },
+  {
+    "path": "cni_blocks.php",
+    "sha256": "F6F424D78C4B652F43643B29FE81CF4DAF38600600F5A5989EC91184A79DDB2E"
+  },
+  {
+    "path": "COPY-EXISTING-FILES-HERE.md",
+    "sha256": "CD018665959F6FB8CF68E826EC12E02A081AC55F1CEF6CC36EBBA7CCE23F2F52"
+  },
+  {
+    "path": "desktop.ini",
+    "sha256": "08610CA6879C683FF30DB24FEE22B1040E6150DB7AB0D0D92B51CB41AE415A3D"
+  },
+  {
+    "path": "index.js",
+    "sha256": "24787B9DC2B55277852D53D45A36524F3EF2DD7B30D8249DF49646051E81268F"
+  },
+  {
+    "path": "PROJECT-BRIEF.md",
+    "sha256": "1EF435AF3517AFCFEB985789C22301DE3784DC1B6DAF8D1F9D2B559AF2E22F03"
+  },
+  {
+    "path": "readme.txt",
+    "sha256": "D452C5FD582C8A6E6D2BC4478C032AA49B7B322053C8946D87C0066D514B33CB"
+  },
+  {
+    "path": "style.css",
+    "sha256": "520426D552ACD8566175C5A815263F5DAAB049AFF84A3AA01D33F5BC163469A5"
+  },
+  {
+    "path": "view.js",
+    "sha256": "C10469942AE67E59C65FA65044C32FEC0A3B74F4D5A20998601344EEA398B138"
+  },
+  {
+    "path": "blocks\\desktop.ini",
+    "sha256": "08610CA6879C683FF30DB24FEE22B1040E6150DB7AB0D0D92B51CB41AE415A3D"
+  },
+  {
+    "path": "blocks\\auto-grid\\block.json",
+    "sha256": "41221E53A14C247B092A55601B688140AF1E0677A9C1A3C457930C3E32FF3B8C"
+  },
+  {
+    "path": "blocks\\auto-grid\\desktop.ini",
+    "sha256": "08610CA6879C683FF30DB24FEE22B1040E6150DB7AB0D0D92B51CB41AE415A3D"
+  },
+  {
+    "path": "blocks\\auto-grid\\index.js",
+    "sha256": "A74B33D92851478C5D774FDF6BB0E9CE46FBA8039926DF845D812EE1074FC46E"
+  },
+  {
+    "path": "blocks\\auto-grid\\style.css",
+    "sha256": "DD331AC340856D2A5B4D0A81BDBEBDCBE99542C2B6F9646C0DA92F75EB476D62"
+  },
+  {
+    "path": "blocks\\auto-grid\\view.js",
+    "sha256": "4C8BD5092B8C0795588D54F84E585882B50AC9FD661B0763D994158BB55EE3DA"
+  },
+  {
+    "path": "blocks\\breadcrumb\\block.json",
+    "sha256": "F2C30D5B97784F3EB6A8ECF9FA4DDADEC3E2E191F7763214A7D0E9AC403B39DA"
+  },
+  {
+    "path": "blocks\\breadcrumb\\desktop.ini",
+    "sha256": "08610CA6879C683FF30DB24FEE22B1040E6150DB7AB0D0D92B51CB41AE415A3D"
+  },
+  {
+    "path": "blocks\\breadcrumb\\index.js",
+    "sha256": "B922175BE8E246CE79808B60D98E6F0D32D35E7833EFC0CA124A523617C9697B"
+  },
+  {
+    "path": "blocks\\breadcrumb\\render.php",
+    "sha256": "4661D4BD61D7E5883E69B7CFB6B3611CF8A1B1FBFE397EA6365D510F98F6C5D2"
+  },
+  {
+    "path": "blocks\\breadcrumb\\style.css",
+    "sha256": "15F94AA84B84D9C7AA7CB034CFD6CFFAC1B47D6B224CDAC1FE5F6704C970D38E"
+  },
+  {
+    "path": "blocks\\circle-image-plus\\block.json",
+    "sha256": "1E48043DA464121E652EE8EE72701574EB7EA9D03DBCEE983A8EC8E1E7605100"
+  },
+  {
+    "path": "blocks\\circle-image-plus\\desktop.ini",
+    "sha256": "08610CA6879C683FF30DB24FEE22B1040E6150DB7AB0D0D92B51CB41AE415A3D"
+  },
+  {
+    "path": "blocks\\circle-image-plus\\index.js",
+    "sha256": "67D0F38EB4746706EDB5F1205597459A284210316A434C65322ABB8C8A245B39"
+  },
+  {
+    "path": "blocks\\circle-image-plus\\render.php",
+    "sha256": "F4731EDF75A1CE093B660ED77AA7E0B49DCBD666057BD310C17108F8AC9AD4E3"
+  },
+  {
+    "path": "blocks\\circle-image-plus\\style.css",
+    "sha256": "5FBE646CABFADAB008EBB46402A3E506D12E74E1D86809D942A43159CC17878A"
+  },
+  {
+    "path": "blocks\\counter-plus\\block.json",
+    "sha256": "D00FED28E619C2B1536241971E945A4579C10C66099886D059FB3987A7DB6B4A"
+  },
+  {
+    "path": "blocks\\counter-plus\\desktop.ini",
+    "sha256": "08610CA6879C683FF30DB24FEE22B1040E6150DB7AB0D0D92B51CB41AE415A3D"
+  },
+  {
+    "path": "blocks\\counter-plus\\index.js",
+    "sha256": "F9DF7550D222AC5B9E7F2E72E3B1F39FAC311F11F484C47C7E280C0758C51A76"
+  },
+  {
+    "path": "blocks\\counter-plus\\style.css",
+    "sha256": "8DCA10A1CE32FBD5FCE47107AD41AE6690F22BF7BE439EED426A214C0F128E0B"
+  },
+  {
+    "path": "blocks\\counter-plus\\view.js",
+    "sha256": "745F67EA49AD7391023800BC762241224E290418D59FDCEB0F60BDB3CA3EAF95"
+  },
+  {
+    "path": "blocks\\custom-field\\block.json",
+    "sha256": "93F794208F025F90DFC1D2FB1AF85B54445CE29D63A5B75ACAD6B3D6DA9F3639"
+  },
+  {
+    "path": "blocks\\custom-field\\desktop.ini",
+    "sha256": "08610CA6879C683FF30DB24FEE22B1040E6150DB7AB0D0D92B51CB41AE415A3D"
+  },
+  {
+    "path": "blocks\\custom-field\\index.js",
+    "sha256": "A79B69E17548BD288A364FCD781416E80A877C67FE45C82351604238DFB3F080"
+  },
+  {
+    "path": "blocks\\custom-field\\render.php",
+    "sha256": "60A8EFF599412A5F842E3A707EB855FBE03E108467528D9179596200D6784CE5"
+  },
+  {
+    "path": "blocks\\custom-field\\style.css",
+    "sha256": "1752B46743325300E02E845C51D5E6F2BD3FC17397EB4F114B7310CB5A46439B"
+  },
+  {
+    "path": "blocks\\fixed-display\\block.json",
+    "sha256": "DC72B89627783A0A868736B2F1F5F577234905058B3D3BA469DD03BBF5D849D6"
+  },
+  {
+    "path": "blocks\\fixed-display\\desktop.ini",
+    "sha256": "08610CA6879C683FF30DB24FEE22B1040E6150DB7AB0D0D92B51CB41AE415A3D"
+  },
+  {
+    "path": "blocks\\fixed-display\\index.js",
+    "sha256": "6EC37FBA026879448DEA1CDEE2ADE939826FEDB149DCACA4151B709083CE5292"
+  },
+  {
+    "path": "blocks\\fixed-display\\style.css",
+    "sha256": "19518C1C2131FC8BBEBB5FF8C371F0583D7E97E4B587194E4024AE8ED1F0CAE0"
+  },
+  {
+    "path": "blocks\\fixed-display\\view.js",
+    "sha256": "B10BCB9C717C78AE2E16AD16923AB8D3C0A577CFEDB405C46FAA390E6E58F99F"
+  },
+  {
+    "path": "blocks\\generated-background-plus\\block.json",
+    "sha256": "8CC4521CF7B0473D696D165F58189756D14D075F340A2DC4FD8646C85934D9A5"
+  },
+  {
+    "path": "blocks\\generated-background-plus\\desktop.ini",
+    "sha256": "08610CA6879C683FF30DB24FEE22B1040E6150DB7AB0D0D92B51CB41AE415A3D"
+  },
+  {
+    "path": "blocks\\generated-background-plus\\index.js",
+    "sha256": "85AC5094C980F077CEA6765302D20696B8BFBBC1610B10B6026036EE1980E298"
+  },
+  {
+    "path": "blocks\\generated-background-plus\\style.css",
+    "sha256": "2BDAB99B67CF1E6C89DE8D8CB81F5D65FD67467793CB54CFADB13E0F72ADF3B9"
+  },
+  {
+    "path": "blocks\\grid-card\\block.json",
+    "sha256": "E0E21B33E94EAEFA9DB18E858890FC688B5E25D0EA139F9C829A78A9922773C9"
+  },
+  {
+    "path": "blocks\\grid-card\\desktop.ini",
+    "sha256": "08610CA6879C683FF30DB24FEE22B1040E6150DB7AB0D0D92B51CB41AE415A3D"
+  },
+  {
+    "path": "blocks\\heading-plus\\block.json",
+    "sha256": "D6BFB41F57CC91A90CF6CD88D6AE2292160FD761E849C0576B1D9C7DC4B54739"
+  },
+  {
+    "path": "blocks\\heading-plus\\desktop.ini",
+    "sha256": "08610CA6879C683FF30DB24FEE22B1040E6150DB7AB0D0D92B51CB41AE415A3D"
+  },
+  {
+    "path": "blocks\\heading-plus\\index.js",
+    "sha256": "2D313EF5614600B1891DDEB805C7B69498E4879E9159F1CB2CE6713437ECB5D7"
+  },
+  {
+    "path": "blocks\\heading-plus\\style.css",
+    "sha256": "79693D5AB70E46B2E2684445E893472C6792A181BE0A882E3ED345B55E22B323"
+  },
+  {
+    "path": "blocks\\heading-plus\\view.js",
+    "sha256": "1D4E4A675557C62D52841E4A455E9575C9F5DF7881E953A78578F23E20A7601C"
+  },
+  {
+    "path": "blocks\\image-hotspot-plus\\block.json",
+    "sha256": "493E5CF5E1611822DE8D8947D2B12DF848019BF6ED403AE097F1A80B79DC0598"
+  },
+  {
+    "path": "blocks\\image-hotspot-plus\\desktop.ini",
+    "sha256": "08610CA6879C683FF30DB24FEE22B1040E6150DB7AB0D0D92B51CB41AE415A3D"
+  },
+  {
+    "path": "blocks\\image-hotspot-plus\\index.js",
+    "sha256": "F8B14154C29C268AF2BD18933A22FB3E1B98DBADCB54F71A77570E3CF64B2AEF"
+  },
+  {
+    "path": "blocks\\image-hotspot-plus\\render.php",
+    "sha256": "03941EE10F1CDF561774FA0874B12FCD23DD7AB91FD1848DF22D5D59CE6D03F6"
+  },
+  {
+    "path": "blocks\\image-hotspot-plus\\style.css",
+    "sha256": "13C78B9B37864112B836A015D63D103F99B4154E6B6CDE026F2F4D871DB90B62"
+  },
+  {
+    "path": "blocks\\image-hotspot-plus\\view.js",
+    "sha256": "62D717D8FAB611A0B40400DF39E932793235AA36FC4DD91FA94017466C740339"
+  },
+  {
+    "path": "blocks\\image-text-layer\\block.json",
+    "sha256": "F36B672023CB26E9794EEA0BEA3FCAFA9FEB8242CD0BB1E5723A04261AC31FE6"
+  },
+  {
+    "path": "blocks\\image-text-layer\\desktop.ini",
+    "sha256": "08610CA6879C683FF30DB24FEE22B1040E6150DB7AB0D0D92B51CB41AE415A3D"
+  },
+  {
+    "path": "blocks\\image-text-layer\\index.js",
+    "sha256": "AF0880CE303A56C15287682B306DFBCA678CA058680FFDF4A25D7663F68170AB"
+  },
+  {
+    "path": "blocks\\image-text-layer\\render.php",
+    "sha256": "765822D1210C53721A5DB290880D1FFFAC658F80EE98E5E1A46E6E8AD966F405"
+  },
+  {
+    "path": "blocks\\image-text-layer\\style.css",
+    "sha256": "CBD0ED37BFD4160B2B6AFD57A50A219027A12118265828BE6A21712334070D05"
+  },
+  {
+    "path": "blocks\\outer\\block.json",
+    "sha256": "780D940E47B3EFBE8EC339FFFB61C03A4E862D38CCDFD9531B10C39F3AA69DB0"
+  },
+  {
+    "path": "blocks\\outer\\desktop.ini",
+    "sha256": "08610CA6879C683FF30DB24FEE22B1040E6150DB7AB0D0D92B51CB41AE415A3D"
+  },
+  {
+    "path": "blocks\\outer\\index.js",
+    "sha256": "064530AC57B1F189BD13324DEF1897E9512C436FB0272D5DBE359756CEF9B291"
+  },
+  {
+    "path": "blocks\\outer\\style.css",
+    "sha256": "F22F7CC9DB532BB6DEC915B7BEC639DC925A8AAD1CA05D2BEDC86E83C416C6D4"
+  },
+  {
+    "path": "blocks\\outer\\view.js",
+    "sha256": "DE964B8CDB91E8CC2FFB5816D7141679037A544095E15C708C956EA221DC08C9"
+  },
+  {
+    "path": "blocks\\overlap-media\\block.json",
+    "sha256": "F2173169E8CFE5AF62ADD46A59EA564F0053078F7E3F41CAB255DD2AC4595CDB"
+  },
+  {
+    "path": "blocks\\overlap-media\\desktop.ini",
+    "sha256": "08610CA6879C683FF30DB24FEE22B1040E6150DB7AB0D0D92B51CB41AE415A3D"
+  },
+  {
+    "path": "blocks\\overlap-media\\index.js",
+    "sha256": "1181D8C6C32AA5008AC36B7B42116C5973B8B1BCA4FDD7A65EE7682D69FF71F3"
+  },
+  {
+    "path": "blocks\\overlap-media\\style.css",
+    "sha256": "E05F72D99A028BF90E6F25F3EF93EA548DCC03276A5C7DF8012BE7AE6CA1BBE6"
+  },
+  {
+    "path": "blocks\\page-flip\\block.json",
+    "sha256": "6D60230CABFFB82D3269B3DA001FD3E627B8348E8E9F07F8B65F72394D10BCAD"
+  },
+  {
+    "path": "blocks\\page-flip\\desktop.ini",
+    "sha256": "08610CA6879C683FF30DB24FEE22B1040E6150DB7AB0D0D92B51CB41AE415A3D"
+  },
+  {
+    "path": "blocks\\page-flip\\index.js",
+    "sha256": "6DBD164E3992737F348AB27843CC9B44458EEEAA99767A44359F909ADDD140E6"
+  },
+  {
+    "path": "blocks\\page-flip\\render.php",
+    "sha256": "5F71368D62E783D3E33A69B08F98EE7023801E3E718BDF0C35B6B8BDD6E2BB0D"
+  },
+  {
+    "path": "blocks\\page-flip\\style.css",
+    "sha256": "5C81621D43F2D2C6212D4BB5CB5EE7605448841B125403922AB275CE96536C50"
+  },
+  {
+    "path": "blocks\\page-flip\\view.js",
+    "sha256": "142395ED8415CD3D206F665E64BA5496CBAED3A584F11BB9EB7FC7294E9059A2"
+  },
+  {
+    "path": "blocks\\post-list\\block.json",
+    "sha256": "6AE1B1A644B9C67BDF95F8349DBB71CF83B578500AE68E61A6DED769C42A3695"
+  },
+  {
+    "path": "blocks\\post-list\\desktop.ini",
+    "sha256": "08610CA6879C683FF30DB24FEE22B1040E6150DB7AB0D0D92B51CB41AE415A3D"
+  },
+  {
+    "path": "blocks\\post-list\\index.js",
+    "sha256": "6810E81E6ABA42ACD51B8EFE7C31E551C8F73D4EB2912AE8C81CE3955AA29D1A"
+  },
+  {
+    "path": "blocks\\post-list\\render.php",
+    "sha256": "4224264417232D90D8DFE3738088C22F9E868B4ABA56C3B6154A1DD30349F126"
+  },
+  {
+    "path": "blocks\\post-list\\style.css",
+    "sha256": "4CDADB09789EDC7D59D0BA3A716D7B4220C2C766237AECD5EB03C7FFE73D55B3"
+  },
+  {
+    "path": "blocks\\selected-post-list\\block.json",
+    "sha256": "1600490FED53617CA7575773FBDA02CB53BD5AE6DA7B122BA5EBE8D9E82F00E1"
+  },
+  {
+    "path": "blocks\\selected-post-list\\desktop.ini",
+    "sha256": "08610CA6879C683FF30DB24FEE22B1040E6150DB7AB0D0D92B51CB41AE415A3D"
+  },
+  {
+    "path": "blocks\\selected-post-list\\editor.css",
+    "sha256": "C2425237F1E810A0490652B036CEB1F44BE8EF6D7E7F160A9899F6EE86FC74DE"
+  },
+  {
+    "path": "blocks\\selected-post-list\\index.js",
+    "sha256": "A98F100F16AA2E66AD3393F8A5C1134BEB6FB958B7F0E6EAF1BB5FB4C429D194"
+  },
+  {
+    "path": "blocks\\selected-post-list\\render.php",
+    "sha256": "AC006ACBCACE8D0F3A6CF0494EEDC2F4B135BC139097C0E26D7DB31780E1901F"
+  },
+  {
+    "path": "blocks\\shared\\desktop.ini",
+    "sha256": "08610CA6879C683FF30DB24FEE22B1040E6150DB7AB0D0D92B51CB41AE415A3D"
+  },
+  {
+    "path": "blocks\\shared\\text-designs.js",
+    "sha256": "6A827EF8E83BF2A9876F3F607F2CA6BAB79308672D62722D4D0F5350B678E91F"
+  },
+  {
+    "path": "blocks\\step\\block.json",
+    "sha256": "0743A19980B3A81B5EC15C08BD6E3E2FF56B8A78464754F9D72F2B64A929C2F4"
+  },
+  {
+    "path": "blocks\\step\\desktop.ini",
+    "sha256": "08610CA6879C683FF30DB24FEE22B1040E6150DB7AB0D0D92B51CB41AE415A3D"
+  },
+  {
+    "path": "blocks\\step\\index.js",
+    "sha256": "445E2CE9A687350AB3ABA5DAD4B4FF355E42FD009792FB954D07430697C5E4D4"
+  },
+  {
+    "path": "blocks\\step\\style.css",
+    "sha256": "5A05F03E8FCF9E8CE4E860AA3A2747E07D654A438BEA2D6043756BCFAE3E7219"
+  },
+  {
+    "path": "blocks\\step-item\\block.json",
+    "sha256": "68EBBB790DA825AA2FF1E3031312A4B4B9933F6121659D81D08590DC440FE36C"
+  },
+  {
+    "path": "blocks\\step-item\\desktop.ini",
+    "sha256": "08610CA6879C683FF30DB24FEE22B1040E6150DB7AB0D0D92B51CB41AE415A3D"
+  },
+  {
+    "path": "blocks\\tab-item\\block.json",
+    "sha256": "AA5D2B65C31739BDA6D284D956E0887E6E137B11BC4D39C7DCFC7FA037D97A70"
+  },
+  {
+    "path": "blocks\\tab-item\\desktop.ini",
+    "sha256": "08610CA6879C683FF30DB24FEE22B1040E6150DB7AB0D0D92B51CB41AE415A3D"
+  },
+  {
+    "path": "blocks\\table-plus\\block.json",
+    "sha256": "4392A7EDD4FE51EDB28A1C1469317B1101DBAD1AC88D5C38EF82A9CC2FF05C85"
+  },
+  {
+    "path": "blocks\\table-plus\\desktop.ini",
+    "sha256": "08610CA6879C683FF30DB24FEE22B1040E6150DB7AB0D0D92B51CB41AE415A3D"
+  },
+  {
+    "path": "blocks\\table-plus\\index.js",
+    "sha256": "E09167668B14535BB24029458725D814553C52ED64366D8910847F6E1B545D90"
+  },
+  {
+    "path": "blocks\\table-plus\\style.css",
+    "sha256": "B295DAEEBA000FFFE563394D93CAA44B91ECB909C3ECF3E4BA1545F1303C7958"
+  },
+  {
+    "path": "blocks\\tabs\\block.json",
+    "sha256": "A462D93E2A81A73C84B7363A9C28A60F1538A71B5FBD8427C6FA24A80711C484"
+  },
+  {
+    "path": "blocks\\tabs\\desktop.ini",
+    "sha256": "08610CA6879C683FF30DB24FEE22B1040E6150DB7AB0D0D92B51CB41AE415A3D"
+  },
+  {
+    "path": "blocks\\tabs\\index.js",
+    "sha256": "114E47C8DB4A35DE2AA91770CCD920C0311C2910E1D94ADD8430D79A11EF934C"
+  },
+  {
+    "path": "blocks\\tabs\\style.css",
+    "sha256": "16181852CAD538E8D5AD131CA944A6464F856C8FBE46AEA538379CEC91E70AAA"
+  },
+  {
+    "path": "blocks\\tabs\\view.js",
+    "sha256": "A7D6B1B9690E012E2251A98A5536761D08F9779BFFD1985BD408880CA1BCACD5"
+  },
+  {
+    "path": "blocks\\timeline\\block.json",
+    "sha256": "CEA8F7A69A44BF3021C121BB6DDC72D8AAB62DB1C1980E5B13B5B7392424F129"
+  },
+  {
+    "path": "blocks\\timeline\\desktop.ini",
+    "sha256": "08610CA6879C683FF30DB24FEE22B1040E6150DB7AB0D0D92B51CB41AE415A3D"
+  },
+  {
+    "path": "blocks\\timeline\\index.js",
+    "sha256": "C3A25CCF308065E0E8D7C1611604B6DF4543EFE70B5DCCADC77741DFEE580000"
+  },
+  {
+    "path": "blocks\\timeline\\style.css",
+    "sha256": "FCE2B11404FC9C849249EC143203FE457806B8C61CCD7AEF3F4DA83037EE3B3C"
+  },
+  {
+    "path": "blocks\\timeline-item\\block.json",
+    "sha256": "109AA553EBDFE1460E1E23255032AEC7C07669806A274B3B963AE4CB439D1035"
+  },
+  {
+    "path": "blocks\\timeline-item\\desktop.ini",
+    "sha256": "08610CA6879C683FF30DB24FEE22B1040E6150DB7AB0D0D92B51CB41AE415A3D"
+  },
+  {
+    "path": "blocks\\visual-embed\\block.json",
+    "sha256": "2598F3618C8A70C861AEA39B6C57E4FF27FEDFF088ABC38754030AB2F6F7E835"
+  },
+  {
+    "path": "blocks\\visual-embed\\desktop.ini",
+    "sha256": "08610CA6879C683FF30DB24FEE22B1040E6150DB7AB0D0D92B51CB41AE415A3D"
+  },
+  {
+    "path": "blocks\\visual-embed\\index.js",
+    "sha256": "1C63E11F4A9C09968EBB0AB97B0425309E0A2BC268C7CE70CA18B72B2A98FB4E"
+  },
+  {
+    "path": "blocks\\visual-embed\\render.php",
+    "sha256": "FC4AD1F4F34CC47E2BC5213979D6870BD5615D490025ECBFC4C15751D6126D80"
+  },
+  {
+    "path": "blocks\\visual-embed\\style.css",
+    "sha256": "37B8E8C6881C75CB64FFAA74D0122BDFF24066EACB5394C0575FB43B089F0838"
+  },
+  {
+    "path": "includes\\desktop.ini",
+    "sha256": "08610CA6879C683FF30DB24FEE22B1040E6150DB7AB0D0D92B51CB41AE415A3D"
+  },
+  {
+    "path": "includes\\heading-plus-custom-designs.php",
+    "sha256": "36869F58F5F5B11574FB41F7BAF454CCB8404F1833B862A2F426B71993E055A6"
+  },
+  {
+    "path": "includes\\updater\\class-github-release-updater.php",
+    "sha256": "110A4D0A9221F168504B5E8F9D4B6BF453863702B7DAB7F1D4FFA208BF9F514B"
+  },
+  {
+    "path": "includes\\updater\\desktop.ini",
+    "sha256": "08610CA6879C683FF30DB24FEE22B1040E6150DB7AB0D0D92B51CB41AE415A3D"
+  },
+  {
+    "path": "release\\cni_blocks-1.40.1.zip",
+    "sha256": "ED3FE8735B1CE95297C338364AB16D557A447727BD09ABCA661B2F22771CB419"
+  },
+  {
+    "path": "release\\cni_blocks-1.40.2.zip",
+    "sha256": "AEEE3C2CA287DC61A71A1514641963347B78AE61A20A2F1441CA932C759D8102"
+  },
+  {
+    "path": "release\\cni_blocks-1.40.3.zip",
+    "sha256": "0A91AD60BEDE3791BA2D853DAEA1D5E95BA936CDC11E0CFD760C025E1ACA3634"
+  },
+  {
+    "path": "release\\cni_blocks-1.40.4.zip",
+    "sha256": "0AACF068C3088E046B3684B0E90423F6CBA26F2F8C2342002FD3738D3FA9FDF2"
+  },
+  {
+    "path": "release\\cni_blocks-1.41.0.zip",
+    "sha256": "146C8D1A5567D34E6F9DBC89AB21036BF806E38DF860240D31A8E3048502C22C"
+  },
+  {
+    "path": "release\\cni_blocks-1.42.0.zip",
+    "sha256": "9BF4AD93F627CBABA105DD04F0C76211B112183D2605BCED001ECE2E773719F8"
+  },
+  {
+    "path": "release\\cni_blocks-1.43.0.zip",
+    "sha256": "15E7981E406C30217644013C3D81C932828FD3D42985058DBDF81FBBD5740509"
+  },
+  {
+    "path": "release\\desktop.ini",
+    "sha256": "08610CA6879C683FF30DB24FEE22B1040E6150DB7AB0D0D92B51CB41AE415A3D"
+  }
+]

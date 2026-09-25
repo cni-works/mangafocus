@@ -1,0 +1,29 @@
+{
+  "apiVersion": 3,
+  "name": "ai-manga-viewer/viewer",
+  "title": "AI Manga Viewer",
+  "category": "ai-manga-viewer",
+  "icon": "book-alt",
+  "description": "横長の紹介漫画を、ページ送りやコマ読みで見やすく表示します。",
+  "keywords": [ "漫画", "コミック", "コマ読み", "ページめくり", "冊子" ],
+  "textdomain": "ai-manga-viewer",
+  "attributes": {
+    "pages": { "type": "array", "default": [] },
+    "binding": { "type": "string", "default": "rtl" },
+    "maxWidth": { "type": "number", "default": 650 },
+    "showPageNumbers": { "type": "boolean", "default": true },
+    "enableEdgeClick": { "type": "boolean", "default": true },
+    "showGuideArrowOnAllPages": { "type": "boolean", "default": false },
+    "enableAnimation": { "type": "boolean", "default": true },
+    "scrollAssist": { "type": "boolean", "default": false },
+    "scrollAssistPosition": { "type": "string", "default": "auto" },
+    "scrollAssistStrength": { "type": "string", "default": "normal" },
+    "focusReader": { "type": "boolean", "default": false },
+    "mobileFocusReader": { "type": "boolean", "default": false }
+  },
+  "supports": {
+    "align": [ "wide", "full" ],
+    "anchor": true,
+    "html": false
+  }
+}
