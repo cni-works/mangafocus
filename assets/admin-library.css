@@ -1,0 +1,36 @@
+.post-type-amv_viewer .wp-list-table{display:block;width:100%;border:0;background:transparent;box-shadow:none}
+.post-type-amv_viewer .wp-list-table thead,.post-type-amv_viewer .wp-list-table tfoot{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+.post-type-amv_viewer .wp-list-table tbody{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.post-type-amv_viewer .wp-list-table tbody tr{position:relative;display:grid;grid-template-columns:176px minmax(0,1fr);grid-template-rows:auto 1fr;align-content:start;gap:5px 12px;box-sizing:border-box;min-width:0;min-height:156px;padding:11px;border:1px solid #c3c4c7;border-radius:7px;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.post-type-amv_viewer .wp-list-table tbody th,.post-type-amv_viewer .wp-list-table tbody td{display:block;box-sizing:border-box;width:auto;padding:0;border:0}
+.post-type-amv_viewer .wp-list-table tbody .check-column{position:absolute;z-index:2;top:15px;left:15px;width:auto;padding:4px;border-radius:4px;background:rgba(255,255,255,.92)}
+.post-type-amv_viewer .wp-list-table .column-amv_cover{grid-column:1;grid-row:1/3;width:176px;height:132px;min-width:0}
+.post-type-amv_viewer .amv-library-cover-link{display:block;width:176px;height:132px;border-radius:5px;text-decoration:none}
+.post-type-amv_viewer .amv-library-cover-link:focus{outline:2px solid #2271b1;outline-offset:2px;box-shadow:none}
+.post-type-amv_viewer .amv-library-cover-image,.post-type-amv_viewer .amv-library-cover-placeholder{display:block;box-sizing:border-box;width:176px;height:132px;border-radius:5px;background:#f0f0f1;object-fit:contain}
+.post-type-amv_viewer .amv-library-cover-placeholder{display:grid;place-items:center;color:#646970;font-size:12px;font-weight:600}
+.post-type-amv_viewer .wp-list-table .column-title{grid-column:2;grid-row:1;min-width:0;font-size:14px}
+.post-type-amv_viewer .wp-list-table .column-title .row-title{display:-webkit-box;overflow:hidden;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow-wrap:anywhere;font-size:16px!important;font-weight:600;line-height:1.35}
+.post-type-amv_viewer .wp-list-table .column-title .post-state{font-size:11px}
+.post-type-amv_viewer .wp-list-table .row-actions{position:absolute;z-index:4;top:43px;right:10px;left:auto;margin:0;padding:4px 7px;border:1px solid #dcdcde;border-radius:4px;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.08);font-size:11px;line-height:1.25;opacity:0;pointer-events:none}
+.post-type-amv_viewer .wp-list-table tbody tr:hover .row-actions,.post-type-amv_viewer .wp-list-table tbody tr:focus-within .row-actions{opacity:1;pointer-events:auto}
+.post-type-amv_viewer .wp-list-table .row-actions .edit{display:none}
+.post-type-amv_viewer .wp-list-table .column-amv_details{grid-column:2;grid-row:2;display:flex;min-width:0;flex-direction:column;justify-content:space-between;gap:7px}
+.post-type-amv_viewer .amv-library-meta{display:flex;flex-wrap:wrap;align-items:center;gap:4px 7px;color:#50575e;font-size:13px;line-height:1.35}
+.post-type-amv_viewer .amv-library-badge{display:inline-flex;align-items:center;min-height:18px;padding:0 6px;border:1px solid #c3c4c7;border-radius:9px;background:#f6f7f7;color:#3c434a;font-weight:600;white-space:nowrap}
+.post-type-amv_viewer .amv-library-badge--status::before{width:6px;height:6px;margin-right:4px;border-radius:50%;background:#8c8f94;content:""}
+.post-type-amv_viewer .amv-library-badge--status.is-publish::before{background:#00a32a}
+.post-type-amv_viewer .amv-library-badge--status.is-draft::before{background:#dba617}
+.post-type-amv_viewer .amv-library-meta__id,.post-type-amv_viewer .amv-library-meta__modified{flex-basis:100%}
+.post-type-amv_viewer .amv-library-primary-actions{display:flex;flex-wrap:wrap;align-items:center;gap:5px}
+.post-type-amv_viewer .amv-library-primary-actions .button{min-height:26px;padding:0 8px;font-size:13px;line-height:24px}
+.post-type-amv_viewer .amv-library-analytics-state{align-self:center;color:#646970;font-size:12px;line-height:26px;white-space:nowrap}
+.post-type-amv_viewer .amv-library-shortcode{display:inline-flex;flex:1 1 120px;min-width:0;max-width:100%}
+.post-type-amv_viewer .amv-library-shortcode__copy{display:inline-flex;align-items:center;min-width:0;max-width:100%;min-height:26px;margin:0;padding:2px 7px;border:1px solid #8c8f94;border-radius:3px;background:#f6f7f7;color:#1d2327;cursor:pointer;font-size:13px;line-height:20px}
+.post-type-amv_viewer .amv-library-shortcode__copy:hover{border-color:#2271b1;background:#f0f6fc;color:#135e96}
+.post-type-amv_viewer .amv-library-shortcode__copy:focus{border-color:#2271b1;outline:1px solid #2271b1;outline-offset:1px;box-shadow:none}
+.post-type-amv_viewer .amv-library-shortcode__code{overflow:hidden;min-width:0;padding:0;background:transparent;color:inherit;font-size:12px;text-overflow:ellipsis;white-space:nowrap}
+.post-type-amv_viewer .amv-library-shortcode__feedback{flex:0 0 auto;margin-left:7px;padding-left:7px;border-left:1px solid #c3c4c7;color:#2271b1;font-weight:600;white-space:nowrap}
+.post-type-amv_viewer .wp-list-table .column-amv_modified{display:none}
+@media (max-width:1100px){.post-type-amv_viewer .wp-list-table tbody{grid-template-columns:1fr}.post-type-amv_viewer .wp-list-table tbody tr{grid-template-columns:176px minmax(0,1fr)}.post-type-amv_viewer .wp-list-table .row-actions{position:static;margin-top:3px;padding:0;border:0;background:transparent;box-shadow:none;opacity:1;pointer-events:auto}}
+@media (max-width:600px){.post-type-amv_viewer .wp-list-table tbody tr{grid-template-columns:1fr;grid-template-rows:auto;min-height:0}.post-type-amv_viewer .wp-list-table .column-amv_cover,.post-type-amv_viewer .wp-list-table .column-title,.post-type-amv_viewer .wp-list-table .column-amv_details{grid-column:1;grid-row:auto}.post-type-amv_viewer .wp-list-table .column-amv_cover,.post-type-amv_viewer .amv-library-cover-link,.post-type-amv_viewer .amv-library-cover-image,.post-type-amv_viewer .amv-library-cover-placeholder{width:176px;height:132px}.post-type-amv_viewer .wp-list-table .column-title{margin-top:2px}.post-type-amv_viewer .wp-list-table .row-actions{position:static;left:auto;visibility:visible}.post-type-amv_viewer .wp-list-table .row-actions .edit{display:none}}

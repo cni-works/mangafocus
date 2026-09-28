@@ -1,0 +1,140 @@
+( function( blocks, element, blockEditor, components, i18n, apiFetch, data ) {
+	'use strict';
+	const el = element.createElement;
+	const { __ } = i18n;
+	const { useBlockProps } = blockEditor;
+	const { Button, Spinner, TextControl } = components;
+	const attributes = { viewerId: { type: 'integer', default: 0 }, instanceKey: { type: 'string', default: '' } };
+	function stableKey() { if ( window.crypto && typeof window.crypto.randomUUID === 'function' ) return 'instance-' + window.crypto.randomUUID(); return 'instance-' + Date.now().toString( 36 ) + '-' + Math.random().toString( 36 ).slice( 2, 12 ); }
+	function flattenBlocks( source, result ) { ( source || [] ).forEach( function( block ) { result.push( block ); flattenBlocks( block.innerBlocks, result ); } ); return result; }
+
+	function titleOf( item ) {
+		if ( ! item || ! item.title ) return '';
+		return item.title.raw || item.title.rendered || '';
+	}
+
+	function coverOf( item ) {
+		if ( item && item.amv_cover_url ) return item.amv_cover_url;
+		const media = item && item._embedded && item._embedded[ 'wp:featuredmedia' ];
+		return media && media[ 0 ] && media[ 0 ].source_url ? media[ 0 ].source_url : '';
+	}
+
+	function dateOf( item ) {
+		return item && item.modified ? item.modified.replace( 'T', ' ' ).slice( 0, 16 ) : '';
+	}
+
+	function statusOf( item ) {
+		const labels = {
+			publish: __( '公開済み', 'ai-manga-viewer' ),
+			draft: __( '下書き', 'ai-manga-viewer' ),
+			pending: __( '承認待ち', 'ai-manga-viewer' ),
+			private: __( '非公開', 'ai-manga-viewer' ),
+			future: __( '予約済み', 'ai-manga-viewer' )
+		};
+		return item && labels[ item.status ] ? labels[ item.status ] : '';
+	}
+
+	function viewerCard( item, selectedId, onSelect ) {
+		const selected = Number( item.id ) === selectedId;
+		const cover = coverOf( item );
+		return el( Button, {
+			key: item.id,
+			variant: selected ? 'primary' : 'secondary',
+			onClick: function() { onSelect( Number( item.id ) ); },
+			style: { display: 'flex', flexDirection: 'column', alignItems: 'stretch', gap: '8px', height: 'auto', minHeight: '190px', padding: '8px', textAlign: 'left' },
+			'aria-pressed': selected
+		},
+		cover ? el( 'img', { src: cover, alt: '', style: { display: 'block', width: '100%', height: '120px', objectFit: 'cover', borderRadius: '3px', background: '#f0f0f1' } } ) : el( 'span', { 'aria-hidden': 'true', style: { display: 'grid', placeItems: 'center', width: '100%', height: '120px', borderRadius: '3px', background: '#f0f0f1', color: '#646970', fontSize: '36px' } }, '▤' ),
+		el( 'strong', { style: { overflowWrap: 'anywhere', color: selected ? 'inherit' : '#1e1e1e' } }, titleOf( item ) || __( '無題の漫画', 'ai-manga-viewer' ) ),
+		el( 'small', { style: { color: selected ? 'inherit' : '#646970' } }, 'ID: ' + item.id + ( statusOf( item ) ? ' · ' + statusOf( item ) : '' ) + ( dateOf( item ) ? ' · ' + dateOf( item ) : '' ) ) );
+	}
+
+	function selectedSummary( item, viewerId ) {
+		const cover = coverOf( item );
+		return el( 'div', { style: { display: 'grid', justifyItems: 'center', gap: '10px', marginBottom: '14px', padding: '14px', border: '1px solid #dcdcde', borderRadius: '4px', background: '#f6f7f7', textAlign: 'center' } },
+			cover ? el( 'img', { src: cover, alt: '', style: { display: 'block', width: 'min(100%,260px)', height: 'auto', maxHeight: '320px', objectFit: 'contain', borderRadius: '3px', background: '#fff' } } ) : el( 'span', { 'aria-hidden': 'true', style: { display: 'grid', placeItems: 'center', width: 'min(100%,260px)', aspectRatio: '3 / 4', maxHeight: '320px', borderRadius: '3px', background: '#e2e4e7', color: '#646970', fontSize: '56px' } }, '▤' ),
+			el( 'div', { style: { maxWidth: '100%' } },
+				el( 'strong', { style: { display: 'block', overflowWrap: 'anywhere' } }, titleOf( item ) || __( '無題の漫画', 'ai-manga-viewer' ) ),
+				el( 'span', { style: { display: 'block', marginTop: '4px', color: '#646970', fontSize: '12px' } }, 'Viewer ID: ' + viewerId ),
+				statusOf( item ) ? el( 'span', { style: { display: 'block', marginTop: '2px', color: '#646970', fontSize: '12px' } }, statusOf( item ) + ( dateOf( item ) ? ' · ' + dateOf( item ) : '' ) ) : null,
+				el( 'span', { style: { display: 'block', marginTop: '6px', color: '#646970', fontSize: '12px' } }, __( '編集画面では表紙のみ表示します。公開側ではViewer全体が表示されます。', 'ai-manga-viewer' ) )
+			)
+		);
+	}
+
+	blocks.registerBlockType( 'ai-manga-viewer/library-viewer', {
+		apiVersion: 3,
+		title: __( '登録済みViewer', 'ai-manga-viewer' ),
+		icon: 'book-alt',
+		category: 'ai-manga-viewer',
+		description: __( '漫画ライブラリから登録済みのViewerを1冊選んで表示します。', 'ai-manga-viewer' ),
+		attributes: attributes,
+		supports: { align: [ 'wide', 'full' ], anchor: true, html: false },
+		edit: function( props ) {
+			const viewerId = Number( props.attributes.viewerId ) || 0;
+			const instanceKey = props.attributes.instanceKey || '';
+			const instanceOwner = data.useSelect( function( select ) { if ( ! instanceKey ) return ''; const all = flattenBlocks( select( 'core/block-editor' ).getBlocks(), [] ); const owner = all.find( function( block ) { return block.name === 'ai-manga-viewer/library-viewer' && block.attributes && block.attributes.instanceKey === instanceKey; } ); return owner ? owner.clientId : ''; }, [ instanceKey ] );
+			const itemsState = element.useState( [] ); const items = itemsState[ 0 ]; const setItems = itemsState[ 1 ];
+			const selectedState = element.useState( null ); const selectedRecord = selectedState[ 0 ]; const setSelectedRecord = selectedState[ 1 ];
+			const selectedErrorState = element.useState( '' ); const selectedError = selectedErrorState[ 0 ]; const setSelectedError = selectedErrorState[ 1 ];
+			const loadingState = element.useState( true ); const loading = loadingState[ 0 ]; const setLoading = loadingState[ 1 ];
+			const errorState = element.useState( '' ); const error = errorState[ 0 ]; const setError = errorState[ 1 ];
+			const searchState = element.useState( '' ); const search = searchState[ 0 ]; const setSearch = searchState[ 1 ];
+			const choosingState = element.useState( ! viewerId ); const choosing = choosingState[ 0 ]; const setChoosing = choosingState[ 1 ];
+			const blockProps = useBlockProps( { className: 'amv-library-selector', style: { padding: '16px', border: '1px solid #c3c4c7', background: '#fff' } } );
+
+			element.useEffect( function() { if ( ! instanceKey || ( instanceOwner && instanceOwner !== props.clientId ) ) props.setAttributes( { instanceKey: stableKey() } ); }, [ instanceKey, instanceOwner, props.clientId ] );
+
+			element.useEffect( function() {
+				let active = true;
+				apiFetch( { path: '/wp/v2/ai-manga-viewers?context=edit&status=publish%2Cdraft%2Cpending%2Cprivate%2Cfuture&per_page=100&orderby=modified&order=desc&_embed=wp%3Afeaturedmedia&_fields=id%2Ctitle%2Cfeatured_media%2Cmodified%2Cstatus%2Camv_cover_url%2C_embedded' } ).then( function( records ) {
+					if ( active ) { setItems( Array.isArray( records ) ? records : [] ); setLoading( false ); }
+				} ).catch( function() {
+					if ( active ) { setError( __( '漫画ライブラリを読み込めませんでした。', 'ai-manga-viewer' ) ); setLoading( false ); }
+				} );
+				return function() { active = false; };
+			}, [] );
+
+			element.useEffect( function() {
+				let active = true;
+				setSelectedError( '' );
+				if ( ! viewerId ) { setSelectedRecord( null ); return function() { active = false; }; }
+				apiFetch( { path: '/wp/v2/ai-manga-viewers/' + viewerId + '?context=edit&_embed=wp%3Afeaturedmedia&_fields=id%2Ctitle%2Cfeatured_media%2Cmodified%2Cstatus%2Camv_cover_url%2C_embedded' } ).then( function( record ) {
+					if ( active ) setSelectedRecord( record || null );
+				} ).catch( function() {
+					if ( active ) { setSelectedRecord( null ); setSelectedError( __( '選択済みのViewerを確認できません。削除または権限変更の可能性があります。', 'ai-manga-viewer' ) ); }
+				} );
+				return function() { active = false; };
+			}, [ viewerId ] );
+
+			const selected = selectedRecord || items.find( function( item ) { return Number( item.id ) === viewerId; } );
+			const query = search.trim().toLocaleLowerCase();
+			const visible = query ? items.filter( function( item ) { return titleOf( item ).toLocaleLowerCase().indexOf( query ) !== -1 || String( item.id ) === query; } ) : items;
+			const choose = function( id ) {
+				const item = items.find( function( record ) { return Number( record.id ) === id; } ) || null;
+				setSelectedRecord( item ); setSelectedError( '' ); props.setAttributes( { viewerId: id } ); setChoosing( false );
+			};
+			const clear = function() { props.setAttributes( { viewerId: 0 } ); setSelectedRecord( null ); setSelectedError( '' ); setChoosing( true ); };
+
+			return el( 'div', blockProps,
+			el( 'strong', { style: { display: 'block', marginBottom: '10px' } }, __( '登録済みViewer', 'ai-manga-viewer' ) ),
+			viewerId && ! choosing ? el( 'div', null,
+				selected ? selectedSummary( selected, viewerId ) : el( 'p', null, __( '選択済みのViewer', 'ai-manga-viewer' ), ' · ID: ', viewerId ),
+				selectedError ? el( 'p', { role: 'alert', style: { color: '#b32d2e' } }, selectedError ) : null,
+				el( 'div', { style: { display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '14px' } },
+					el( Button, { variant: 'secondary', onClick: function() { setChoosing( true ); } }, __( '漫画ライブラリから選び直す', 'ai-manga-viewer' ) ),
+					el( Button, { variant: 'tertiary', isDestructive: true, onClick: clear }, __( '選択を解除', 'ai-manga-viewer' ) )
+				)
+			) : null,
+			choosing ? el( 'div', null,
+				el( TextControl, { label: __( 'タイトルまたはViewer IDで検索', 'ai-manga-viewer' ), value: search, onChange: setSearch } ),
+				loading ? el( Spinner ) : null,
+				error ? el( 'p', { role: 'alert', style: { color: '#b32d2e' } }, error ) : null,
+				! loading && ! error && ! visible.length ? el( 'p', null, __( '選択できる漫画がありません。', 'ai-manga-viewer' ) ) : null,
+				visible.length ? el( 'div', { style: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(140px,1fr))', gap: '10px' } }, visible.map( function( item ) { return viewerCard( item, viewerId, choose ); } ) ) : null,
+				viewerId ? el( Button, { variant: 'tertiary', onClick: function() { setChoosing( false ); }, style: { marginTop: '10px' } }, __( '選択を変更しない', 'ai-manga-viewer' ) ) : null
+			) : null );
+		},
+		save: function() { return null; }
+	} );
+} )( window.wp.blocks, window.wp.element, window.wp.blockEditor, window.wp.components, window.wp.i18n, window.wp.apiFetch, window.wp.data );

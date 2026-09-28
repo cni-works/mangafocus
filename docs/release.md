@@ -20,11 +20,11 @@ PowerShellと、PATHから利用できるPHP CLI・Node.jsが必要。プロジ�
 
 ## 梱包と検査
 
-現時点では本体PHP、readme.txt、blocks/viewerのJSON・PHP・JS2ファイル・CSSの計7ファイルのみを明示的に梱包する。全エントリーは `ai-manga-viewer/` の下に置く。必要な実行ファイルを追加したときは、スクリプトのruntimeFilesも更新する。
+現時点では本体、readme、2つのブロック、解析・AI相談用PHP、管理画面CSS/JSを含む実行時ファイル17件だけを明示的に梱包する。全エントリーは `ai-manga-viewer/` の下に置く。必要な実行ファイルを追加したときは、スクリプトのruntimeFilesも更新する。
 
 docs、tests、scripts、release、Git管理情報、node_modules、desktop.ini、関連プロジェクトは梱包しない。現在のindex.jsは実行用ソースなので必ず含める。
 
-必須ファイル・バージョン・ブロック名とtextdomain・PHP/JS構文を確認し、ZIP内の全7ファイルの内容を元ファイルとSHA-256で照合する。PHPかNodeが使えなければ停止する。生成ZIP全体のSHA-256も表示する。構文検査は実行に使ったPHPのバージョンでの検査であり、PHP 7.4互換の実証やWordPress実機検査の代わりにはならない。
+必須ファイル・バージョン・ブロック名とtextdomain・PHP/JS構文を確認し、ZIP内の全実行時ファイルの内容を元ファイルとSHA-256で照合する。PHPかNodeが使えなければ停止する。生成ZIP全体のSHA-256も表示する。構文検査は実行に使ったPHPのバージョンでの検査であり、PHP 7.4互換の実証やWordPress実機検査の代わりにはならない。
 
 ## WordPressでの受け入れ確認（未実施）
 

@@ -4,10 +4,14 @@ param([switch]$Force)
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
+if (Get-Variable -Name PSNativeCommandUseErrorActionPreference -ErrorAction SilentlyContinue) {
+    $PSNativeCommandUseErrorActionPreference = $false
+}
 $projectRoot = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 $runtimeFiles = @(
-    'ai-manga-viewer.php', 'readme.txt',
-    'blocks/viewer/block.json', 'blocks/viewer/index.js',
+    'ai-manga-viewer.php', 'readme.txt', 'includes/analytics.php', 'includes/consultation.php', 'assets/admin-library.css', 'assets/admin-library.js', 'assets/admin-analytics.css', 'assets/admin-analytics.js', 'assets/admin-consultation.css', 'assets/admin-consultation.js',
+    'blocks/library-viewer/block.json', 'blocks/library-viewer/index.js',
+	'blocks/viewer/block.json', 'blocks/viewer/layout.js', 'blocks/viewer/index.js',
     'blocks/viewer/render.php', 'blocks/viewer/style.css', 'blocks/viewer/view.js'
 )
 
@@ -51,6 +55,10 @@ $metadata = [Text.Encoding]::UTF8.GetString($snapshots['blocks/viewer/block.json
 if ($metadata.name -cne 'ai-manga-viewer/viewer' -or $metadata.textdomain -cne 'ai-manga-viewer') {
     throw 'Unexpected block namespace or text domain.'
 }
+$libraryMetadata = [Text.Encoding]::UTF8.GetString($snapshots['blocks/library-viewer/block.json']) | ConvertFrom-Json
+if ($libraryMetadata.name -cne 'ai-manga-viewer/library-viewer' -or $libraryMetadata.textdomain -cne 'ai-manga-viewer') {
+    throw 'Unexpected Library block namespace or text domain.'
+}
 
 $releaseDir = Join-Path $projectRoot 'release'
 if (Test-Path -LiteralPath $releaseDir) { Assert-RegularPath $releaseDir }
@@ -66,11 +74,21 @@ $node = (Get-Command node -CommandType Application -ErrorAction Stop | Select-Ob
 foreach ($relative in $runtimeFiles) {
     $source = Join-Path $projectRoot $relative
     if ($relative.EndsWith('.php')) {
-        & $php -l $source
-        if ($LASTEXITCODE -ne 0) { throw "PHP lint failed: $relative" }
+        $previousErrorAction = $ErrorActionPreference
+        try {
+            $ErrorActionPreference = 'Continue'
+            & $php -l $source
+            $syntaxExitCode = $LASTEXITCODE
+        } finally { $ErrorActionPreference = $previousErrorAction }
+        if ($syntaxExitCode -ne 0) { throw "PHP lint failed: $relative" }
     } elseif ($relative.EndsWith('.js')) {
-        & $node --check $source
-        if ($LASTEXITCODE -ne 0) { throw "JavaScript syntax check failed: $relative" }
+        $previousErrorAction = $ErrorActionPreference
+        try {
+            $ErrorActionPreference = 'Continue'
+            & $node --check $source
+            $syntaxExitCode = $LASTEXITCODE
+        } finally { $ErrorActionPreference = $previousErrorAction }
+        if ($syntaxExitCode -ne 0) { throw "JavaScript syntax check failed: $relative" }
     }
     if ((Get-Sha256 ([IO.File]::ReadAllBytes($source))) -cne (Get-Sha256 $snapshots[$relative])) {
         throw "Source changed during validation. Run the build again: $relative"

@@ -3,8 +3,9 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 $root = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 $fixture = Join-Path $PSScriptRoot ('.release-test-' + [guid]::NewGuid().ToString('N'))
-$files = @('ai-manga-viewer.php', 'readme.txt', 'blocks/viewer/block.json',
-    'blocks/viewer/index.js', 'blocks/viewer/view.js', 'blocks/viewer/render.php',
+$files = @('ai-manga-viewer.php', 'readme.txt', 'includes/analytics.php', 'includes/consultation.php', 'assets/admin-library.css', 'assets/admin-library.js', 'assets/admin-analytics.css', 'assets/admin-analytics.js', 'assets/admin-consultation.css', 'assets/admin-consultation.js', 'blocks/library-viewer/block.json',
+    'blocks/library-viewer/index.js', 'blocks/viewer/block.json',
+    'blocks/viewer/layout.js', 'blocks/viewer/index.js', 'blocks/viewer/view.js', 'blocks/viewer/render.php',
     'blocks/viewer/style.css', 'scripts/build-release.ps1')
 $utf8 = [Text.UTF8Encoding]::new($false)
 function Expect-Failure([scriptblock]$Action, [string]$Message) {
