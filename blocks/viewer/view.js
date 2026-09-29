@@ -2,6 +2,7 @@
 	'use strict';
 	const duration = 360;
 	const layout = window.aiMangaViewerLayout;
+	const focusFit = { autoOverviewWidth: 74, autoOverviewHeight: 68, wideAspectStart: 1.35, wideAspectFull: 3.2, wideZoomMax: 1.25 };
 	function clamp( value, min, max ) { return Math.max( min, Math.min( max, value ) ); }
 	function runtimeId( prefix ) { if ( window.crypto && typeof window.crypto.randomUUID === 'function' ) return prefix + '-' + window.crypto.randomUUID(); return prefix + '-' + Date.now().toString( 36 ) + '-' + Math.random().toString( 36 ).slice( 2, 12 ); }
 	function parseAreas( page, mobile ) { try { const value = JSON.parse( mobile ? ( page.dataset.mobileFocusAreas || '[]' ) : ( page.dataset.focusAreas || '[]' ) ); return Array.isArray( value ) ? value : []; } catch ( error ) { return []; } }
@@ -300,11 +301,16 @@
 				return;
 			}
 			const naturalWidth = source.naturalWidth || modalImage.naturalWidth || 1, naturalHeight = source.naturalHeight || modalImage.naturalHeight || 1, rect = modalStage.getBoundingClientRect();
-			const autoOverview = item.area.view === 'auto' && ( item.area.width >= 74 || item.area.height >= 68 );
+			const areaWidth = clamp( Number( item.area.width ) || 100, 5, 100 ), areaHeight = clamp( Number( item.area.height ) || 100, 5, 100 );
+			const areaAspect = ( naturalWidth * areaWidth ) / ( naturalHeight * areaHeight );
+			const autoOverview = item.area.view === 'auto' && areaWidth >= focusFit.autoOverviewWidth && areaHeight >= focusFit.autoOverviewHeight;
 			const useOverview = showingOverview || item.area.view === 'overview' || autoOverview;
-			const containScale = Math.min( rect.width / ( naturalWidth * item.area.width / 100 ), rect.height / ( naturalHeight * item.area.height / 100 ) ); const deviceScale = window.matchMedia( '(max-width: 781px)' ).matches ? .92 : .86; const zoom = clamp( Number( item.area.zoom ) || 100, 60, 110 ) / 100; const focusScale = containScale * deviceScale * zoom; const scale = useOverview ? Math.min( rect.width / naturalWidth, rect.height / naturalHeight ) : focusScale;
+			const isWideFocus = ! useOverview && areaAspect > focusFit.wideAspectStart;
+			const wideProgress = isWideFocus ? clamp( ( areaAspect - focusFit.wideAspectStart ) / ( focusFit.wideAspectFull - focusFit.wideAspectStart ), 0, 1 ) : 0;
+			const smartZoom = 1 + ( focusFit.wideZoomMax - 1 ) * wideProgress;
+			const containScale = Math.min( rect.width / ( naturalWidth * areaWidth / 100 ), rect.height / ( naturalHeight * areaHeight / 100 ) ); const deviceScale = window.matchMedia( '(max-width: 781px)' ).matches ? .92 : .86; const zoom = clamp( Number( item.area.zoom ) || 100, 60, 110 ) / 100; const effectiveZoom = Math.min( focusFit.wideZoomMax, zoom * smartZoom ); const focusScale = containScale * deviceScale * effectiveZoom; const scale = useOverview ? Math.min( rect.width / naturalWidth, rect.height / naturalHeight ) : focusScale;
 			const width = naturalWidth * scale, height = naturalHeight * scale, x = useOverview ? ( rect.width - width ) / 2 : rect.width / 2 - width * item.area.x / 100, y = useOverview ? ( rect.height - height ) / 2 : rect.height / 2 - height * item.area.y / 100;
-			modalImage.style.width = width + 'px'; modalImage.style.height = height + 'px'; modalImage.style.left = x + 'px'; modalImage.style.top = y + 'px'; updateModalCta( page, item.pageIndex, x, y, width, height );
+			modal.classList.toggle( 'is-wide-focus', isWideFocus ); modalImage.style.width = width + 'px'; modalImage.style.height = height + 'px'; modalImage.style.left = x + 'px'; modalImage.style.top = y + 'px'; updateModalCta( page, item.pageIndex, x, y, width, height );
 			const isFirstFocus = focusIndex === 0, isLastFocus = focusIndex === sequence.length - 1; modalCount.textContent = ( focusIndex + 1 ) + ' / ' + sequence.length; overview.textContent = useOverview ? 'コマへ戻る' : 'ページ全体'; modalPrevious.disabled = false; modalPrevious.textContent = isFirstFocus ? 'ビューアーを閉じる' : '前のコマ'; modalPrevious.setAttribute( 'aria-label', isFirstFocus ? 'ビューアーを閉じる' : '前のコマ' ); modalNext.disabled = false; modalNext.textContent = isLastFocus ? 'ビューアーを閉じる' : '次のコマ'; modalNext.setAttribute( 'aria-label', isLastFocus ? 'ビューアーを閉じる' : '次のコマ' );
 		}
 		function syncPage( pageIndex ) { const targetView = viewForPage( pageIndex ); const changed = targetView !== currentView || focusedPageIndex !== pageIndex; if ( ! changed ) return false; resetZoom(); temporaryOverview = false; activateView( targetView, pageIndex ); updateButtons(); return true; }

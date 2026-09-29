@@ -729,6 +729,69 @@ assert.equal(registered['ai-manga-viewer/library-viewer'].save(), null);
     await side.setViewportSize({ width: 781, height: 850 });
     assert.equal(await sideControls.isVisible(), false);
     await side.close();
+    for (const focusViewport of [ { width: 1200, reducedMotion: 'no-preference' }, { width: 390, reducedMotion: 'reduce' } ]) {
+      const wideFocus = await browser.newPage({ viewport: { width: focusViewport.width, height: 850 }, reducedMotion: focusViewport.reducedMotion });
+      await wideFocus.route('https://example.test/**', route => route.fulfill({ contentType: 'image/svg+xml', body: '<svg xmlns="http://www.w3.org/2000/svg" width="600" height="900"><rect width="600" height="900" fill="#ddd"/></svg>' }));
+      await wideFocus.setContent(html);
+      await wideFocus.evaluate(() => {
+        const rootElement = document.querySelector('.wp-block-ai-manga-viewer-viewer');
+        const firstPage = rootElement.querySelector('.amv-reader__page');
+        rootElement.dataset.mobileFocusReader = 'off';
+        firstPage.dataset.focusAreas = JSON.stringify([
+          { id: 'wide-top', x: 50, y: 16, width: 100, height: 30, zoom: 100, view: 'auto' },
+          { id: 'wide-middle', x: 50, y: 50, width: 100, height: 30, zoom: 100, view: 'auto' },
+          { id: 'wide-bottom', x: 50, y: 84, width: 100, height: 30, zoom: 100, view: 'auto' },
+          { id: 'wide-extreme', x: 50, y: 50, width: 100, height: 20, zoom: 100, view: 'auto' },
+          { id: 'wide-offset', x: 40, y: 50, width: 80, height: 30, zoom: 100, view: 'auto' },
+          { id: 'square', x: 50, y: 50, width: 45, height: 45, zoom: 100, view: 'auto' },
+          { id: 'vertical', x: 50, y: 50, width: 25, height: 65, zoom: 100, view: 'auto' },
+          { id: 'page-overview', x: 50, y: 50, width: 95, height: 90, zoom: 100, view: 'auto' }
+        ]);
+      });
+      await wideFocus.addStyleTag({ path: path.join(current, 'style.css') });
+      await wideFocus.addScriptTag({ path: path.join(current, 'layout.js') });
+      await wideFocus.addScriptTag({ path: path.join(current, 'view.js') });
+      await wideFocus.locator('.amv-reader__focus-open').click();
+      const wideModal = wideFocus.locator('.amv-modal:not([hidden])');
+      const wideImage = wideModal.locator('.amv-modal__image');
+      const readFocus = () => wideModal.evaluate(modalElement => {
+        const stageElement = modalElement.querySelector('.amv-modal__stage');
+        const imageElement = modalElement.querySelector('.amv-modal__image');
+        return {
+          stageWidth: stageElement.getBoundingClientRect().width,
+          imageWidth: parseFloat(imageElement.style.width),
+          left: parseFloat(imageElement.style.left),
+          top: parseFloat(imageElement.style.top),
+          wide: modalElement.classList.contains('is-wide-focus'),
+          transition: getComputedStyle(imageElement).transitionDuration
+        };
+      });
+      await wideFocus.waitForFunction(() => parseFloat(document.querySelector('.amv-modal__image').style.width) > 0);
+      const topFocus = await readFocus();
+      assert.equal(topFocus.wide, true, 'A full-width shallow panel must remain a focus panel');
+      assert.ok(topFocus.imageWidth > topFocus.stageWidth * .87, 'A horizontal panel must receive a modest smart zoom');
+      assert.ok(topFocus.transition.split(',').every(value => value.trim() === (focusViewport.reducedMotion === 'reduce' ? '0s' : '0.4s')), 'Wide focus transition must use 400ms or be disabled by reduced motion');
+      await wideModal.locator('.amv-modal__next').click();
+      const middleFocus = await readFocus();
+      await wideModal.locator('.amv-modal__next').click();
+      const bottomFocus = await readFocus();
+      assert.ok(topFocus.top > middleFocus.top && middleFocus.top > bottomFocus.top, 'Top, middle and bottom horizontal panels must move to distinct vertical positions');
+      await wideModal.locator('.amv-modal__next').click();
+      const extremeFocus = await readFocus();
+      assert.ok(extremeFocus.imageWidth <= extremeFocus.stageWidth * 1.16, 'Extreme horizontal panels must stay within the 125% smart zoom cap');
+      await wideModal.locator('.amv-modal__next').click();
+      const offsetFocus = await readFocus();
+      assert.ok(Math.abs(offsetFocus.left + offsetFocus.imageWidth * .4 - offsetFocus.stageWidth / 2) < 1, 'Smart zoom must center the registered panel rather than the page');
+      await wideModal.locator('.amv-modal__next').click();
+      assert.equal((await readFocus()).wide, false, 'Square panels must retain the normal focus behavior');
+      await wideModal.locator('.amv-modal__next').click();
+      assert.equal((await readFocus()).wide, false, 'Vertical panels must retain the normal focus behavior');
+      await wideModal.locator('.amv-modal__next').click();
+      assert.equal((await readFocus()).wide, false, 'A panel near the full page size must use overview behavior');
+      assert.equal(await wideModal.locator('.amv-modal__overview').textContent(), 'コマへ戻る');
+      await wideModal.locator('.amv-modal__close').click();
+      await wideFocus.close();
+    }
     console.log('PASS: editor registration/schema, desktop/mobile coexistence, navigation, modal sequences, first/current start options, focus trap/return; no page errors');
     console.log('PASS: RTL/LTR page and panel keys/swipes/edge buttons/turn effects; vertical, multi-touch and cancelled gestures ignored');
     console.log('PASS: Manga Library two-column cards, contained 4:3 covers, responsive stacking, edit/analytics links and shortcode copy');
@@ -736,5 +799,6 @@ assert.equal(registered['ai-manga-viewer/library-viewer'].save(), null);
     console.log('PASS: Viewer impressions require 50% visibility for one second, remain distinct from reading, and are de-duplicated');
     console.log('PASS: provider-neutral AI consultation Markdown copy feedback');
     console.log('PASS: desktop side zoom controls remain clickable outside the manga; hidden at tablet width; zoom navigation resets and advances');
+    console.log('PASS: smart horizontal-panel focus zoom, vertical positioning, 125% cap, centering and reduced motion');
   } finally { await browser.close(); }
 })().catch(error => { console.error(error); process.exitCode = 1; });
