@@ -19,10 +19,6 @@
 		return media && media[ 0 ] && media[ 0 ].source_url ? media[ 0 ].source_url : '';
 	}
 
-	function dateOf( item ) {
-		return item && item.modified ? item.modified.replace( 'T', ' ' ).slice( 0, 16 ) : '';
-	}
-
 	function statusOf( item ) {
 		const labels = {
 			publish: __( '公開済み', 'ai-manga-viewer' ),
@@ -46,7 +42,7 @@
 		},
 		cover ? el( 'img', { src: cover, alt: '', style: { display: 'block', width: '100%', height: '120px', objectFit: 'cover', borderRadius: '3px', background: '#f0f0f1' } } ) : el( 'span', { 'aria-hidden': 'true', style: { display: 'grid', placeItems: 'center', width: '100%', height: '120px', borderRadius: '3px', background: '#f0f0f1', color: '#646970', fontSize: '36px' } }, '▤' ),
 		el( 'strong', { style: { overflowWrap: 'anywhere', color: selected ? 'inherit' : '#1e1e1e' } }, titleOf( item ) || __( '無題の漫画', 'ai-manga-viewer' ) ),
-		el( 'small', { style: { color: selected ? 'inherit' : '#646970' } }, 'ID: ' + item.id + ( statusOf( item ) ? ' · ' + statusOf( item ) : '' ) + ( dateOf( item ) ? ' · ' + dateOf( item ) : '' ) ) );
+		el( 'small', { style: { color: selected ? 'inherit' : '#646970' } }, 'ID: ' + item.id + ( statusOf( item ) ? ' · ' + statusOf( item ) : '' ) ) );
 	}
 
 	function selectedSummary( item, viewerId ) {
@@ -56,7 +52,7 @@
 			el( 'div', { style: { maxWidth: '100%' } },
 				el( 'strong', { style: { display: 'block', overflowWrap: 'anywhere' } }, titleOf( item ) || __( '無題の漫画', 'ai-manga-viewer' ) ),
 				el( 'span', { style: { display: 'block', marginTop: '4px', color: '#646970', fontSize: '12px' } }, 'Viewer ID: ' + viewerId ),
-				statusOf( item ) ? el( 'span', { style: { display: 'block', marginTop: '2px', color: '#646970', fontSize: '12px' } }, statusOf( item ) + ( dateOf( item ) ? ' · ' + dateOf( item ) : '' ) ) : null,
+				statusOf( item ) ? el( 'span', { style: { display: 'block', marginTop: '2px', color: '#646970', fontSize: '12px' } }, statusOf( item ) ) : null,
 				el( 'span', { style: { display: 'block', marginTop: '6px', color: '#646970', fontSize: '12px' } }, __( '編集画面では表紙のみ表示します。公開側ではViewer全体が表示されます。', 'ai-manga-viewer' ) )
 			)
 		);
@@ -81,13 +77,15 @@
 			const errorState = element.useState( '' ); const error = errorState[ 0 ]; const setError = errorState[ 1 ];
 			const searchState = element.useState( '' ); const search = searchState[ 0 ]; const setSearch = searchState[ 1 ];
 			const choosingState = element.useState( ! viewerId ); const choosing = choosingState[ 0 ]; const setChoosing = choosingState[ 1 ];
-			const blockProps = useBlockProps( { className: 'amv-library-selector', style: { padding: '16px', border: '1px solid #c3c4c7', background: '#fff' } } );
+			const selectorRef = element.useRef( null );
+			const previousChoosing = element.useRef( choosing );
+			const blockProps = useBlockProps( { ref: selectorRef, className: 'amv-library-selector', style: { padding: '16px', border: '1px solid #c3c4c7', background: '#fff' } } );
 
 			element.useEffect( function() { if ( ! instanceKey || ( instanceOwner && instanceOwner !== props.clientId ) ) props.setAttributes( { instanceKey: stableKey() } ); }, [ instanceKey, instanceOwner, props.clientId ] );
 
 			element.useEffect( function() {
 				let active = true;
-				apiFetch( { path: '/wp/v2/ai-manga-viewers?context=edit&status=publish%2Cdraft%2Cpending%2Cprivate%2Cfuture&per_page=100&orderby=modified&order=desc&_embed=wp%3Afeaturedmedia&_fields=id%2Ctitle%2Cfeatured_media%2Cmodified%2Cstatus%2Camv_cover_url%2C_embedded' } ).then( function( records ) {
+				apiFetch( { path: '/wp/v2/ai-manga-viewers?context=edit&status=publish%2Cdraft%2Cpending%2Cprivate%2Cfuture&per_page=100&orderby=modified&order=desc&_embed=wp%3Afeaturedmedia&_fields=id%2Ctitle%2Cfeatured_media%2Cstatus%2Camv_cover_url%2C_embedded' } ).then( function( records ) {
 					if ( active ) { setItems( Array.isArray( records ) ? records : [] ); setLoading( false ); }
 				} ).catch( function() {
 					if ( active ) { setError( __( '漫画ライブラリを読み込めませんでした。', 'ai-manga-viewer' ) ); setLoading( false ); }
@@ -99,13 +97,27 @@
 				let active = true;
 				setSelectedError( '' );
 				if ( ! viewerId ) { setSelectedRecord( null ); return function() { active = false; }; }
-				apiFetch( { path: '/wp/v2/ai-manga-viewers/' + viewerId + '?context=edit&_embed=wp%3Afeaturedmedia&_fields=id%2Ctitle%2Cfeatured_media%2Cmodified%2Cstatus%2Camv_cover_url%2C_embedded' } ).then( function( record ) {
+				apiFetch( { path: '/wp/v2/ai-manga-viewers/' + viewerId + '?context=edit&_embed=wp%3Afeaturedmedia&_fields=id%2Ctitle%2Cfeatured_media%2Cstatus%2Camv_cover_url%2C_embedded' } ).then( function( record ) {
 					if ( active ) setSelectedRecord( record || null );
 				} ).catch( function() {
 					if ( active ) { setSelectedRecord( null ); setSelectedError( __( '選択済みのViewerを確認できません。削除または権限変更の可能性があります。', 'ai-manga-viewer' ) ); }
 				} );
 				return function() { active = false; };
 			}, [ viewerId ] );
+
+			element.useEffect( function() {
+				const wasChoosing = previousChoosing.current;
+				previousChoosing.current = choosing;
+				if ( ! choosing || wasChoosing ) return;
+				const frame = window.requestAnimationFrame( function() {
+					const selector = selectorRef.current;
+					if ( ! selector ) return;
+					selector.scrollIntoView( { behavior: 'auto', block: 'start' } );
+					const searchInput = selector.querySelector( 'input[type="text"], input[type="search"]' );
+					if ( searchInput ) searchInput.focus( { preventScroll: true } );
+				} );
+				return function() { window.cancelAnimationFrame( frame ); };
+			}, [ choosing ] );
 
 			const selected = selectedRecord || items.find( function( item ) { return Number( item.id ) === viewerId; } );
 			const query = search.trim().toLocaleLowerCase();

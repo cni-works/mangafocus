@@ -25,12 +25,60 @@ const html = execFileSync('php', [path.join(__dirname, 'render-smoke.php'), '--s
       document.addEventListener('amv:reader-event', event => window.__spreadEvents.push(event.detail));
       let fullscreenElement = null;
       Object.defineProperty(document, 'fullscreenElement', { configurable: true, get: () => fullscreenElement });
-      document.exitFullscreen = () => { fullscreenElement = null; document.dispatchEvent(new Event('fullscreenchange')); return Promise.resolve(); };
-      HTMLElement.prototype.requestFullscreen = function() { fullscreenElement = this; document.dispatchEvent(new Event('fullscreenchange')); return Promise.resolve(); };
+      document.exitFullscreen = () => { if (fullscreenElement && (fullscreenElement.closest('#vertical-fixture') || fullscreenElement.closest('#cover-vertical-fixture'))) fullscreenElement.style.height = ''; fullscreenElement = null; document.dispatchEvent(new Event('fullscreenchange')); return Promise.resolve(); };
+      HTMLElement.prototype.requestFullscreen = function() { fullscreenElement = this; if (this.closest('#vertical-fixture') || this.closest('#cover-vertical-fixture')) this.style.height = '900px'; document.dispatchEvent(new Event('fullscreenchange')); return Promise.resolve(); };
     });
     await page.addStyleTag({ path: path.join(viewerRoot, 'style.css') });
     await page.addScriptTag({ path: path.join(viewerRoot, 'layout.js') });
     await page.addScriptTag({ path: path.join(viewerRoot, 'view.js') });
+
+    const cover = page.locator('#cover-fixture .amv-reader');
+    const coverLauncher = cover.locator('.amv-reader__cover-launcher-button');
+    assert.equal(await cover.locator('.amv-reader__stage').evaluate(node => getComputedStyle(node).display), 'none', 'Cover mode must hide the inline reader surface');
+    assert.equal(await coverLauncher.isVisible(), true, 'Cover launcher must be the visible entry point');
+	await cover.scrollIntoViewIfNeeded();
+	await page.waitForTimeout(1100);
+	assert.equal((await page.evaluate(() => window.__spreadEvents.filter(event => event.viewerKey === 'cover-viewer' && event.name === 'viewer_impression'))).length, 1, 'A visible cover must use the existing impression rule');
+    assert.equal((await page.evaluate(() => window.__spreadEvents.filter(event => event.viewerKey === 'cover-viewer' && ['read_start', 'page_reach'].includes(event.name)))).length, 0, 'Showing a cover must not start reading or reach a page');
+    await coverLauncher.click();
+    await page.waitForFunction(() => document.querySelector('#cover-fixture .amv-reader').classList.contains('is-fullscreen'));
+    assert.equal(await cover.locator('.amv-reader__count').textContent(), '1 / 6', 'Cover launch must always start from the first page');
+    assert.equal(await cover.locator('.amv-reader__stage').evaluate(node => document.activeElement === node), true, 'Fullscreen entry must move focus into the reader');
+    const coverEvents = await page.evaluate(() => window.__spreadEvents.filter(event => event.viewerKey === 'cover-viewer'));
+    assert.equal(coverEvents.filter(event => event.name === 'read_start').length, 1, 'Cover launch must start one reading session');
+    assert.deepEqual(coverEvents.filter(event => event.name === 'page_reach').map(event => event.pageNumber), [1], 'Cover launch must initially reach only page one');
+    await cover.locator('.amv-reader__fullscreen').click();
+    await page.waitForFunction(() => !document.querySelector('#cover-fixture .amv-reader').classList.contains('is-fullscreen'));
+    await page.waitForFunction(() => document.activeElement === document.querySelector('#cover-fixture .amv-reader__cover-launcher-button'));
+    assert.equal(await cover.locator('.amv-reader__stage').evaluate(node => getComputedStyle(node).display), 'none', 'Exiting fullscreen must restore the cover-only view');
+	const coverFocusOpen = cover.locator('.amv-reader__cover-focus-open');
+	assert.equal(await coverFocusOpen.isVisible(), true, 'A configured focus reader must be available beside the cover launcher');
+	await coverFocusOpen.click();
+	assert.equal(await page.locator('body > .amv-modal:not([hidden])').count(), 1, 'The cover focus action must open the existing dedicated viewer');
+	await page.locator('body > .amv-modal:not([hidden]) .amv-modal__close').click();
+	await page.waitForFunction(() => document.activeElement === document.querySelector('#cover-fixture .amv-reader__cover-focus-open'));
+
+    const coverVertical = page.locator('#cover-vertical-fixture .amv-reader');
+    await coverVertical.locator('.amv-reader__cover-launcher-button').click();
+    await page.waitForFunction(() => document.querySelector('#cover-vertical-fixture .amv-reader').classList.contains('is-vertical-reading'));
+    assert.equal(await coverVertical.locator('.amv-reader__page').evaluateAll(nodes => nodes.filter(node => getComputedStyle(node).display !== 'none').length), 6, 'Cover launch must support vertical fullscreen reading');
+    assert.equal(await cover.evaluate(node => node.classList.contains('is-fullscreen')), false, 'Multiple cover launchers must keep independent fullscreen state');
+	const verticalSideControls = coverVertical.locator('.amv-reader__zoom-controls--side');
+	const rightRail = await verticalSideControls.evaluate(node => { const box = node.getBoundingClientRect(); const button = node.querySelector('button'); const style = getComputedStyle(node); const buttonStyle = getComputedStyle(button); return { position: style.position, direction: style.flexDirection, centerY: box.top + box.height / 2, right: innerWidth - box.right, color: buttonStyle.color, background: buttonStyle.backgroundColor }; });
+	assert.equal(rightRail.position, 'fixed', 'Vertical side zoom controls must track the viewport');
+	assert.equal(rightRail.direction, 'column', 'Right/left vertical zoom controls must remain a vertical rail');
+	assert.ok(Math.abs(rightRail.centerY - 450) < 3 && Math.abs(rightRail.right - 16) < 3, 'Right zoom controls must sit in the outer viewport gutter');
+	assert.equal(rightRail.color, 'rgb(31, 41, 55)', 'Vertical zoom button text must remain dark on the light background');
+	assert.equal(rightRail.background, 'rgb(255, 255, 255)', 'Vertical zoom buttons must use a readable white background');
+	await coverVertical.evaluate(node => { node.scrollTop = 600; });
+	await page.waitForTimeout(50);
+	assert.ok(Math.abs((await verticalSideControls.boundingBox()).y - (rightRail.centerY - (await verticalSideControls.boundingBox()).height / 2)) < 3, 'Side zoom controls must remain fixed while vertical pages scroll');
+	await coverVertical.evaluate(node => { node.dataset.zoomPosition = 'left'; });
+	await page.waitForTimeout(20);
+	assert.ok(Math.abs((await verticalSideControls.boundingBox()).x - 16) < 3, 'Left zoom controls must move to the outer left gutter');
+	await page.evaluate(() => document.exitFullscreen());
+    await page.waitForFunction(() => !document.querySelector('#cover-vertical-fixture .amv-reader').classList.contains('is-fullscreen'));
+	await page.waitForFunction(() => document.activeElement === document.querySelector('#cover-vertical-fixture .amv-reader__cover-launcher-button'));
 
     const spread = page.locator('#spread-fixture .amv-reader');
     await spread.waitFor();
@@ -60,98 +108,31 @@ const html = execFileSync('php', [path.join(__dirname, 'render-smoke.php'), '--s
     await page.keyboard.press('Tab');
     assert.equal(await page.evaluate(() => Number(document.activeElement.closest('.amv-reader__page').dataset.pageIndex)), 2, 'CTA tab order must follow logical DOM order');
 
-    const events = await page.evaluate(() => window.__spreadEvents);
+    const events = await page.evaluate(() => window.__spreadEvents.filter(event => event.viewerKey === 'spread-viewer'));
     assert.equal(events.filter(event => event.name === 'read_start').length, 1);
     assert.equal(events.find(event => event.name === 'read_start').pageNumber, 1, 'read_start must use the primary page');
     assert.deepEqual(events.filter(event => event.name === 'page_reach').map(event => event.pageNumber), [1, 2, 3], 'Both visible spread pages must be reached');
 
     const pageFocus = page.locator('#page-focus-fixture .amv-reader');
     await page.waitForFunction(() => document.querySelector('#page-focus-fixture .amv-reader').classList.contains('has-spread-layout'));
-    assert.equal(await pageFocus.locator('.amv-reader__count').textContent(), '1 / 6', 'pageFocus must begin with the standalone cover');
     await pageFocus.locator('.amv-reader__edge--next').click();
-    await page.waitForFunction(() => document.querySelector('#page-focus-fixture .amv-reader__count').textContent === '2 / 6');
-    assert.equal(await pageFocus.locator('.amv-reader__page.is-active').count(), 2, 'pageFocus must preserve the two-page surface');
-    assert.equal(await pageFocus.locator('.amv-reader__page.is-focused-page').getAttribute('data-page-index'), '1');
-    assert.equal(await pageFocus.locator('.amv-reader__page[data-page-index="2"]').getAttribute('aria-hidden'), 'true', 'Inactive spread page must be hidden from assistive technology');
-    assert.equal(await pageFocus.locator('.amv-reader__page[data-page-index="2"]').evaluate(node => node.inert), true, 'Inactive spread page controls must be inert');
-    assert.match(await pageFocus.locator('.amv-reader__focus-layer').getAttribute('style'), /scale\(/, 'pageFocus fit must use the outer focus layer');
-    const focusedGeometry = await pageFocus.evaluate(element => ({
-      page: element.querySelector('.amv-reader__page.is-focused-page').getBoundingClientRect().width,
-      pageHeight: element.querySelector('.amv-reader__page.is-focused-page').getBoundingClientRect().height,
-      viewport: element.querySelector('.amv-reader__pages').getBoundingClientRect().width,
-      viewportHeight: window.innerHeight
-    }));
-    assert.ok(focusedGeometry.page <= focusedGeometry.viewport + 1, 'Focused page must not exceed the viewer width');
-    assert.ok(focusedGeometry.pageHeight <= focusedGeometry.viewportHeight - 127, 'Normal pageFocus must keep the page and controls within the viewport height');
-
-    await pageFocus.locator('.amv-reader__spread-overview').click();
-    assert.equal(await pageFocus.locator('.amv-reader__count').textContent(), '2–3 / 6', 'Temporary overview must expose the full spread range');
-    assert.equal(await pageFocus.locator('.amv-reader__page[data-page-index="2"]').getAttribute('aria-hidden'), 'false');
-    assert.equal(await pageFocus.locator('.amv-reader__page[data-page-index="2"]').evaluate(node => node.inert), false);
-    await pageFocus.locator('.amv-reader__spread-overview').click();
-    assert.equal(await pageFocus.locator('.amv-reader__count').textContent(), '2 / 6');
-
-    const focusTransformPage2 = await pageFocus.locator('.amv-reader__focus-layer').evaluate(node => getComputedStyle(node).transform);
-    await pageFocus.locator('.amv-reader__stage').focus();
-    await page.keyboard.press('ArrowLeft');
-    await page.waitForFunction(() => document.querySelector('#page-focus-fixture .amv-reader__count').textContent === '3 / 6');
-    await page.waitForTimeout(30);
-    const focusTransformPage3 = await pageFocus.locator('.amv-reader__focus-layer').evaluate(node => getComputedStyle(node).transform);
-    assert.notEqual(focusTransformPage3, focusTransformPage2, 'RTL logical navigation must move focus across the same spread');
-    assert.equal(await pageFocus.locator('.amv-reader__page.is-focused-page').getAttribute('data-page-index'), '2');
-
-    await pageFocus.locator('.amv-reader__zoom-in').click();
-    assert.match(await pageFocus.locator('.amv-reader__surface').getAttribute('style'), /scale\(1\.25\)/, 'Manual zoom must remain on the inner surface');
-    assert.equal(await pageFocus.locator('.amv-reader__focus-layer').evaluate(node => getComputedStyle(node).transform), focusTransformPage3, 'Manual zoom must not replace the pageFocus fit transform');
-    await pageFocus.locator('.amv-reader__zoom-page--next').click();
-    await page.waitForFunction(() => document.querySelector('#page-focus-fixture .amv-reader__count').textContent === '4 / 6');
-    assert.equal(await pageFocus.locator('.amv-reader__zoom-level').textContent(), '100%', 'Logical page movement must reset only manual zoom');
-    assert.equal(await pageFocus.evaluate(node => node.classList.contains('is-page-focus')), true);
-
-    const pageFocusFullscreen = pageFocus.locator('.amv-reader__fullscreen');
-    await pageFocusFullscreen.scrollIntoViewIfNeeded();
-    const fullscreenReturnTop = await pageFocus.evaluate(node => node.getBoundingClientRect().top);
-    await pageFocusFullscreen.click();
-    await page.waitForTimeout(50);
-    assert.equal(await pageFocus.locator('.amv-reader__count').textContent(), '4 / 6', 'Fullscreen must preserve the focused logical page');
-    await page.evaluate(() => { window.scrollTo(0, Math.min(document.documentElement.scrollHeight - innerHeight, scrollY + 420)); document.exitFullscreen(); });
-    await page.waitForTimeout(100);
-    assert.equal(await pageFocus.locator('.amv-reader__count').textContent(), '4 / 6', 'Leaving fullscreen must preserve the focused logical page');
-    const restoredTop = await pageFocus.evaluate(node => node.getBoundingClientRect().top);
-    assert.ok(Math.abs(restoredTop - fullscreenReturnTop) < 2, 'Leaving fullscreen must restore the Viewer to its previous viewport position');
-
-    await pageFocus.locator('.amv-reader__focus-open').click();
-    const focusModal = page.locator('body > .amv-modal:not([hidden])');
-    await focusModal.waitFor();
-    assert.equal(await focusModal.locator('.amv-modal__count').textContent(), '4 / 6', 'Dedicated Viewer must start from the focused logical page');
-    await focusModal.locator('.amv-modal__next').click();
-    await focusModal.locator('.amv-modal__close').click();
-    assert.equal(await pageFocus.locator('.amv-reader__count').textContent(), '5 / 6', 'Returning from the Dedicated Viewer must keep its logical page in pageFocus');
-
-    await pageFocus.locator('.amv-reader__focus-open').click();
-    await focusModal.waitFor();
-    assert.equal(await focusModal.locator('.amv-modal__count').textContent(), '5 / 6');
-    await focusModal.locator('.amv-modal__next').click();
-    await focusModal.locator('.amv-modal__next').click();
-    await page.waitForFunction(() => document.querySelector('#page-focus-fixture .amv-reader__count').textContent === '1 / 6');
-    assert.equal(await focusModal.isHidden(), true, 'Completing the Dedicated Viewer must close it');
-
-    const focusEvents = await page.evaluate(() => window.__spreadEvents.filter(event => event.viewerKey === 'page-focus-viewer'));
-    assert.equal(focusEvents.find(event => event.name === 'read_start').pageNumber, 1, 'pageFocus read_start must use the logical focused page');
-    assert.deepEqual(focusEvents.filter(event => event.name === 'page_reach').map(event => event.pageNumber), [1, 2, 3, 4, 5, 6], 'pageFocus must reach one focused page at a time, while temporary overview and Dedicated Viewer add their shown pages');
-
-    const pageFocusAuto = page.locator('#page-focus-auto-fixture .amv-reader');
-    await page.waitForFunction(() => document.querySelector('#page-focus-auto-fixture .amv-reader').classList.contains('has-spread-layout'));
-    await pageFocusAuto.locator('.amv-reader__edge--next').click();
-    await pageFocusAuto.locator('.amv-reader__edge--next').click();
-    assert.equal(await pageFocusAuto.locator('.amv-reader__count').textContent(), '3 / 6');
-    await page.setViewportSize({ width: 730, height: 900 });
-    await page.waitForFunction(() => document.querySelector('#page-focus-auto-fixture .amv-reader__count').textContent === '3 / 6' && !document.querySelector('#page-focus-auto-fixture .amv-reader').classList.contains('has-spread-layout'));
-    await page.setViewportSize({ width: 840, height: 900 });
-    await page.waitForFunction(() => document.querySelector('#page-focus-auto-fixture .amv-reader').classList.contains('has-spread-layout'));
-    assert.equal(await pageFocusAuto.locator('.amv-reader__count').textContent(), '3 / 6', 'Auto layout transitions must preserve the focused logical page');
-    assert.equal(await pageFocusAuto.locator('.amv-reader__page.is-focused-page').getAttribute('data-page-index'), '2');
-
+    await page.waitForFunction(() => document.querySelector('#page-focus-fixture .amv-reader__count').textContent === '2–3 / 6');
+	assert.equal(await pageFocus.evaluate(node => node.classList.contains('is-page-focus')), false, 'Inline reading must keep the full spread visible');
+	assert.equal(await pageFocus.locator('.amv-reader__spread-overview').isHidden(), true, 'The page-focus toggle must stay hidden outside fullscreen');
+	await pageFocus.locator('.amv-reader__fullscreen').click();
+	await page.waitForFunction(() => document.querySelector('#page-focus-fixture .amv-reader').classList.contains('is-page-focus'));
+	assert.equal(await pageFocus.locator('.amv-reader__count').textContent(), '2 / 6', 'Fullscreen pageFocus must begin at the logically first page in the active spread');
+	assert.equal(await pageFocus.locator('.amv-reader__spread-overview').isVisible(), true, 'Fullscreen pageFocus must expose the temporary spread overview action');
+	await pageFocus.locator('.amv-reader__edge--next').click();
+	assert.equal(await pageFocus.locator('.amv-reader__count').textContent(), '3 / 6', 'Fullscreen pageFocus must advance one logical page at a time');
+	await pageFocus.locator('.amv-reader__spread-overview').click();
+	assert.equal(await pageFocus.locator('.amv-reader__count').textContent(), '2–3 / 6', 'Temporary overview must reveal the active spread');
+	await pageFocus.locator('.amv-reader__spread-overview').click();
+	assert.equal(await pageFocus.locator('.amv-reader__count').textContent(), '3 / 6', 'Leaving temporary overview must restore the focused page');
+	await pageFocus.locator('.amv-reader__fullscreen').click();
+	await page.waitForFunction(() => !document.querySelector('#page-focus-fixture .amv-reader').classList.contains('is-fullscreen'));
+	assert.equal(await pageFocus.evaluate(node => node.classList.contains('is-page-focus')), false, 'Exiting fullscreen must restore inline spread overview');
+	assert.equal(await pageFocus.locator('.amv-reader__count').textContent(), '2–3 / 6', 'Inline page numbering must return to the active spread range');
     await page.setViewportSize({ width: 1200, height: 900 });
     await page.waitForTimeout(80);
 
@@ -200,6 +181,47 @@ const html = execFileSync('php', [path.join(__dirname, 'render-smoke.php'), '--s
     assert.ok(Math.abs(fullscreenGeometry.gap - 12) < 1, 'Fullscreen overview must keep only the configured center gap');
     assert.ok(Math.abs(fullscreenGeometry.surfaceWidth - fullscreenGeometry.imagesWidth - 12) < 1, 'Fullscreen surface must shrink to the two rendered page widths plus the gap');
     assert.ok(Math.abs(fullscreenGeometry.leftInset - fullscreenGeometry.rightInset) < 2, 'Fullscreen spread must remain centered');
+
+    const vertical = page.locator('#vertical-fixture .amv-reader');
+    await vertical.locator('.amv-reader__fullscreen').click();
+    await page.waitForFunction(() => document.querySelector('#vertical-fixture .amv-reader').classList.contains('is-vertical-reading'));
+    assert.equal(await vertical.locator('.amv-reader__page').count(), 6);
+    assert.equal(await vertical.locator('.amv-reader__page').evaluateAll(nodes => nodes.filter(node => getComputedStyle(node).display !== 'none').length), 6, 'Vertical fullscreen must expose every page');
+    assert.equal(await vertical.locator('.amv-reader__page[aria-hidden="true"]').count(), 0, 'Vertical pages must remain available to assistive technology');
+    assert.equal(await vertical.locator('.amv-reader__page').evaluateAll(nodes => nodes.some(node => node.inert)), false, 'Vertical page CTAs must remain keyboard reachable');
+    assert.equal(await vertical.locator('.amv-reader__edge--next').evaluate(node => getComputedStyle(node).display), 'none', 'Paged edge navigation must be hidden');
+    assert.equal(await vertical.locator('.amv-reader__zoom-controls').evaluate(node => getComputedStyle(node).display), 'flex', 'Vertical reading must expose width zoom controls');
+    const verticalWidth100 = (await vertical.locator('.amv-reader__stage').boundingBox()).width;
+    await vertical.locator('.amv-reader__zoom-in').click();
+    await page.waitForFunction(() => document.querySelector('#vertical-fixture .amv-reader__zoom-level').textContent === '125%');
+    const verticalWidth125 = (await vertical.locator('.amv-reader__stage').boundingBox()).width;
+    assert.ok(verticalWidth125 > verticalWidth100 * 1.2, 'Vertical zoom must widen the reading column instead of transforming the long surface');
+    assert.equal(await vertical.locator('.amv-reader__surface').evaluate(node => getComputedStyle(node).transform), 'none', 'Vertical zoom must preserve normal vertical layout');
+    await vertical.locator('.amv-reader__zoom-reset').click();
+    await page.waitForFunction(() => document.querySelector('#vertical-fixture .amv-reader__zoom-level').textContent === '100%');
+    assert.ok(Math.abs((await vertical.locator('.amv-reader__stage').boundingBox()).width - verticalWidth100) < 2, 'Vertical reset must restore the configured reading width');
+    await page.waitForTimeout(100);
+    assert.equal((await page.evaluate(() => window.__spreadEvents.filter(event => event.viewerKey === 'vertical-viewer' && event.name === 'page_reach'))).length, 0, 'Vertical reach must not fire immediately on mode entry');
+    await page.waitForTimeout(750);
+    assert.deepEqual((await page.evaluate(() => window.__spreadEvents.filter(event => event.viewerKey === 'vertical-viewer' && event.name === 'page_reach').map(event => event.pageNumber))), [1], 'The first vertical page must be reached after dwell');
+    await vertical.evaluate(node => { const page3 = node.querySelector('.amv-reader__page[data-page-index="2"]'); node.scrollTop += page3.getBoundingClientRect().top - node.getBoundingClientRect().top - 16; });
+    await page.waitForFunction(() => document.querySelector('#vertical-fixture .amv-reader__count').textContent === '3 / 6');
+    await page.waitForTimeout(750);
+    assert.ok((await page.evaluate(() => window.__spreadEvents.filter(event => event.viewerKey === 'vertical-viewer' && event.name === 'page_reach').map(event => event.pageNumber))).includes(3), 'A settled vertical page must emit page reach');
+    await vertical.locator('.amv-reader__fullscreen').click();
+    await page.waitForFunction(() => !document.querySelector('#vertical-fixture .amv-reader').classList.contains('is-vertical-reading'));
+    assert.equal(await vertical.locator('.amv-reader__count').textContent(), '2–3 / 6', 'Leaving vertical fullscreen must restore the paged view containing the current page');
+    await vertical.locator('.amv-reader__fullscreen').click();
+    await page.waitForFunction(() => document.querySelector('#vertical-fixture .amv-reader').classList.contains('is-vertical-reading'));
+    await vertical.evaluate(node => { const lastPage = node.querySelector('.amv-reader__page[data-page-index="5"]'); node.scrollTop += lastPage.getBoundingClientRect().top - node.getBoundingClientRect().top - 16; });
+    await page.waitForFunction(() => document.querySelector('#vertical-fixture .amv-reader__count').textContent === '6 / 6');
+    await vertical.locator('.amv-reader__fullscreen').click();
+    await page.waitForFunction(() => !document.querySelector('#vertical-fixture .amv-reader').classList.contains('is-vertical-reading'));
+    assert.equal(await vertical.locator('.amv-reader__count').textContent(), '1 / 6', 'Leaving vertical fullscreen from the final page must return to the first page');
+    const verticalEvents = await page.evaluate(() => window.__spreadEvents.filter(event => event.viewerKey === 'vertical-viewer'));
+    assert.equal(verticalEvents.find(event => event.name === 'read_start').mode, 'vertical');
+    assert.equal(verticalEvents.find(event => event.name === 'mode_use').mode, 'vertical');
+
     const wide = page.locator('#wide-fixture .amv-reader');
     await page.waitForFunction(() => Number(document.querySelector('#wide-fixture .amv-reader__page[data-page-index="1"]').dataset.imageWidth) > 0);
     await wide.locator('.amv-reader__edge--next').click();
@@ -231,7 +253,7 @@ const html = execFileSync('php', [path.join(__dirname, 'render-smoke.php'), '--s
     await page.waitForFunction(() => document.querySelector('#spread-fixture .amv-reader').classList.contains('has-spread-layout'));
 
     assert.deepEqual(errors, []);
-    console.log('PASS: spread overview/pageFocus navigation, temporary overview, accessibility, fullscreen/zoom layering, analytics, auto hysteresis and landscape singles');
+    console.log('PASS: spread overview, fullscreen-only pageFocus, vertical width zoom, accessibility, fullscreen/zoom layering, analytics, auto hysteresis and landscape singles');
   } finally {
     await browser.close();
   }

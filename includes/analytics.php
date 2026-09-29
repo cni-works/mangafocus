@@ -776,7 +776,7 @@ function ai_manga_viewer_normalize_analytics_event( $payload ) {
 	}
 	$name = isset( $payload['name'] ) && is_string( $payload['name'] ) ? $payload['name'] : '';
 	$mode = isset( $payload['mode'] ) && is_string( $payload['mode'] ) ? $payload['mode'] : '';
-	if ( ! in_array( $name, array( 'viewer_impression', 'read_start', 'mode_use', 'page_reach', 'cta_click', 'active_time' ), true ) || ! in_array( $mode, array( 'standard', 'fullscreen', 'zoom', 'focus', 'standard_direct' ), true ) ) {
+	if ( ! in_array( $name, array( 'viewer_impression', 'read_start', 'mode_use', 'page_reach', 'cta_click', 'active_time' ), true ) || ! in_array( $mode, array( 'standard', 'fullscreen', 'vertical', 'zoom', 'focus', 'standard_direct' ), true ) ) {
 		return null;
 	}
 	$event_id    = $payload['eventId'] ?? '';
@@ -895,6 +895,7 @@ function ai_manga_viewer_store_analytics_event( $event ) {
 		$mode_column = array(
 			'standard'   => 'used_standard',
 			'fullscreen' => 'used_fullscreen',
+			'vertical'   => 'used_fullscreen',
 			'zoom'       => 'used_zoom',
 			'focus'      => 'used_focus',
 		)[ $event['mode'] ];

@@ -434,6 +434,8 @@ function ai_manga_viewer_sanitize_library_attributes( $attributes ) {
 		'showGuideArrowOnAllPages'  => ! empty( $attributes['showGuideArrowOnAllPages'] ),
 		'enableAnimation'           => ! isset( $attributes['enableAnimation'] ) || ! empty( $attributes['enableAnimation'] ),
 		'enableFullscreen'          => ! empty( $attributes['enableFullscreen'] ),
+		'inlineDisplayMode'         => 'coverLauncher' === ( $attributes['inlineDisplayMode'] ?? '' ) ? 'coverLauncher' : 'reader',
+		'fullscreenReadingMode'     => 'vertical' === ( $attributes['fullscreenReadingMode'] ?? '' ) ? 'vertical' : 'paged',
 		'enableZoom'                => ! empty( $attributes['enableZoom'] ),
 		'zoomControlsPosition'      => in_array( $attributes['zoomControlsPosition'] ?? '', array( 'left', 'right', 'bottom' ), true ) ? $attributes['zoomControlsPosition'] : 'bottom',
 		'scrollAssist'              => ! empty( $attributes['scrollAssist'] ),
@@ -565,6 +567,8 @@ function ai_manga_viewer_render_library_viewer( $viewer_id, $instance_key = '' )
 	if ( '' !== $instance_key ) {
 		$viewer_block['attrs']['instanceKey'] = $instance_key;
 	}
+	$viewer_block['attrs']['_libraryCoverUrl'] = ai_manga_viewer_library_cover_url( $viewer_id, 'large' );
+	$viewer_block['attrs']['_viewerTitle']     = get_the_title( $viewer_id );
 
 	$rendered = render_block( $viewer_block );
 	$rendered = preg_replace( '/<div\b/', '<div data-analytics-source="library"', $rendered, 1 );

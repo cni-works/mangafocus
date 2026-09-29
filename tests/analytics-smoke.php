@@ -181,6 +181,9 @@ foreach ( array( array_merge( $impression_event, array( 'sessionId' => 'invented
 }
 if ( true !== ai_manga_viewer_store_analytics_event( $normalized ) ) { throw new Exception( 'First analytics event was not stored' ); }
 if ( 'duplicate' !== ai_manga_viewer_store_analytics_event( $normalized ) ) { throw new Exception( 'Duplicate event id was not ignored' ); }
+$vertical_event = array_merge( $event, array( 'eventId' => 'event-vertical', 'sessionId' => 'session-vertical', 'mode' => 'vertical' ) );
+$normalized_vertical = ai_manga_viewer_normalize_analytics_event( $vertical_event );
+if ( ! $normalized_vertical || 'vertical' !== $normalized_vertical['mode'] || true !== ai_manga_viewer_store_analytics_event( $normalized_vertical ) ) { throw new Exception( 'Vertical reading analytics mode failed' ); }
 $active_event = $event;
 $active_event['name'] = 'active_time'; $active_event['eventId'] = 'event-active'; $active_event['readingStarted'] = true; $active_event['activeSecondsDelta'] = 15;
 $normalized_active = ai_manga_viewer_normalize_analytics_event( $active_event );
@@ -190,7 +193,7 @@ if ( null !== ai_manga_viewer_normalize_analytics_event( $invalid_active ) ) { t
 $invalid_active = $active_event; $invalid_active['readingStarted'] = false;
 if ( null !== ai_manga_viewer_normalize_analytics_event( $invalid_active ) ) { throw new Exception( 'Active reading time without a reading session was accepted' ); }
 $sql = implode( "\n", $GLOBALS['wpdb']->queries );
-foreach ( array( 'START TRANSACTION', 'wp_amv_reader_events', 'active_seconds_delta', 'wp_amv_reader_sessions', 'active_seconds=LEAST(1800,active_seconds+VALUES(active_seconds))', 'wp_amv_page_reaches', 'COMMIT' ) as $expected ) {
+foreach ( array( 'START TRANSACTION', 'wp_amv_reader_events', 'active_seconds_delta', 'wp_amv_reader_sessions', 'used_fullscreen', 'active_seconds=LEAST(1800,active_seconds+VALUES(active_seconds))', 'wp_amv_page_reaches', 'COMMIT' ) as $expected ) {
 	if ( false === strpos( $sql, $expected ) ) { throw new Exception( 'Persistence query missing: ' . $expected ); }
 }
 if ( false !== strpos( $sql, 'visitor-abc' ) || false === strpos( $sql, hash_hmac( 'sha256', 'visitor-abc', 'test-salt' ) ) ) { throw new Exception( 'Raw visitor id was stored instead of its HMAC' ); }

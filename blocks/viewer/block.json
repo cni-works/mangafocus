@@ -22,6 +22,8 @@
     "showGuideArrowOnAllPages": { "type": "boolean", "default": false },
     "enableAnimation": { "type": "boolean", "default": true },
     "enableFullscreen": { "type": "boolean", "default": false },
+    "inlineDisplayMode": { "type": "string", "default": "reader" },
+    "fullscreenReadingMode": { "type": "string", "default": "paged" },
     "enableZoom": { "type": "boolean", "default": false },
     "zoomControlsPosition": { "type": "string", "default": "bottom" },
     "scrollAssist": { "type": "boolean", "default": false },
