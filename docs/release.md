@@ -20,7 +20,7 @@ PowerShellと、PATHから利用できるPHP CLI・Node.jsが必要。プロジ�
 
 ## 梱包と検査
 
-現時点では本体、readme、2つのブロック、解析・AI相談用PHP、管理画面CSS/JSを含む実行時ファイル17件だけを明示的に梱包する。全エントリーは `ai-manga-viewer/` の下に置く。必要な実行ファイルを追加したときは、スクリプトのruntimeFilesも更新する。
+現時点では本体、readme、Feature API、Extension API、2つのブロック、解析・AI相談用PHP、管理画面CSS/JSを含む実行時ファイル20件だけを明示的に梱包する。全エントリーは `ai-manga-viewer/` の下に置く。必要な実行ファイルを追加したときは、スクリプトのruntimeFilesも更新する。
 
 docs、tests、scripts、release、Git管理情報、node_modules、desktop.ini、関連プロジェクトは梱包しない。現在のindex.jsは実行用ソースなので必ず含める。
 

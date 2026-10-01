@@ -4,8 +4,9 @@ const { execFileSync } = require('node:child_process');
 const { chromium } = require('playwright');
 
 const root = path.resolve(__dirname, '..');
+const proRoot = path.resolve(root, '..', 'AI Manga Viewer Pro');
 const viewerRoot = path.join(root, 'blocks/viewer');
-const html = execFileSync('php', [path.join(__dirname, 'render-smoke.php'), '--spread-fixture'], { encoding: 'utf8' });
+const html = execFileSync('php', [path.join(__dirname, 'render-smoke.php'), '--spread-fixture', '--pro-cta-fixture', '--pro-panel-fixture'], { encoding: 'utf8' });
 
 (async () => {
   const browser = await chromium.launch({ channel: 'msedge', headless: true });
@@ -20,17 +21,22 @@ const html = execFileSync('php', [path.join(__dirname, 'render-smoke.php'), '--s
     });
     await page.setContent(html);
     await page.evaluate(() => {
-      window.aiMangaViewerAnalytics = { enabled: true, restUrl: 'https://example.test/wp-json/ai-manga-viewer/v1/events' };
+      window.aiMangaViewerProAnalytics = { enabled: true, restUrl: 'https://example.test/wp-json/ai-manga-viewer/v1/events' };
       window.__spreadEvents = [];
       document.addEventListener('amv:reader-event', event => window.__spreadEvents.push(event.detail));
       let fullscreenElement = null;
       Object.defineProperty(document, 'fullscreenElement', { configurable: true, get: () => fullscreenElement });
-      document.exitFullscreen = () => { if (fullscreenElement && (fullscreenElement.closest('#vertical-fixture') || fullscreenElement.closest('#cover-vertical-fixture'))) fullscreenElement.style.height = ''; fullscreenElement = null; document.dispatchEvent(new Event('fullscreenchange')); return Promise.resolve(); };
-      HTMLElement.prototype.requestFullscreen = function() { fullscreenElement = this; if (this.closest('#vertical-fixture') || this.closest('#cover-vertical-fixture')) this.style.height = '900px'; document.dispatchEvent(new Event('fullscreenchange')); return Promise.resolve(); };
+      document.exitFullscreen = () => { if (fullscreenElement && (fullscreenElement.closest('#vertical-fixture') || fullscreenElement.closest('#vertical-current-fixture') || fullscreenElement.closest('#cover-vertical-fixture'))) fullscreenElement.style.height = ''; fullscreenElement = null; document.dispatchEvent(new Event('fullscreenchange')); return Promise.resolve(); };
+      HTMLElement.prototype.requestFullscreen = function() { fullscreenElement = this; if (this.closest('#vertical-fixture') || this.closest('#vertical-current-fixture') || this.closest('#cover-vertical-fixture')) this.style.height = '900px'; document.dispatchEvent(new Event('fullscreenchange')); return Promise.resolve(); };
     });
     await page.addStyleTag({ path: path.join(viewerRoot, 'style.css') });
+    await page.addStyleTag({ path: path.join(proRoot, 'assets', 'cta', 'style.css') });
+    await page.addStyleTag({ path: path.join(proRoot, 'assets', 'panel-reader', 'style.css') });
     await page.addScriptTag({ path: path.join(viewerRoot, 'layout.js') });
+    await page.addScriptTag({ path: path.join(proRoot, 'assets', 'analytics', 'frontend.js') });
     await page.addScriptTag({ path: path.join(viewerRoot, 'view.js') });
+    await page.addScriptTag({ path: path.join(proRoot, 'assets', 'cta', 'frontend.js') });
+    await page.addScriptTag({ path: path.join(proRoot, 'assets', 'panel-reader', 'frontend.js') });
 
     const cover = page.locator('#cover-fixture .amv-reader');
     const coverLauncher = cover.locator('.amv-reader__cover-launcher-button');
@@ -113,6 +119,14 @@ const html = execFileSync('php', [path.join(__dirname, 'render-smoke.php'), '--s
     assert.equal(events.find(event => event.name === 'read_start').pageNumber, 1, 'read_start must use the primary page');
     assert.deepEqual(events.filter(event => event.name === 'page_reach').map(event => event.pageNumber), [1, 2, 3], 'Both visible spread pages must be reached');
 
+    await spread.locator('.amv-reader__fullscreen').click();
+    await page.waitForFunction(() => document.querySelector('#spread-fixture .amv-reader').classList.contains('is-fullscreen'));
+    assert.equal(await spread.locator('.amv-reader__count').textContent(), '1 / 6', 'Default paged fullscreen entry must start from the first page');
+    await spread.locator('.amv-reader__fullscreen').click();
+    await page.waitForFunction(() => !document.querySelector('#spread-fixture .amv-reader').classList.contains('is-fullscreen'));
+    await spread.locator('.amv-reader__edge--next').click();
+    await page.waitForFunction(() => document.querySelector('#spread-fixture .amv-reader__count').textContent === '2–3 / 6');
+
     const pageFocus = page.locator('#page-focus-fixture .amv-reader');
     await page.waitForFunction(() => document.querySelector('#page-focus-fixture .amv-reader').classList.contains('has-spread-layout'));
     await pageFocus.locator('.amv-reader__edge--next').click();
@@ -130,7 +144,7 @@ const html = execFileSync('php', [path.join(__dirname, 'render-smoke.php'), '--s
 	await pageFocus.locator('.amv-reader__spread-overview').click();
 	assert.equal(await pageFocus.locator('.amv-reader__count').textContent(), '3 / 6', 'Leaving temporary overview must restore the focused page');
 	await pageFocus.locator('.amv-reader__fullscreen').click();
-	await page.waitForFunction(() => !document.querySelector('#page-focus-fixture .amv-reader').classList.contains('is-fullscreen'));
+		await page.waitForFunction(() => { const root = document.querySelector('#page-focus-fixture .amv-reader'); return !root.classList.contains('is-fullscreen') && !root.classList.contains('is-page-focus'); });
 	assert.equal(await pageFocus.evaluate(node => node.classList.contains('is-page-focus')), false, 'Exiting fullscreen must restore inline spread overview');
 	assert.equal(await pageFocus.locator('.amv-reader__count').textContent(), '2–3 / 6', 'Inline page numbering must return to the active spread range');
     await page.setViewportSize({ width: 1200, height: 900 });
@@ -182,9 +196,20 @@ const html = execFileSync('php', [path.join(__dirname, 'render-smoke.php'), '--s
     assert.ok(Math.abs(fullscreenGeometry.surfaceWidth - fullscreenGeometry.imagesWidth - 12) < 1, 'Fullscreen surface must shrink to the two rendered page widths plus the gap');
     assert.ok(Math.abs(fullscreenGeometry.leftInset - fullscreenGeometry.rightInset) < 2, 'Fullscreen spread must remain centered');
 
+    const verticalCurrent = page.locator('#vertical-current-fixture .amv-reader');
+    const verticalCurrentApiMoved = await verticalCurrent.evaluate(node => window.aiMangaViewer.getInstance(node).goToPage(2));
+    assert.equal(verticalCurrentApiMoved, true);
+    await verticalCurrent.locator('.amv-reader__fullscreen').click();
+    await page.waitForFunction(() => document.querySelector('#vertical-current-fixture .amv-reader').classList.contains('is-vertical-reading'));
+    assert.equal(await verticalCurrent.locator('.amv-reader__count').textContent(), '3 / 6', 'Enabled current-page setting must preserve the logical page in vertical fullscreen');
+    await verticalCurrent.locator('.amv-reader__fullscreen').click();
+    await page.waitForFunction(() => !document.querySelector('#vertical-current-fixture .amv-reader').classList.contains('is-fullscreen'));
+
     const vertical = page.locator('#vertical-fixture .amv-reader');
+    assert.equal(await vertical.evaluate(node => window.aiMangaViewer.getInstance(node).goToPage(2)), true);
     await vertical.locator('.amv-reader__fullscreen').click();
     await page.waitForFunction(() => document.querySelector('#vertical-fixture .amv-reader').classList.contains('is-vertical-reading'));
+    assert.equal(await vertical.locator('.amv-reader__count').textContent(), '1 / 6', 'Default vertical fullscreen entry must start from the first page');
     assert.equal(await vertical.locator('.amv-reader__page').count(), 6);
     assert.equal(await vertical.locator('.amv-reader__page').evaluateAll(nodes => nodes.filter(node => getComputedStyle(node).display !== 'none').length), 6, 'Vertical fullscreen must expose every page');
     assert.equal(await vertical.locator('.amv-reader__page[aria-hidden="true"]').count(), 0, 'Vertical pages must remain available to assistive technology');

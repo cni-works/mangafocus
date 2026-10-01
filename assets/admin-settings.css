@@ -1,0 +1,104 @@
+.amv-settings {
+	max-width: 1120px;
+}
+
+.amv-settings .amv-settings__lead {
+	margin-bottom: 20px;
+}
+
+.amv-settings .amv-settings__grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 16px;
+}
+
+.amv-settings .amv-settings__card {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 20px;
+	border: 1px solid #c3c4c7;
+	border-radius: 4px;
+	background: #fff;
+	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+}
+
+.amv-settings .amv-settings__card h2 {
+	margin: 0 0 16px;
+}
+
+.amv-settings .amv-settings__definition {
+	margin: 0;
+}
+
+.amv-settings .amv-settings__definition > div,
+.amv-settings .amv-settings__features li {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+	padding: 10px 0;
+	border-top: 1px solid #dcdcde;
+}
+
+.amv-settings .amv-settings__definition > div:first-child,
+.amv-settings .amv-settings__features li:first-child {
+	border-top: 0;
+}
+
+.amv-settings .amv-settings__definition dt {
+	font-weight: 600;
+}
+
+.amv-settings .amv-settings__definition dd {
+	margin: 0;
+}
+
+.amv-settings .amv-settings__features {
+	margin: 0;
+}
+
+.amv-settings .amv-settings__features small {
+	display: block;
+	margin-top: 3px;
+	color: #646970;
+}
+
+.amv-settings .amv-settings__status,
+.amv-settings .amv-settings__pro {
+	display: inline-block;
+	padding: 2px 8px;
+	border-radius: 999px;
+	font-size: 12px;
+	font-weight: 600;
+	line-height: 1.6;
+	white-space: nowrap;
+}
+
+.amv-settings .amv-settings__status.is-available {
+	color: #005a32;
+	background: #edfaef;
+}
+
+.amv-settings .amv-settings__status.is-unavailable {
+	color: #50575e;
+	background: #f0f0f1;
+}
+
+.amv-settings .amv-settings__pro {
+	color: #135e96;
+	background: #eaf4fb;
+}
+
+.amv-settings .amv-settings__actions {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin-bottom: 0;
+}
+
+@media (max-width: 782px) {
+	.amv-settings .amv-settings__grid {
+		grid-template-columns: 1fr;
+	}
+}

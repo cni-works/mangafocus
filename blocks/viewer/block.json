@@ -4,8 +4,8 @@
   "title": "AI Manga Viewer",
   "category": "ai-manga-viewer",
   "icon": "book-alt",
-  "description": "横長の紹介漫画を、ページ送りやコマ読みで見やすく表示します。",
-  "keywords": [ "漫画", "コミック", "コマ読み", "ページめくり", "冊子" ],
+  "description": "漫画画像をページ送り、見開き、全画面で読みやすく表示します。",
+  "keywords": [ "漫画", "コミック", "ビューアー", "ページめくり", "冊子" ],
   "textdomain": "ai-manga-viewer",
   "attributes": {
     "pages": { "type": "array", "default": [] },
@@ -22,6 +22,7 @@
     "showGuideArrowOnAllPages": { "type": "boolean", "default": false },
     "enableAnimation": { "type": "boolean", "default": true },
     "enableFullscreen": { "type": "boolean", "default": false },
+    "fullscreenStartAtCurrent": { "type": "boolean", "default": false },
     "inlineDisplayMode": { "type": "string", "default": "reader" },
     "fullscreenReadingMode": { "type": "string", "default": "paged" },
     "enableZoom": { "type": "boolean", "default": false },

@@ -3,7 +3,7 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 $root = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 $fixture = Join-Path $PSScriptRoot ('.release-test-' + [guid]::NewGuid().ToString('N'))
-$files = @('ai-manga-viewer.php', 'readme.txt', 'includes/analytics.php', 'includes/consultation.php', 'assets/admin-library.css', 'assets/admin-library.js', 'assets/admin-analytics.css', 'assets/admin-analytics.js', 'assets/admin-consultation.css', 'assets/admin-consultation.js', 'blocks/library-viewer/block.json',
+$files = @('ai-manga-viewer.php', 'readme.txt', 'includes/features.php', 'includes/extensions.php', 'includes/settings.php', 'includes/analytics.php', 'includes/analytics/lifecycle.php', 'includes/analytics/storage.php', 'includes/analytics/settings.php', 'assets/admin-library.css', 'assets/admin-library.js', 'assets/admin-settings.css', 'blocks/library-viewer/block.json',
     'blocks/library-viewer/index.js', 'blocks/viewer/block.json',
     'blocks/viewer/layout.js', 'blocks/viewer/index.js', 'blocks/viewer/view.js', 'blocks/viewer/render.php',
     'blocks/viewer/style.css', 'scripts/build-release.ps1')
@@ -53,8 +53,32 @@ try {
     $archive = [IO.Compression.ZipFile]::OpenRead($zip)
     try {
         $expected = @($files | Where-Object { $_ -notlike 'scripts/*' } | ForEach-Object { 'ai-manga-viewer/' + $_ })
-        $diff = @(Compare-Object $expected @($archive.Entries | ForEach-Object { $_.FullName }))
+        $entryNames = @($archive.Entries | ForEach-Object { $_.FullName })
+        $diff = @(Compare-Object $expected $entryNames)
         if ($diff.Count -ne 0) { throw 'Unexpected archive file list.' }
+        if (@($entryNames | Where-Object { $_ -match '(?i)ai-manga-viewer-pro|(^|/)(pro|premium|commercial)/' }).Count -ne 0) {
+            throw 'Pro Add-on source leaked into the Free Core ZIP.'
+        }
+		if (@($entryNames | Where-Object { $_ -match '(?i)(consultation|admin-analytics|analytics/(?:queries|rest|admin))' }).Count -ne 0) {
+			throw 'Pro-owned Analytics or AI Consultation runtime leaked into the Free Core ZIP.'
+		}
+		$editorSource = [IO.File]::ReadAllText((Join-Path $fixture 'blocks/viewer/index.js'))
+		$rendererSource = [IO.File]::ReadAllText((Join-Path $fixture 'blocks/viewer/render.php'))
+		$viewSource = [IO.File]::ReadAllText((Join-Path $fixture 'blocks/viewer/view.js'))
+		$styleSource = [IO.File]::ReadAllText((Join-Path $fixture 'blocks/viewer/style.css'))
+		if ($editorSource -match 'function ctaOf|CTA画像を選択|このページにCTAを表示' -or $rendererSource -match 'function ai_manga_viewer_page_cta' -or $viewSource -match 'notifyCtaClick|\.amv-reader__cta' -or $styleSource -match '\.amv-reader__cta') {
+			throw 'Pro-owned CTA runtime or editor implementation leaked into the Free Core ZIP.'
+		}
+		if ($editorSource -match 'コマ読みを有効化|スマホ用にコマを追加|amv-reader__focus-area' -or $rendererSource -match 'amv-reader__focus-open|amv-modal__stage|data-amv-panel-reader' -or $viewSource -match 'parseAreas|focusFit|amv-modal__image' -or $styleSource -match '\.amv-modal|\.amv-reader__focus-open|\.amv-reader__focus-area') {
+			throw 'Pro-owned panel reader runtime or editor implementation leaked into the Free Core ZIP.'
+		}
+		if ($editorSource -notmatch 'previous\.cta' -or -not $rendererSource.Contains("'cta' => `$cta") -or [IO.File]::ReadAllText((Join-Path $fixture 'ai-manga-viewer.php')) -notmatch 'ai_manga_viewer_sanitize_library_cta') {
+			throw 'Core CTA compatibility preservation is missing from the Free Core ZIP.'
+		}
+		$blockMetadata = [IO.File]::ReadAllText((Join-Path $fixture 'blocks/viewer/block.json'))
+		if ($editorSource -notmatch 'focusAreas:\s*areasOf\(\s*previous\s*\)' -or $editorSource -notmatch 'mobileFocusAreas:\s*areasOf\(\s*previous,\s*true\s*\)' -or $rendererSource -notmatch "'focus_reader'" -or $blockMetadata -notmatch '"focusReader"' -or $blockMetadata -notmatch '"focusReaderStartAtCurrent"' -or $blockMetadata -notmatch '"mobileFocusReader"' -or $viewSource -notmatch 'is-page-focus') {
+			throw 'Core panel-reader compatibility schema or Free pageFocus runtime is missing from the Free Core ZIP.'
+		}
     } finally { $archive.Dispose() }
     if (@(Get-ChildItem -LiteralPath (Join-Path $fixture 'release') -Force -Filter '.candidate-*').Count -ne 0) {
         throw 'Candidate ZIP was left behind.'

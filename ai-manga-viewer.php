@@ -14,9 +14,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+if ( ! defined( 'AI_MANGA_VIEWER_VERSION' ) ) {
+	define( 'AI_MANGA_VIEWER_VERSION', '0.3.0-alpha' );
+}
+
+if ( ! defined( 'AI_MANGA_VIEWER_PLUGIN_FILE' ) ) {
+	define( 'AI_MANGA_VIEWER_PLUGIN_FILE', __FILE__ );
+}
+
+require_once plugin_dir_path( __FILE__ ) . 'includes/features.php';
+require_once plugin_dir_path( __FILE__ ) . 'includes/extensions.php';
+require_once plugin_dir_path( __FILE__ ) . 'includes/settings.php';
 require_once plugin_dir_path( __FILE__ ) . 'blocks/viewer/render.php';
 require_once plugin_dir_path( __FILE__ ) . 'includes/analytics.php';
-require_once plugin_dir_path( __FILE__ ) . 'includes/consultation.php';
 
 register_activation_hook( __FILE__, 'ai_manga_viewer_install_analytics_tables' );
 register_deactivation_hook( __FILE__, 'ai_manga_viewer_deactivate_analytics' );
@@ -32,21 +42,13 @@ function ai_manga_viewer_register_blocks() {
 	wp_register_script(
 		'ai-manga-viewer-editor',
 		$url . 'index.js',
-		array( 'ai-manga-viewer-layout', 'wp-api-fetch', 'wp-blocks', 'wp-i18n', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-data' ),
+		array( 'ai-manga-viewer-layout', 'wp-api-fetch', 'wp-blocks', 'wp-i18n', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-data', 'wp-hooks' ),
 		filemtime( $path . 'index.js' )
 	);
 	wp_register_script( 'ai-manga-viewer-view', $url . 'view.js', array( 'ai-manga-viewer-layout' ), filemtime( $path . 'view.js' ), true );
-	wp_add_inline_script(
-		'ai-manga-viewer-view',
-		'window.aiMangaViewerAnalytics=' . wp_json_encode(
-			array(
-				'enabled'   => null,
-				'restUrl'   => esc_url_raw( rest_url( 'ai-manga-viewer/v1/events' ) ),
-				'configUrl' => esc_url_raw( rest_url( 'ai-manga-viewer/v1/config' ) ),
-			)
-		) . ';',
-		'before'
-	);
+	$feature_script = ai_manga_viewer_feature_bootstrap_script();
+	wp_add_inline_script( 'ai-manga-viewer-editor', $feature_script, 'before' );
+	wp_add_inline_script( 'ai-manga-viewer-view', $feature_script, 'before' );
 	wp_register_style( 'ai-manga-viewer-style', $url . 'style.css', array(), filemtime( $path . 'style.css' ) );
 	wp_set_script_translations( 'ai-manga-viewer-editor', 'ai-manga-viewer' );
 	register_block_type(
@@ -65,6 +67,7 @@ function ai_manga_viewer_register_blocks() {
 		array( 'wp-api-fetch', 'wp-blocks', 'wp-i18n', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-data' ),
 		filemtime( $library_path . 'index.js' )
 	);
+	wp_add_inline_script( 'ai-manga-viewer-library-editor', $feature_script, 'before' );
 	wp_set_script_translations( 'ai-manga-viewer-library-editor', 'ai-manga-viewer' );
 	register_block_type(
 		$library_path,
@@ -273,8 +276,18 @@ function ai_manga_viewer_library_column( $column, $post_id ) {
 			),
 			admin_url( 'edit.php' )
 		);
-		$analytics_enabled = ai_manga_viewer_analytics_enabled();
-		$consultation_url = ai_manga_viewer_consultation_url( 30, 'library-viewer-' . absint( $post_id ) );
+		$analytics_available  = ai_manga_viewer_has_feature( 'analytics' );
+		$analytics_enabled    = $analytics_available && ai_manga_viewer_analytics_enabled();
+		$consultation_enabled = $analytics_enabled && ai_manga_viewer_has_feature( 'ai_consultation' );
+		$consultation_url     = $consultation_enabled ? add_query_arg(
+			array(
+				'post_type'  => 'amv_viewer',
+				'page'       => 'ai-manga-viewer-consultation',
+				'amv_days'   => 30,
+				'amv_viewer' => 'library-viewer-' . absint( $post_id ),
+			),
+			admin_url( 'edit.php' )
+		) : '';
 		$analytics_settings_url = add_query_arg(
 			array(
 				'post_type' => 'amv_viewer',
@@ -289,14 +302,16 @@ function ai_manga_viewer_library_column( $column, $post_id ) {
 		}
 		if ( $analytics_enabled ) {
 			echo '<a class="button button-small amv-library-analytics" href="' . esc_url( $analytics_url ) . '">' . esc_html__( '解析を見る', 'ai-manga-viewer' ) . '</a>';
-			if ( current_user_can( 'manage_options' ) ) {
+			if ( $consultation_enabled && current_user_can( 'manage_options' ) ) {
 				echo '<a class="button button-small amv-library-consultation" href="' . esc_url( $consultation_url ) . '">' . esc_html__( 'AI相談資料を作成', 'ai-manga-viewer' ) . '</a>';
 			}
-		} else {
+		} elseif ( $analytics_available ) {
 			echo '<span class="amv-library-analytics-state">' . esc_html__( '解析停止中', 'ai-manga-viewer' ) . '</span>';
 			if ( current_user_can( 'manage_options' ) ) {
 				echo '<a class="button button-small amv-library-analytics-settings" href="' . esc_url( $analytics_settings_url ) . '">' . esc_html__( '解析を有効にする', 'ai-manga-viewer' ) . '</a>';
 			}
+		} else {
+			echo '<span class="amv-library-analytics-state">' . esc_html__( '漫画解析は現在利用できません', 'ai-manga-viewer' ) . '</span>';
 		}
 		echo '<span class="amv-library-shortcode"><button type="button" class="amv-library-shortcode__copy" data-shortcode="' . esc_attr( $shortcode ) . '" data-default-label="' . esc_attr__( 'コピー', 'ai-manga-viewer' ) . '" data-copied-label="' . esc_attr__( 'コピーしました', 'ai-manga-viewer' ) . '" data-success-message="' . esc_attr__( 'ショートコードをコピーしました。', 'ai-manga-viewer' ) . '" data-error-message="' . esc_attr__( 'コピーできませんでした。', 'ai-manga-viewer' ) . '" aria-label="' . esc_attr( sprintf( __( 'ショートコード %s をコピー', 'ai-manga-viewer' ), $shortcode ) ) . '" title="' . esc_attr__( 'クリックしてショートコードをコピー', 'ai-manga-viewer' ) . '"><code class="amv-library-shortcode__code">' . esc_html( $shortcode ) . '</code><span class="amv-library-shortcode__feedback" aria-hidden="true">' . esc_html__( 'コピー', 'ai-manga-viewer' ) . '</span></button><span class="screen-reader-text amv-library-shortcode__status" aria-live="polite"></span></span></div>';
 		return;
@@ -368,7 +383,7 @@ function ai_manga_viewer_sanitize_library_focus_area( $area ) {
 	return $clean;
 }
 
-/** Sanitize one CTA copied from a direct Viewer. */
+/** Preserve and sanitize the CTA compatibility schema copied from a direct Viewer. */
 function ai_manga_viewer_sanitize_library_cta( $cta ) {
 	if ( ! is_array( $cta ) ) {
 		return array();
@@ -434,6 +449,7 @@ function ai_manga_viewer_sanitize_library_attributes( $attributes ) {
 		'showGuideArrowOnAllPages'  => ! empty( $attributes['showGuideArrowOnAllPages'] ),
 		'enableAnimation'           => ! isset( $attributes['enableAnimation'] ) || ! empty( $attributes['enableAnimation'] ),
 		'enableFullscreen'          => ! empty( $attributes['enableFullscreen'] ),
+		'fullscreenStartAtCurrent'  => ! empty( $attributes['fullscreenStartAtCurrent'] ),
 		'inlineDisplayMode'         => 'coverLauncher' === ( $attributes['inlineDisplayMode'] ?? '' ) ? 'coverLauncher' : 'reader',
 		'fullscreenReadingMode'     => 'vertical' === ( $attributes['fullscreenReadingMode'] ?? '' ) ? 'vertical' : 'paged',
 		'enableZoom'                => ! empty( $attributes['enableZoom'] ),

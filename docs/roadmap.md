@@ -1,14 +1,14 @@
 # AI Manga Viewer 開発方針
 
-2026-09-28時点。現在0.3.0-alpha。日程や将来の版番号を固定せず、実機検証と利用者の反応で更新する。
+2026-09-30時点。現在0.3.0-alpha。日程や将来の版番号を固定せず、実機検証と利用者の反応で更新する。
 
-Phase 1.5〜2の安定化を経て、Phase 3の全画面・自由ズーム・パンを専用テストサイトで確認し、追加Aとして1ページ・見開き・自動のページレイアウトをローカル実装した。Phase 4のManga Library・1冊参照基盤と、Phase 5のCTA最小実装をローカルで進行中。Phase 6は漫画解析の識別キー、Viewer表示、ブラウザー内イベント、既定OFFのREST・DB保存基盤、有効閲覧時間、匿名読者と30分以内の再開判定、最小集計画面までローカル実装した。Phase 7Aは外部AIへ送信せず、相談テーマ・Viewer設定・集計結果・画像URLをMarkdownへ整理してコピーする基盤をローカル実装し、初回実証を受けてページ間の到達減少とスマホで実際に使われるコマ設定が正しく伝わるVersion 2へ更新した。安定化は[Phase 2検証記録](phase-2-validation.md)、通常閲覧は[Phase 3検証記録](phase-3-validation.md)、登録基盤は[Phase 4検証記録](phase-4-validation.md)、CTAは[Phase 5検証記録](phase-5-validation.md)、解析は[Phase 6設計方針](phase-6-analytics-design.md)、AI相談は[Phase 7A設計方針](phase-7-consultation-design.md)を参照する。
+Phase 1.5〜2の安定化を経て、Phase 3の全画面・自由ズーム・パンを専用テストサイトで確認し、追加Aとして1ページ・見開き・自動のページレイアウトをローカル実装した。Phase 4のManga Library・1冊参照基盤と、Phase 5のCTA最小実装をローカルで進行中。Phase 6は漫画解析の識別キー、Viewer表示、ブラウザー内イベント、既定OFFのREST・DB保存基盤、有効閲覧時間、匿名読者と30分以内の再開判定、最小集計画面までローカル実装した。Phase 7Aは外部AIへ送信せず、相談テーマ・Viewer設定・集計結果・画像URLをMarkdownへ整理してコピーする基盤をローカル実装し、初回実証を受けてページ間の到達減少とスマホで実際に使われるコマ設定が正しく伝わるVersion 2へ更新した。Phase 8AではFree / Proの製品境界と停止時の安全なフォールバックを正式化した。安定化は[Phase 2検証記録](phase-2-validation.md)、通常閲覧は[Phase 3検証記録](phase-3-validation.md)、登録基盤は[Phase 4検証記録](phase-4-validation.md)、CTAは[Phase 5検証記録](phase-5-validation.md)、解析は[Phase 6設計方針](phase-6-analytics-design.md)、AI相談は[Phase 7A設計方針](phase-7-consultation-design.md)、製品境界は[Phase 8A Free / Pro製品設計](phase-8-free-pro-design.md)を参照する。
 
 ## 商品の価値
 
 AIで作った漫画をWordPressで綺麗に読ませる。通常漫画・企業紹介・冊子にも使える。α版では全機能を維持し、販売向けの制限やライセンス機構はまだ導入しない。
 
-Free候補は読者自身が拡大・移動して快適に読める通常ビューアー。Pro候補は作者がコマの位置・順序・倍率を指定し、読者が送るだけで読める体験。無料側の自由ズームを充実させ、コマ読みをProの強みとして磨く。境界は試用結果をもとに確定する。
+Freeは読者自身が拡大・移動して快適に読める通常ビューアーと公開基盤、Proは作者がコマの位置・順序・倍率を指定し、誘導・分析・改善まで行う機能群とする。無料側の自由ズームを充実させ、コマ読みをProの強みとして磨く。初期の製品境界と停止時挙動は[Phase 8A仕様](phase-8-free-pro-design.md)を基準とし、将来機能は実装前に個別評価する。
 
 当面は漫画の公開・読書体験を中心に開発する。採用基準は「漫画を公開しやすくするか、読みやすくするか」。通常閲覧とコマ送りを優先し、漫画以外への用途拡張は保留する。登録済み漫画とショートコードは漫画の公開先を広げる機能として開発順序に組み込む。編集は既存ブロックを共用し、Classic Editor専用の別編集機構は作らない。PDF、図面・フロアマップ向けの専用対応は引き続き保留し、着手時期は未定とする。
 
@@ -36,7 +36,7 @@ Free候補は読者自身が拡大・移動して快適に読める通常ビュ�
 | 4：読ませ方と導線を整える（Phase 5） | 既存のコマ設定・送り操作を磨き、任意ページの文字／画像CTAを追加。両方の設置方式で検証 | 演出プリセットの量産、自動配置補正 |
 | 5：反応を測る（Phase 6） | 閲覧開始、ページ到達、最終ページ到達、CTAクリックを段階的に検証。漫画別・設置場所別に扱う | 一覧が未実装なら一覧経由の分析、高度なコマ別解析 |
 | 6：改善相談に使う（Phase 7A） | 相談テーマ・自由入力・期間・集計結果・画像URLを確認し、Markdown相談資料をコピー | ZIP、外部AI API接続、自動診断 |
-| 7：販売対象を確定する（Phase 8） | 試用結果から対象機能とFree/Pro区分を決め、導入・更新・サポートを整える | 未検証機能を含めた販売や、全構想の完成待ち |
+| 7：販売対象を確定する（Phase 8） | 8AでFree/Pro境界と停止時挙動を仕様化し、8Bで挙動を変えずFeature APIを導入。その後にコード分割、更新・配布を段階化 | 8Bでの機能制限、未検証機能を含めた販売、全構想の完成待ち |
 
 Phase 5完了時を最初の商品範囲の見直し地点とする。ここで通常閲覧・登録・コマ読み・CTAの実用性を評価し、解析とAI相談用出力を初回販売へ含めるか、後続更新へ回すかを判断する。上記は開発の基本順序であり、Phase 6〜7の完成を販売準備開始の絶対条件にはしない。判断までは基本順序を維持し、販売開始や機能制限の導入は別途決定する。
 
@@ -54,7 +54,18 @@ Phase 5完了時を最初の商品範囲の見直し地点とする。ここで�
 | 7A AI相談用出力 | 相談テーマ・自由入力・集計期間・数値・画像URL・コマ情報をMarkdownでプレビューしコピー | 外部送信なしで改善相談に使え、数値から離脱理由を断定しない | Pro候補 |
 | 7B AI相談パック | 画像と相談資料をZIPへまとめる | 7Aの需要と画像共有上の課題を確認してから判断 | Pro候補・未着手 |
 | 7C 外部AI連携 | 需要が確認された場合だけ送信先、同意、認証、データ利用条件を再検討 | 必須段階にしない | 未定・未着手 |
-| 8 販売準備 | 実案件の試用結果で境界を決定。説明書、サポート、更新・配布方式、無効化時の表示とデータ保持 | 限定した1.0の対象範囲を検証し、購入者が導入・更新できる | Free/Pro確定 |
+| 8A Free / Pro製品設計 | 公開・閲覧をFree、読ませ方・誘導・分析・改善をProとし、期限切れ・停止・削除時の挙動とデータ保持を定義 | [Phase 8A仕様](phase-8-free-pro-design.md)を基準に実装判断できる | 文書化のみ。0.3.0-alphaは全機能利用可能 |
+| 8B Feature API導入 | `panel_reader`、`cta`、`analytics`、`ai_consultation`の共通判定入口とPHP由来のJS mapを追加 | 実装済み。保存・表示を変えず、全featureが利用可能な状態で判定を共通化 | 機能制限・license接続なし。詳細は[Phase 8B仕様](phase-8-feature-api.md) |
+| 8C-1 Free Core / Pro Add-on分割設計 | 現行の混在箇所、保存互換、拡張口、Analytics lifecycle、段階的な物理分割順を確定 | [Phase 8C-1設計](phase-8-pro-split-design.md)を基準に、Coreのみ／Core+Proを機能単位で検証できる | 設計のみ。Pro Add-on作成・gating・license接続は未着手 |
+| 8C-2 互換契約と拡張ポイント | Editor 3箇所、Renderer 3箇所、Frontend公開APIと汎用イベントを追加 | 実装済み。[Extension API契約](phase-8-extension-api.md)に公開範囲と非公開範囲を固定 | 既存機能の移動・gating・license接続なし。Extension API Version 1 |
+| 8C-3 Pro Add-on骨組み | Proを兄弟ソースツリーの独立プラグインとして起動し、Core不在・無効・非互換時はsafe-disabledにする | 実装済み。[Pro Add-on bootstrap](phase-8-pro-addon-bootstrap.md)に配置・依存確認・状態を固定 | 機能移動、gating、license、Capabilityなし。Pro 0.1.0-alpha |
+| 8C-4A Analytics内部境界 | Core内でDB lifecycle/storageと、query/admin/REST/frontend transportを分離する | 実装済み。[Analytics内部境界](phase-8-analytics-split.md)に所有ファイル、Storage API、AI相談依存を固定 | 動作・Feature値・REST/DB/event契約は変更しない。物理移動なし |
+| 8C-4B Analytics物理分離 | ProのAnalytics moduleをExtension API経由で読み込み、CoreのDB lifecycle・retention・保存互換を維持する | 実装済み。Core単体では収集・REST・レポート停止、Core + Proで既存契約を復元 | 一時provider bridgeは8C-5で削除。期限切れ時のcollection/report分離はPhase 8D |
+| 8C-5 AI Consultation物理分離 | AI相談画面・Markdown生成・管理assetをProへ移し、Pro Analyticsへ直接依存させる | 実装済み。[AI Consultation物理分離](phase-8-ai-consultation-split.md)に所有境界と読み込み順を固定 | 外部AI送信、license、Capabilityは未実装 |
+| 8C-6 CTA物理分離 | CTA Inspector・stage overlay・公開Renderer・frontend JS/CSSをProへ移し、Coreは保存互換だけを持つ | 実装済み。[CTA物理分離](phase-8-cta-split.md)に停止中の保持と再有効化を固定 | Coreの`cta`はfalse。runtime/editor capability分離はPhase 8D |
+| 8C-7 panel_reader物理分離 | コマInspector・PC/mobile stage editor・専用Viewer runtime・CSSをProへ移し、Coreは保存互換とFree pageFocusを持つ | 実装済み。[panel_reader物理分離](phase-8-panel-reader-split.md)に停止中の通常Viewer fallbackと再有効化を固定 | Coreの`panel_reader`はfalse。runtime/editor capability分離はPhase 8D |
+| 8C Free / Proコード分割 | Free Rendererの安全なフォールバックを保ちながらProアドオンへ実コードを段階移動 | Free単体とFree + Proの両構成で既存作品・再有効化を検証 | 8Bとは別Phase |
+| 8D ライセンス・更新・配布 | 公開済みPro表示を保護しながら制作・分析・改善権を制御するCapability、互換Version、更新経路、サポートを実装 | 期限切れでも既存コマ・CTAとAnalytics収集が契約どおり動き、更新後に編集・レポートが復帰する | 配布先、license検証方式、猶予期間は未確定 |
 
 Phase 3は全画面・自由ズーム・パンを整え、追加Aとして見開きを実装した。見開きは保存ページを組み替えず、縦長2ページを表示面として並べ、表紙・横長画像・余った最終ページは単独表示する。自動はViewer幅で切り替え、スマホ等の狭幅では1ページへ戻す。追加A-2では全画面のページ送りに限り、見開き構造のまま論理ページ順に1ページずつ大きく表示する`pageFocus`を追加した。通常のページ内Viewerと既定値は見開き全体表示として互換性を保つ。見開き専用ページめくりは追加B候補として実機確認後に判断する。縦読み・読書位置保存・先読み等の全候補完成はPhase 4の前提にしない。既存コマ読みの不具合修正はPhase 2から進め、Phase 5まで待たない。
 
@@ -247,20 +258,22 @@ Classic Editor、Elementor、Bricks、Divi、WPBakery、ショートコード対
 
 検証の成果物は対応サンプル、画質比較、実測負荷、環境条件、保存/削除/再変換仕様、採否理由とする。許容範囲が狭すぎる場合はPDFを延期し、画像の事前書き出しを案内する。外部変換サービスへの送信は初期案に含めない。
 
-## Free / Pro候補の更新
+## Free / Pro製品境界
 
-| 区分 | 候補 |
+| 区分 | 確定した初期範囲 |
 | --- | --- |
-| Free | 漫画の通常ページ表示、全画面・自由ズーム・パン、画像管理、Gutenberg編集、登録済み漫画、ショートコードとブロックからの参照表示。読書位置保存等は順次検討 |
-| Pro | 漫画モード（コマ読み）、高度なコマ設定・PC/スマホ別設計、Web演出、CTA、高度な/コマ別Analytics、AI相談用出力等のマーケティング支援 |
+| Free | 直接配置Viewer、Manga Library、登録済みViewer、ショートコード、通常ページ送り、右綴じ/左綴じ、single/spread/auto、singleFirstPage、spread overview/pageFocus、全画面、全画面縦スクロール、zoom/pan、swipe、keyboard、coverLauncher、Library表紙、Direct → Library登録、軽量なページ切替 |
+| Pro | コマ読み・専用コマViewer、PC/スマホ別コマ設定、CTA作成・自由配置・演出、AnalyticsとCTA計測、AI相談資料 |
 
-通常漫画の公開はFreeで十分実用的にする。Proは作者が読ませ方を設計し、公開後の改善につなげる。基本解析をFreeへ含めるかは未確定。漫画ライブラリの登録数制限は、利用者自身のサーバーへ保存する機能との相性が悪く、再利用という基本価値も弱めるため初期のFree/Pro境界には採用しない。実測で大規模登録による保守負荷が確認された場合だけ、十分に大きい上限や高度な整理・一覧・解析側の区分を比較する。α版の既存機能を削除・制限せず、試用結果を踏まえて販売前に区分を確定する。
+通常漫画の公開はFreeで十分実用的にする。Proは作者が読ませ方を設計し、行動を促し、公開後の反応を分析して改善につなげる。漫画ライブラリの登録数制限は、利用者自身のサーバーへ保存する機能との相性が悪く、再利用という基本価値も弱めるため初期のFree/Pro境界には採用しない。ライセンス期限切れでは公開済みコマ読みとCTAを維持するが、新規作成・編集、Analytics閲覧、AI相談、更新、サポートを停止する。Analytics設定がONなら期限切れ中も計測・保存を続け、retention内データを更新後に再表示する。Pro停止・削除時は設定を保持したままFree Viewerへ安全にフォールバックし、新規計測を停止する。詳細は[Phase 8A仕様](phase-8-free-pro-design.md)を基準とする。0.3.0-alphaとPhase 8Bでは既存機能を削除・制限しない。
 
 登録済み漫画とショートコードは開発対象に含めるが、販売時期と1.0の確定範囲は試用後に判断する。保留中のPDFは再開時も基本利用をFree候補として再評価し、現在の1.0の必須条件には含めない。
 
 ## CTAで合意した範囲
 
 主に最終ページをCTA化するが、どのページにも配置できる。文字ボタンまたはメディアライブラリの画像を選び、URL・位置・サイズを指定する。ページ内の相対位置で表示し、コマ読みでもページと一緒に動く。見切れを避ける配置・コマ範囲は作成者が調整する。自動補正、画面への固定、専用の外側エリアは初期必須にしない。
+
+Phase 8C-6でCTAを、Phase 8C-7で`panel_reader`をPro Add-onへ物理分離した。Coreは両Featureを既定で無効にし、公開markupと編集UIを出さない一方、`pages[].cta`、`focusAreas`、`mobileFocusAreas`と関連attributesの互換schema、正規化、ページ操作時の往復保持、Direct → Libraryコピーを継続する。Pro停止中にCoreで保存しても値を失わず、Pro再有効化時に復帰する。Freeの`pageFocus`はCoreへ残る。実装境界は[CTA物理分離](phase-8-cta-split.md)と[panel_reader物理分離](phase-8-panel-reader-split.md)を参照する。
 
 ## 将来候補：読者の「いいね」
 
@@ -276,7 +289,7 @@ Classic Editor、Elementor、Bricks、Divi、WPBakery、ショートコード対
 - AI相談用出力は外部AI API接続なしで開始する。漫画の画像・あらすじがないと内容面の分析ができないことを明示する。
 - Access Analytics Plusの設計を参考にできるが、必須依存にはしない。
 - 演出の種類追加、見開き、Webtoon高度対応、GA4、自動AI検出は任意の将来候補。PDF、図面/フロアマップ専用対応は保留する。管理者向けManga Libraryと1冊参照はPhase 4、読者向けManga Library一覧ブロックはその後の任意拡張とする。専用の作品ポータルや分類機能一式の実装まで必須にはしない。
-- ライセンス切れで公開済み漫画を突然読めなくしない方針を推奨。実際の販売条件は後で決める。
+- ライセンス期限切れで公開済み漫画を突然変化させない。Proコードが有効なら既存コマ読み・CTA表示を継続し、制作・編集、Analytics閲覧、AI相談、更新、サポートを停止する。Analytics設定ONでは計測・保存とretentionを継続する。Pro停止・削除時はFree Viewerへフォールバックし、新規計測を停止して、Pro設定とAnalyticsを既定で保持する。
 
 ## Manga Library一覧と直接配置Viewerの登録導線
 
@@ -289,6 +302,8 @@ Classic Editor、Elementor、Bricks、Divi、WPBakery、ショートコード対
 - 直接配置Viewerは登録後もAnalytics対象にならない。登録済みViewerブロックまたはショートコードとして配置したLibrary Viewerだけを計測する。
 
 ## Version方針
+
+Phase 8C-8でCore所有の`AI Manga Viewer 設定`を追加した。製品状態、Manga Library、解析設定、Free / Pro Feature状態をまとめる軽量なハブとし、Analytics専用の`解析設定`とは分離する。Proは公開フィルターとFeature APIを通じて状態を提供し、Phase 8DのLicense / Updater UIを後から追加できる構造にした。正式URLが未確定のマニュアル・サポート・公式サイトリンクは表示しない。詳細は[一般設定画面](phase-8-general-settings.md)を参照する。
 
 Version変更は利用者の明示指示があるときだけ行う。ZIP生成では変更しない。本体ヘッダーを取得元としreadmeのStable tagを一致させる。
 

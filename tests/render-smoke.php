@@ -47,8 +47,9 @@ function admin_url( $path = '' ) { return 'https://example.test/wp-admin/' . ltr
 function add_query_arg( $args, $url ) { return $url . ( false === strpos( $url, '?' ) ? '?' : '&' ) . http_build_query( $args ); }
 function rest_url( $path = '' ) { return 'https://example.test/wp-json/' . ltrim( $path, '/' ); }
 function add_action( $hook, $fn, $priority = 10, $accepted_args = 1 ) { $GLOBALS['actions'][$hook][] = $fn; }
-function add_filter( $hook, $fn, $priority = 10, $accepted_args = 1 ) { $GLOBALS['filters'][$hook][] = $fn; }
-function apply_filters( $hook, $value ) { return $value; }
+function add_filter( $hook, $fn, $priority = 10, $accepted_args = 1 ) { $GLOBALS['filters'][$hook][$priority][] = array( 'callback' => $fn, 'accepted_args' => $accepted_args ); return true; }
+function remove_filter( $hook, $fn, $priority = 10 ) { if ( empty( $GLOBALS['filters'][$hook][$priority] ) ) return false; foreach ( $GLOBALS['filters'][$hook][$priority] as $index => $entry ) { if ( $entry['callback'] === $fn ) { unset( $GLOBALS['filters'][$hook][$priority][$index] ); return true; } } return false; }
+function apply_filters( $hook, $value ) { $args = func_get_args(); array_shift( $args ); if ( empty( $GLOBALS['filters'][$hook] ) ) return $value; ksort( $GLOBALS['filters'][$hook] ); foreach ( $GLOBALS['filters'][$hook] as $entries ) foreach ( $entries as $entry ) { $call_args = array_slice( $args, 0, max( 1, (int) $entry['accepted_args'] ) ); $args[0] = call_user_func_array( $entry['callback'], $call_args ); } return $args[0]; }
 function add_shortcode( $tag, $fn ) { $GLOBALS['shortcodes'][$tag] = $fn; }
 function register_activation_hook( $file, $fn ) { $GLOBALS['activation_hook'] = $fn; }
 function register_deactivation_hook( $file, $fn ) { $GLOBALS['deactivation_hook'] = $fn; }
@@ -66,9 +67,9 @@ function wp_die( $message ) { throw new RuntimeException( (string) $message ); }
 function shortcode_atts( $pairs, $atts, $shortcode = '' ) { return array_merge( $pairs, array_intersect_key( (array) $atts, $pairs ) ); }
 function wp_register_script( $handle, $url, $deps, $version, $footer = false ) { $GLOBALS['scripts'][$handle] = $deps; }
 function wp_add_inline_script( $handle, $data, $position = 'after' ) { $GLOBALS['inline_scripts'][ $handle ] = compact( 'data', 'position' ); }
-function wp_enqueue_script( $handle, $url, $deps, $version, $footer = false ) { $GLOBALS['enqueued_scripts'][$handle] = compact( 'url', 'deps', 'version', 'footer' ); }
+function wp_enqueue_script( $handle, $url = '', $deps = array(), $version = false, $footer = false ) { $GLOBALS['enqueued_scripts'][$handle] = compact( 'url', 'deps', 'version', 'footer' ); }
 function wp_register_style( $handle, $url, $deps, $version ) {}
-function wp_enqueue_style( $handle, $url, $deps, $version ) { $GLOBALS['enqueued_styles'][$handle] = compact( 'url', 'deps', 'version' ); }
+function wp_enqueue_style( $handle, $url = '', $deps = array(), $version = false ) { $GLOBALS['enqueued_styles'][$handle] = compact( 'url', 'deps', 'version' ); }
 function wp_set_script_translations( $handle, $domain ) {}
 function get_current_screen() { return $GLOBALS['test_screen'] ?? null; }
 function register_block_type( $path, $settings ) {
@@ -107,6 +108,16 @@ function get_posts( $args = array() ) { return $GLOBALS['test_get_posts'] ?? arr
 function parse_blocks( $content ) { return $GLOBALS['test_parsed_blocks'][ $content ] ?? array(); }
 function render_block( $block ) { $GLOBALS['test_rendered_blocks'][] = $block; $previous_class = $GLOBALS['test_block_class']; $GLOBALS['test_block_class'] = 'wp-block-ai-manga-viewer-viewer'; $rendered = ai_manga_viewer_render_viewer( $block['attrs'] ?? array() ); $GLOBALS['test_block_class'] = $previous_class; return $rendered; }
 require dirname( __DIR__ ) . '/ai-manga-viewer.php';
+$with_pro_cta = in_array( '--pro-cta-fixture', $argv, true );
+$with_pro_panel = in_array( '--pro-panel-fixture', $argv, true );
+if ( $with_pro_cta ) {
+	add_filter( 'ai_manga_viewer_has_feature', function( $available, $feature_id ) { return 'cta' === $feature_id ? true : $available; }, 30, 2 );
+	require dirname( __DIR__, 2 ) . '/AI Manga Viewer Pro/includes/modules/cta/renderer.php';
+}
+if ( $with_pro_panel ) {
+	add_filter( 'ai_manga_viewer_has_feature', function( $available, $feature_id ) { return 'panel_reader' === $feature_id ? true : $available; }, 30, 2 );
+	require dirname( __DIR__, 2 ) . '/AI Manga Viewer Pro/includes/modules/panel-reader/renderer.php';
+}
 foreach ( $GLOBALS['actions']['init'] as $callback ) { call_user_func( $callback ); }
 foreach ( $GLOBALS['actions']['rest_api_init'] as $callback ) { call_user_func( $callback ); }
 foreach ( $GLOBALS['actions']['admin_init'] as $callback ) { call_user_func( $callback ); }
@@ -114,38 +125,22 @@ foreach ( $GLOBALS['actions']['admin_menu'] as $callback ) { call_user_func( $ca
 if ( count( ai_manga_viewer_block_categories( ai_manga_viewer_block_categories( array() ) ) ) !== 1 ) { throw new Exception( 'Duplicate category' ); }
 if ( ( $GLOBALS['shortcodes']['ai_manga_viewer'] ?? null ) !== 'ai_manga_viewer_library_shortcode' ) { throw new Exception( 'Library shortcode registration failed' ); }
 if ( ! isset( $GLOBALS['registered_blocks']['ai-manga-viewer/viewer'], $GLOBALS['registered_blocks']['ai-manga-viewer/library-viewer'] ) ) { throw new Exception( 'Both viewer blocks must be registered' ); }
-if ( ( $GLOBALS['activation_hook'] ?? null ) !== 'ai_manga_viewer_install_analytics_tables' || ( $GLOBALS['deactivation_hook'] ?? null ) !== 'ai_manga_viewer_deactivate_analytics' || ( $GLOBALS['uninstall_hook'] ?? null ) !== 'ai_manga_viewer_uninstall_analytics' || ! isset( $GLOBALS['rest_routes']['ai-manga-viewer/v1/events'], $GLOBALS['rest_routes']['ai-manga-viewer/v1/config'], $GLOBALS['rest_routes']['ai-manga-viewer/v1/library'], $GLOBALS['rest_fields']['amv_viewer']['amv_cover_url'] ) ) { throw new Exception( 'Analytics lifecycle, Library route, config route or cover REST field registration failed' ); }
+if ( ( $GLOBALS['activation_hook'] ?? null ) !== 'ai_manga_viewer_install_analytics_tables' || ( $GLOBALS['deactivation_hook'] ?? null ) !== 'ai_manga_viewer_deactivate_analytics' || ( $GLOBALS['uninstall_hook'] ?? null ) !== 'ai_manga_viewer_uninstall_analytics' || isset( $GLOBALS['rest_routes']['ai-manga-viewer/v1/events'], $GLOBALS['rest_routes']['ai-manga-viewer/v1/config'] ) || ! isset( $GLOBALS['rest_routes']['ai-manga-viewer/v1/library'], $GLOBALS['rest_fields']['amv_viewer']['amv_cover_url'] ) ) { throw new Exception( 'Core lifecycle, Pro route absence, Library route or cover REST field registration failed' ); }
 $GLOBALS['test_can_edit'] = false;
 if ( call_user_func( $GLOBALS['rest_routes']['ai-manga-viewer/v1/library']['permission_callback'] ) ) { throw new Exception( 'Library registration route allowed an unauthorized request' ); }
 $GLOBALS['test_can_edit'] = true;
 if ( ! call_user_func( $GLOBALS['rest_routes']['ai-manga-viewer/v1/library']['permission_callback'] ) ) { throw new Exception( 'Library registration route rejected an authorized editor' ); }
-if ( 3 !== count( $GLOBALS['registered_settings'] ?? array() ) || 'manage_options' !== ( $GLOBALS['submenu_pages']['ai-manga-viewer-analytics']['capability'] ?? '' ) || 'manage_options' !== ( $GLOBALS['submenu_pages']['ai-manga-viewer-analytics-report']['capability'] ?? '' ) || isset( $GLOBALS['submenu_pages']['ai-manga-viewer-consultation'] ) || 'edit.php?post_type=amv_viewer' !== ( $GLOBALS['submenu_pages']['ai-manga-viewer-analytics']['parent'] ?? '' ) || ( $GLOBALS['actions']['admin_post_ai_manga_viewer_delete_analytics'][0] ?? '' ) !== 'ai_manga_viewer_handle_delete_analytics' ) { throw new Exception( 'Analytics settings/report registration, disabled consultation visibility or deletion handler failed' ); }
-$GLOBALS['test_options']['ai_manga_viewer_analytics_enabled'] = '1';
-ai_manga_viewer_add_consultation_page();
-if ( 'manage_options' !== ( $GLOBALS['submenu_pages']['ai-manga-viewer-consultation']['capability'] ?? '' ) ) { throw new Exception( 'Enabled consultation submenu registration failed' ); }
-$GLOBALS['test_options']['ai_manga_viewer_analytics_enabled'] = '0';
-if ( 'before' !== ( $GLOBALS['inline_scripts']['ai-manga-viewer-view']['position'] ?? '' ) || false === strpos( $GLOBALS['inline_scripts']['ai-manga-viewer-view']['data'] ?? '', '"enabled":null' ) || false === strpos( $GLOBALS['inline_scripts']['ai-manga-viewer-view']['data'] ?? '', 'ai-manga-viewer\/v1\/events' ) || false === strpos( $GLOBALS['inline_scripts']['ai-manga-viewer-view']['data'] ?? '', 'ai-manga-viewer\/v1\/config' ) ) { throw new Exception( 'Cache-safe analytics client configuration failed' ); }
+if ( 3 !== count( $GLOBALS['registered_settings'] ?? array() ) || 'manage_options' !== ( $GLOBALS['submenu_pages']['ai-manga-viewer-analytics']['capability'] ?? '' ) || isset( $GLOBALS['submenu_pages']['ai-manga-viewer-analytics-report'], $GLOBALS['submenu_pages']['ai-manga-viewer-consultation'] ) || 'edit.php?post_type=amv_viewer' !== ( $GLOBALS['submenu_pages']['ai-manga-viewer-analytics']['parent'] ?? '' ) || ( $GLOBALS['actions']['admin_post_ai_manga_viewer_delete_analytics'][0] ?? '' ) !== 'ai_manga_viewer_handle_delete_analytics' ) { throw new Exception( 'Core Analytics lifecycle settings boundary failed' ); }
+$feature_bootstrap = 'window.aiMangaViewerFeatures={"panel_reader":' . ( $with_pro_panel ? 'true' : 'false' ) . ',"cta":' . ( $with_pro_cta ? 'true' : 'false' ) . ',"analytics":false,"ai_consultation":false};';
+if ( 'before' !== ( $GLOBALS['inline_scripts']['ai-manga-viewer-editor']['position'] ?? '' ) || $feature_bootstrap !== ( $GLOBALS['inline_scripts']['ai-manga-viewer-editor']['data'] ?? '' ) || 'before' !== ( $GLOBALS['inline_scripts']['ai-manga-viewer-library-editor']['position'] ?? '' ) || $feature_bootstrap !== ( $GLOBALS['inline_scripts']['ai-manga-viewer-library-editor']['data'] ?? '' ) ) { throw new Exception( 'Editor feature configuration failed' ); }
+if ( 'before' !== ( $GLOBALS['inline_scripts']['ai-manga-viewer-view']['position'] ?? '' ) || false === strpos( $GLOBALS['inline_scripts']['ai-manga-viewer-view']['data'] ?? '', $feature_bootstrap ) ) { throw new Exception( 'Frontend feature bootstrap failed' ); }
+if ( isset( $GLOBALS['inline_scripts']['ai-manga-viewer-analytics-transport'] ) || in_array( 'ai-manga-viewer-analytics-transport', $GLOBALS['scripts']['ai-manga-viewer-view'] ?? array(), true ) ) { throw new Exception( 'Pro Analytics transport leaked into Core.' ); }
 $cover_callback = $GLOBALS['rest_fields']['amv_viewer']['amv_cover_url']['get_callback'];
 if ( 'https://example.test/cover.jpg' !== $cover_callback( array( 'id' => 123 ) ) || '' !== $cover_callback( array( 'id' => 0 ) ) ) { throw new Exception( 'Manga Library cover REST field failed' ); }
 if ( in_array( 'wp-server-side-render', $GLOBALS['scripts']['ai-manga-viewer-library-editor'] ?? array(), true ) ) { throw new Exception( 'Registered Viewer editor must not load the full server-side preview dependency' ); }
-if ( ! in_array( 'wp-data', $GLOBALS['scripts']['ai-manga-viewer-editor'] ?? array(), true ) || ! in_array( 'wp-api-fetch', $GLOBALS['scripts']['ai-manga-viewer-editor'] ?? array(), true ) || ! in_array( 'wp-data', $GLOBALS['scripts']['ai-manga-viewer-library-editor'] ?? array(), true ) ) { throw new Exception( 'Editor migration or instance-key dependency is missing' ); }
-$valid_event = array( 'name' => 'read_start', 'eventId' => 'event-123', 'sessionId' => 'session-123', 'visitorId' => 'visitor-123', 'viewerKey' => 'viewer-123', 'instanceKey' => 'instance-123', 'pageKey' => 'page-123', 'pageIndex' => 0, 'pageNumber' => 1, 'pageCount' => 2, 'mode' => 'zoom', 'occurredAt' => 123456789, 'ignored' => 'drop-me' );
-$normalized_event = ai_manga_viewer_normalize_analytics_event( $valid_event );
-if ( ! is_array( $normalized_event ) || isset( $normalized_event['ignored'] ) || 'session-123' !== $normalized_event['session_id'] || 1 !== $normalized_event['page_number'] ) { throw new Exception( 'Analytics event allowlist normalization failed' ); }
-$direct_cta_event = $valid_event; $direct_cta_event['name'] = 'cta_click'; $direct_cta_event['mode'] = 'standard_direct'; $direct_cta_event['sessionId'] = ''; $direct_cta_event['ctaKey'] = 'cta-123'; $direct_cta_event['readingStarted'] = false;
-if ( ! ai_manga_viewer_normalize_analytics_event( $direct_cta_event ) ) { throw new Exception( 'Direct CTA analytics event was rejected' ); }
-$active_event = $valid_event; $active_event['name'] = 'active_time'; $active_event['readingStarted'] = true; $active_event['activeSecondsDelta'] = 15;
-if ( 15 !== ( ai_manga_viewer_normalize_analytics_event( $active_event )['active_seconds_delta'] ?? 0 ) ) { throw new Exception( 'Active reading event was rejected' ); }
-foreach ( array(
-	array_merge( $valid_event, array( 'name' => 'page_view' ) ),
-	array_merge( $valid_event, array( 'viewerKey' => '../unsafe' ) ),
-	array_merge( $valid_event, array( 'visitorId' => '../unsafe' ) ),
-	array_merge( $valid_event, array( 'pageNumber' => 2 ) ),
-	array_merge( $direct_cta_event, array( 'sessionId' => 'invented-session' ) ),
-	array_merge( $active_event, array( 'activeSecondsDelta' => 16 ) ),
-) as $invalid_event ) {
-	if ( null !== ai_manga_viewer_normalize_analytics_event( $invalid_event ) ) { throw new Exception( 'Invalid analytics event was accepted' ); }
-}
+if ( ! in_array( 'wp-data', $GLOBALS['scripts']['ai-manga-viewer-editor'] ?? array(), true ) || ! in_array( 'wp-api-fetch', $GLOBALS['scripts']['ai-manga-viewer-editor'] ?? array(), true ) || ! in_array( 'wp-hooks', $GLOBALS['scripts']['ai-manga-viewer-editor'] ?? array(), true ) || ! in_array( 'wp-data', $GLOBALS['scripts']['ai-manga-viewer-library-editor'] ?? array(), true ) ) { throw new Exception( 'Editor migration, hook or instance-key dependency is missing' ); }
+if ( 1 !== AI_MANGA_VIEWER_EXTENSION_API_VERSION || 1 !== ai_manga_viewer_get_extension_api_version() ) { throw new Exception( 'Extension API version contract failed' ); }
+if ( function_exists( 'ai_manga_viewer_normalize_analytics_event' ) || function_exists( 'ai_manga_viewer_register_analytics_routes' ) || function_exists( 'ai_manga_viewer_render_analytics_report_page' ) ) { throw new Exception( 'Pro Analytics implementation leaked into Core.' ); }
 $library = $GLOBALS['post_types']['amv_viewer'] ?? null;
 if ( ! is_array( $library ) || empty( $library['show_ui'] ) || empty( $library['show_in_rest'] ) || ! empty( $library['publicly_queryable'] ) ) { throw new Exception( 'Manga Library registration failed' ); }
 if ( array( array( 'ai-manga-viewer/viewer' ) ) !== $library['template'] || 'all' !== $library['template_lock'] ) { throw new Exception( 'Manga Library editor template failed' ); }
@@ -160,10 +155,7 @@ if ( ! empty( $GLOBALS['enqueued_scripts'] ) ) { throw new Exception( 'Library a
 $GLOBALS['test_screen'] = (object) array( 'id' => 'edit-amv_viewer' );
 ai_manga_viewer_library_admin_assets( 'edit.php' );
 if ( empty( $GLOBALS['enqueued_scripts']['ai-manga-viewer-library-admin'] ) || empty( $GLOBALS['enqueued_styles']['ai-manga-viewer-library-admin'] ) ) { throw new Exception( 'Library admin card assets were not enqueued' ); }
-ai_manga_viewer_analytics_admin_assets( 'amv_viewer_page_ai-manga-viewer-analytics-report' );
-if ( empty( $GLOBALS['enqueued_scripts']['ai-manga-viewer-analytics-admin'] ) || empty( $GLOBALS['enqueued_styles']['ai-manga-viewer-analytics-admin'] ) ) { throw new Exception( 'Analytics report assets were not enqueued' ); }
-ai_manga_viewer_consultation_admin_assets( 'amv_viewer_page_ai-manga-viewer-consultation' );
-if ( empty( $GLOBALS['enqueued_scripts']['ai-manga-viewer-consultation-admin'] ) || empty( $GLOBALS['enqueued_styles']['ai-manga-viewer-consultation-admin'] ) ) { throw new Exception( 'Consultation assets were not enqueued' ); }
+if ( isset( $GLOBALS['enqueued_scripts']['ai-manga-viewer-analytics-admin'], $GLOBALS['enqueued_styles']['ai-manga-viewer-analytics-admin'] ) ) { throw new Exception( 'Pro Analytics admin assets leaked into Core.' ); }
 $GLOBALS['test_block_class'] = 'wp-block-ai-manga-viewer-viewer';
 if ( '' !== ai_manga_viewer_render_viewer( array() ) ) { throw new Exception( 'Empty output' ); }
 $area = array( 'id' => 'focus-existing', 'x' => 25, 'y' => 30, 'width' => 25, 'height' => 30, 'zoom' => 90, 'view' => 'focus' );
@@ -175,9 +167,9 @@ $GLOBALS['test_can_edit'] = true;
 $registration_pages = $attrs['pages'];
 $registration_pages[0]['id'] = 901;
 $registration_pages[0]['cta'] = array( 'enabled' => true, 'label' => 'Contact <b>now</b>', 'url' => 'https://example.test/contact', 'backgroundColor' => '#123456' );
-$registration = ai_manga_viewer_register_direct_viewer( new WP_REST_Request( array( 'title' => '登録テスト<script>', 'sourcePostId' => 456, 'sourceInstanceKey' => 'instance-source', 'attributes' => array_merge( $attrs, array( 'pages' => $registration_pages, 'binding' => 'ltr', 'pageLayout' => 'spread', 'singleFirstPage' => false, 'spreadReadingMode' => 'pageFocus', 'maxWidth' => 900, 'enableFullscreen' => true, 'inlineDisplayMode' => 'coverLauncher', 'fullscreenReadingMode' => 'vertical', 'enableZoom' => true, 'zoomControlsPosition' => 'right', 'libraryViewerId' => 999 ) ) ) ) );
+$registration = ai_manga_viewer_register_direct_viewer( new WP_REST_Request( array( 'title' => '登録テスト<script>', 'sourcePostId' => 456, 'sourceInstanceKey' => 'instance-source', 'attributes' => array_merge( $attrs, array( 'pages' => $registration_pages, 'binding' => 'ltr', 'pageLayout' => 'spread', 'singleFirstPage' => false, 'spreadReadingMode' => 'pageFocus', 'maxWidth' => 900, 'enableFullscreen' => true, 'fullscreenStartAtCurrent' => true, 'inlineDisplayMode' => 'coverLauncher', 'fullscreenReadingMode' => 'vertical', 'enableZoom' => true, 'zoomControlsPosition' => 'right', 'libraryViewerId' => 999 ) ) ) ) );
 $registered_attrs = $GLOBALS['serialized_library_block']['attrs'] ?? array();
-if ( 2444 !== ( $registration['id'] ?? 0 ) || empty( $registration['canSwitch'] ) || 'publish' !== ( $registration['status'] ?? '' ) || 'library-viewer-2444' !== ( $registered_attrs['viewerKey'] ?? '' ) || 'library-source-2444' !== ( $registered_attrs['instanceKey'] ?? '' ) || 0 !== ( $registered_attrs['libraryViewerId'] ?? -1 ) || 'spread' !== ( $registered_attrs['pageLayout'] ?? '' ) || false !== ( $registered_attrs['singleFirstPage'] ?? null ) || 'pageFocus' !== ( $registered_attrs['spreadReadingMode'] ?? '' ) || 'coverLauncher' !== ( $registered_attrs['inlineDisplayMode'] ?? '' ) || 'vertical' !== ( $registered_attrs['fullscreenReadingMode'] ?? '' ) || 2 !== count( $registered_attrs['pages'] ?? array() ) || 2 !== count( $registered_attrs['pages'][0]['focusAreas'] ?? array() ) || 1 !== count( $registered_attrs['pages'][0]['mobileFocusAreas'] ?? array() ) || 'Contact now' !== ( $registered_attrs['pages'][0]['cta']['label'] ?? '' ) || 901 !== ( $GLOBALS['test_thumbnail'][2444] ?? 0 ) || 'auto:901' !== ( $GLOBALS['test_meta'][2444]['_amv_auto_featured_image'] ?? '' ) || '456:instance-source' !== ( $GLOBALS['test_meta'][2444]['_amv_source_reference'] ?? '' ) ) { throw new Exception( 'Direct Viewer Library registration did not preserve and sanitize the Viewer configuration' ); }
+if ( 2444 !== ( $registration['id'] ?? 0 ) || empty( $registration['canSwitch'] ) || 'publish' !== ( $registration['status'] ?? '' ) || 'library-viewer-2444' !== ( $registered_attrs['viewerKey'] ?? '' ) || 'library-source-2444' !== ( $registered_attrs['instanceKey'] ?? '' ) || 0 !== ( $registered_attrs['libraryViewerId'] ?? -1 ) || 'spread' !== ( $registered_attrs['pageLayout'] ?? '' ) || false !== ( $registered_attrs['singleFirstPage'] ?? null ) || 'pageFocus' !== ( $registered_attrs['spreadReadingMode'] ?? '' ) || empty( $registered_attrs['fullscreenStartAtCurrent'] ) || 'coverLauncher' !== ( $registered_attrs['inlineDisplayMode'] ?? '' ) || 'vertical' !== ( $registered_attrs['fullscreenReadingMode'] ?? '' ) || 2 !== count( $registered_attrs['pages'] ?? array() ) || 2 !== count( $registered_attrs['pages'][0]['focusAreas'] ?? array() ) || 1 !== count( $registered_attrs['pages'][0]['mobileFocusAreas'] ?? array() ) || 'Contact now' !== ( $registered_attrs['pages'][0]['cta']['label'] ?? '' ) || 901 !== ( $GLOBALS['test_thumbnail'][2444] ?? 0 ) || 'auto:901' !== ( $GLOBALS['test_meta'][2444]['_amv_auto_featured_image'] ?? '' ) || '456:instance-source' !== ( $GLOBALS['test_meta'][2444]['_amv_source_reference'] ?? '' ) ) { throw new Exception( 'Direct Viewer Library registration did not preserve and sanitize the Viewer configuration' ); }
 $duplicate = ai_manga_viewer_register_direct_viewer( new WP_REST_Request( array( 'title' => '再登録', 'sourcePostId' => 456, 'sourceInstanceKey' => 'instance-source', 'existingViewerId' => 2444, 'attributes' => $attrs ) ) );
 if ( 2444 !== ( $duplicate['id'] ?? 0 ) || empty( $duplicate['duplicate'] ) ) { throw new Exception( 'Direct Viewer duplicate registration prevention failed' ); }
 $GLOBALS['test_can_publish'] = false;
@@ -188,7 +180,9 @@ $invalid_registration = ai_manga_viewer_register_direct_viewer( new WP_REST_Requ
 if ( ! is_wp_error( $invalid_registration ) || 'amv_title_required' !== $invalid_registration->code ) { throw new Exception( 'Direct Viewer registration validation failed' ); }
 $new = ai_manga_viewer_render_viewer( $attrs );
 if ( false !== strpos( $new, '<script>' ) || false !== strpos( $new, 'cni-' ) ) { throw new Exception( 'Escaping or namespace failure' ); }
-if ( false === strpos( $new, 'data-page-layout="single"' ) || false === strpos( $new, 'data-inline-display-mode="reader"' ) || false !== strpos( $new, 'amv-reader__cover-launcher-button' ) || false === strpos( $new, 'data-single-first-page="on"' ) || false === strpos( $new, 'data-spread-reading-mode="overview"' ) || false === strpos( $new, 'class="amv-reader__focus-layer"' ) || false === strpos( $new, 'class="amv-reader__surface"' ) || false === strpos( $new, '--amv-reader-spread-max-width:1312px' ) ) { throw new Exception( 'Default single-page compatibility or spread surface output failed' ); }
+if ( false === strpos( $new, 'data-page-layout="single"' ) || false === strpos( $new, 'data-inline-display-mode="reader"' ) || false !== strpos( $new, 'amv-reader__cover-launcher-button' ) || false === strpos( $new, 'data-single-first-page="on"' ) || false === strpos( $new, 'data-spread-reading-mode="overview"' ) || false === strpos( $new, 'data-fullscreen-start="first"' ) || false === strpos( $new, 'class="amv-reader__focus-layer"' ) || false === strpos( $new, 'class="amv-reader__surface"' ) || false === strpos( $new, '--amv-reader-spread-max-width:1312px' ) ) { throw new Exception( 'Default single-page compatibility or spread surface output failed' ); }
+$fullscreen_current_output = ai_manga_viewer_render_viewer( array_merge( $attrs, array( 'fullscreenStartAtCurrent' => true ) ) );
+if ( false === strpos( $fullscreen_current_output, 'data-fullscreen-start="current"' ) ) { throw new Exception( 'Current-page fullscreen start setting was not rendered' ); }
 $spread_output = ai_manga_viewer_render_viewer( array_merge( $attrs, array( 'pageLayout' => 'spread', 'singleFirstPage' => false ) ) );
 if ( false === strpos( $spread_output, 'data-page-layout="spread"' ) || false === strpos( $spread_output, 'data-single-first-page="off"' ) ) { throw new Exception( 'Spread layout attributes were not rendered' ); }
 $page_focus_output = ai_manga_viewer_render_viewer( array_merge( $attrs, array( 'pageLayout' => 'spread', 'spreadReadingMode' => 'pageFocus', 'enableFullscreen' => true ) ) );
@@ -241,13 +235,13 @@ if ( 903 !== ( $GLOBALS['test_thumbnail'][133] ?? 0 ) || 'manual' !== ( $GLOBALS
 $GLOBALS['test_options']['ai_manga_viewer_analytics_enabled'] = '1';
 $GLOBALS['test_can_manage'] = true;
 $column_buffer_level = ob_get_level(); ob_start(); ai_manga_viewer_library_column( 'amv_details', 123 ); $details_column = ob_get_clean();
-if ( ob_get_level() !== $column_buffer_level || false === strpos( $details_column, 'amv-library-meta' ) || false === strpos( $details_column, 'is-publish' ) || false === strpos( $details_column, '2ページ' ) || false === strpos( $details_column, 'Viewer ID:' ) || false === strpos( $details_column, '2026-09-27 18:30' ) || false === strpos( $details_column, '>編集<' ) || false === strpos( $details_column, '>解析を見る<' ) || false === strpos( $details_column, '>AI相談資料を作成<' ) || false === strpos( $details_column, 'page=ai-manga-viewer-consultation' ) || false === strpos( $details_column, 'amv_viewer=library-viewer-123' ) || false === strpos( $details_column, 'data-shortcode="[ai_manga_viewer id=&quot;123&quot;]"' ) || false === strpos( $details_column, '<code class="amv-library-shortcode__code">[ai_manga_viewer id=&quot;123&quot;]</code>' ) || false === strpos( $details_column, 'amv-library-shortcode__feedback' ) ) { throw new Exception( 'Compact Manga Library metadata or actions failed' ); }
+if ( ob_get_level() !== $column_buffer_level || false === strpos( $details_column, 'amv-library-meta' ) || false === strpos( $details_column, 'is-publish' ) || false === strpos( $details_column, '2ページ' ) || false === strpos( $details_column, 'Viewer ID:' ) || false === strpos( $details_column, '2026-09-27 18:30' ) || false === strpos( $details_column, '>編集<' ) || false === strpos( $details_column, '漫画解析は現在利用できません' ) || false !== strpos( $details_column, '>解析を見る<' ) || false !== strpos( $details_column, 'AI相談資料を作成' ) || false === strpos( $details_column, 'data-shortcode="[ai_manga_viewer id=&quot;123&quot;]"' ) || false === strpos( $details_column, '<code class="amv-library-shortcode__code">[ai_manga_viewer id=&quot;123&quot;]</code>' ) || false === strpos( $details_column, 'amv-library-shortcode__feedback' ) ) { throw new Exception( 'Compact Core-only Manga Library metadata or actions failed' ); }
 $GLOBALS['test_options']['ai_manga_viewer_analytics_enabled'] = '0';
 ob_start(); ai_manga_viewer_library_column( 'amv_details', 123 ); $disabled_details = ob_get_clean();
-if ( false === strpos( $disabled_details, '解析停止中' ) || false === strpos( $disabled_details, '>解析を有効にする<' ) || false === strpos( $disabled_details, 'page=ai-manga-viewer-analytics' ) || false !== strpos( $disabled_details, 'ai-manga-viewer-analytics-report' ) || false !== strpos( $disabled_details, 'AI相談資料を作成' ) ) { throw new Exception( 'Disabled Analytics Library action failed' ); }
+if ( false === strpos( $disabled_details, '漫画解析は現在利用できません' ) || false !== strpos( $disabled_details, '解析を有効にする' ) || false !== strpos( $disabled_details, 'ai-manga-viewer-analytics-report' ) || false !== strpos( $disabled_details, 'AI相談資料を作成' ) ) { throw new Exception( 'Core-only Analytics Library action failed' ); }
 $GLOBALS['test_can_manage'] = false;
 ob_start(); ai_manga_viewer_library_column( 'amv_details', 123 ); $unauthorized_details = ob_get_clean();
-if ( false === strpos( $unauthorized_details, '解析停止中' ) || false !== strpos( $unauthorized_details, '解析を有効にする' ) ) { throw new Exception( 'Analytics settings action leaked to an unauthorized editor' ); }
+if ( false === strpos( $unauthorized_details, '漫画解析は現在利用できません' ) || false !== strpos( $unauthorized_details, '解析を有効にする' ) ) { throw new Exception( 'Analytics settings action leaked to an unauthorized editor' ); }
 $GLOBALS['test_can_manage'] = true;
 $shortcode_output = ai_manga_viewer_library_shortcode( array( 'id' => '123', 'ignored' => 'value' ) );
 $shortcode_block = end( $GLOBALS['test_rendered_blocks'] );
@@ -274,21 +268,51 @@ foreach ( array( 125, 126, 127 ) as $invalid_viewer_id ) {
 	if ( '' !== ai_manga_viewer_library_shortcode( array( 'id' => (string) $invalid_viewer_id ) ) ) { throw new Exception( 'Invalid Library content was rendered' ); }
 }
 $GLOBALS['test_can_edit'] = false;
-if ( false === strpos( $new, 'data-focus-start="first"' ) ) { throw new Exception( 'Default focus start is not first' ); }
+if ( $with_pro_panel && false === strpos( $new, 'data-amv-panel-start="first"' ) ) { throw new Exception( 'Pro default panel start is not first' ); }
+if ( ! $with_pro_panel && ( false !== strpos( $new, 'data-amv-panel-reader=' ) || false !== strpos( $new, 'amv-modal' ) || false !== strpos( $new, 'amv-reader__focus-open' ) ) ) { throw new Exception( 'Core-only Renderer exposed Pro panel reader markup' ); }
 if ( false === strpos( $new, 'data-zoom="off"' ) || false === strpos( $new, 'data-zoom-position="bottom"' ) || false !== strpos( $new, 'amv-reader__zoom-controls' ) ) { throw new Exception( 'Zoom must be disabled by default' ); }
 $current_start = ai_manga_viewer_render_viewer( array_merge( $attrs, array( 'focusReaderStartAtCurrent' => true ) ) );
-if ( false === strpos( $current_start, 'data-focus-start="current"' ) ) { throw new Exception( 'Current-page focus start is not rendered' ); }
+if ( $with_pro_panel && false === strpos( $current_start, 'data-amv-panel-start="current"' ) ) { throw new Exception( 'Current-page panel start is not rendered' ); }
 $cta_pages = $attrs['pages'];
 $cta_pages[0]['pageKey'] = 'page-one';
 $cta_pages[1]['pageKey'] = 'page-two';
 $cta_pages[0]['cta'] = array( 'enabled' => true, 'ctaKey' => 'cta-main', 'type' => 'text', 'label' => '詳しく "見る" &', 'url' => 'https://example.test/contact?from=manga', 'position' => 'center', 'newTab' => true );
 $fullscreen_new = ai_manga_viewer_render_viewer( array_merge( $attrs, array( 'viewerKey' => 'viewer-main', 'instanceKey' => 'instance-main', 'pages' => $cta_pages, 'enableFullscreen' => true, 'enableZoom' => true ) ) );
+$extension_root = function( $attributes, $context ) { $GLOBALS['extension_context'] = $context; $attributes['data-amv-test'] = $context['instance_key'] . ' "escaped"'; $attributes['class'] = 'must-not-render'; return $attributes; };
+$extension_overlay = function( $markup, $page, $page_index, $context ) { return '<span class="extension-overlay" data-index="' . esc_attr( $page_index ) . '"></span>'; };
+$extension_after = function( $markup, $context ) { return '<aside class="extension-after"></aside>'; };
+add_filter( 'ai_manga_viewer_renderer_root_attributes', $extension_root, 10, 2 );
+add_filter( 'ai_manga_viewer_renderer_page_overlay', $extension_overlay, 10, 4 );
+add_filter( 'ai_manga_viewer_renderer_after_content', $extension_after, 10, 2 );
+$extension_output = ai_manga_viewer_render_viewer( array_merge( $attrs, array( 'viewerKey' => 'extension-viewer', 'instanceKey' => 'extension-instance', 'pages' => $cta_pages ) ) );
+if ( false === strpos( $extension_output, 'data-amv-test="extension-instance &quot;escaped&quot;"' ) || false !== strpos( $extension_output, 'must-not-render' ) || 2 !== substr_count( $extension_output, 'class="extension-overlay"' ) || false === strpos( $extension_output, 'data-index="0"' ) || false === strpos( $extension_output, 'data-index="1"' ) || false === strpos( $extension_output, 'class="extension-after"' ) || 'extension-instance' !== ( $GLOBALS['extension_context']['instance_key'] ?? '' ) || 1 !== ( $GLOBALS['extension_context']['api_version'] ?? 0 ) ) { throw new Exception( 'Renderer extension contract failed' ); }
+$extension_output_two = ai_manga_viewer_render_viewer( array_merge( $attrs, array( 'viewerKey' => 'extension-viewer', 'instanceKey' => 'extension-instance-two', 'pages' => $cta_pages ) ) );
+if ( false === strpos( $extension_output_two, 'data-amv-test="extension-instance-two &quot;escaped&quot;"' ) ) { throw new Exception( 'Renderer extension did not keep multiple instances distinct' ); }
+remove_filter( 'ai_manga_viewer_renderer_root_attributes', $extension_root, 10 );
+remove_filter( 'ai_manga_viewer_renderer_page_overlay', $extension_overlay, 10 );
+remove_filter( 'ai_manga_viewer_renderer_after_content', $extension_after, 10 );
+$extension_removed = ai_manga_viewer_render_viewer( array_merge( $attrs, array( 'viewerKey' => 'extension-viewer', 'instanceKey' => 'extension-instance', 'pages' => $cta_pages ) ) );
+if ( false !== strpos( $extension_removed, 'data-amv-test' ) || false !== strpos( $extension_removed, 'extension-overlay' ) || false !== strpos( $extension_removed, 'extension-after' ) ) { throw new Exception( 'Renderer extensions were not removable' ); }
+$invalid_extension = function() { return new stdClass(); };
+add_filter( 'ai_manga_viewer_renderer_root_attributes', $invalid_extension, 10, 2 );
+add_filter( 'ai_manga_viewer_renderer_page_overlay', $invalid_extension, 10, 4 );
+add_filter( 'ai_manga_viewer_renderer_after_content', $invalid_extension, 10, 2 );
+$invalid_extension_output = ai_manga_viewer_render_viewer( array_merge( $attrs, array( 'viewerKey' => 'invalid-extension', 'instanceKey' => 'invalid-extension-instance', 'pages' => $cta_pages ) ) );
+if ( false !== strpos( $invalid_extension_output, 'stdClass' ) ) { throw new Exception( 'Invalid extension return value leaked into Renderer output' ); }
+remove_filter( 'ai_manga_viewer_renderer_root_attributes', $invalid_extension, 10 );
+remove_filter( 'ai_manga_viewer_renderer_page_overlay', $invalid_extension, 10 );
+remove_filter( 'ai_manga_viewer_renderer_after_content', $invalid_extension, 10 );
 if ( false !== strpos( $fullscreen_new, 'data-analytics-source=' ) ) { throw new Exception( 'Direct Viewer was marked for analytics' ); }
 $library_analytics_block = $viewer_block;
 $library_analytics_block['attrs'] = array_merge( $attrs, array( 'viewerKey' => 'viewer-main', 'instanceKey' => 'library-source', 'pages' => $cta_pages, 'enableFullscreen' => true, 'enableZoom' => true ) );
 $GLOBALS['test_parsed_blocks']['viewer-123'] = array( array( 'blockName' => 'core/group', 'attrs' => array(), 'innerBlocks' => array( $library_analytics_block ) ) );
 $library_fullscreen = ai_manga_viewer_render_library_viewer( 123, 'instance-main' );
 if ( false === strpos( $library_fullscreen, 'data-analytics-source="library"' ) || false === strpos( $library_fullscreen, 'data-viewer-key="viewer-main"' ) || false === strpos( $library_fullscreen, 'data-instance-key="instance-main"' ) ) { throw new Exception( 'Library Viewer analytics marker or identity failed' ); }
+$library_shortcode_cta = ai_manga_viewer_library_shortcode( array( 'id' => '123' ) );
+if ( $with_pro_cta && ( false === strpos( $library_fullscreen, 'amv-reader__cta' ) || false === strpos( $library_shortcode_cta, 'amv-reader__cta' ) ) ) { throw new Exception( 'Pro CTA did not render through Registered Viewer and shortcode paths' ); }
+if ( ! $with_pro_cta && ( false !== strpos( $library_fullscreen, 'amv-reader__cta' ) || false !== strpos( $library_shortcode_cta, 'amv-reader__cta' ) ) ) { throw new Exception( 'Core-only Registered Viewer or shortcode exposed CTA markup' ); }
+if ( $with_pro_panel && ( false === strpos( $library_fullscreen, 'data-amv-panel-reader="on"' ) || false === strpos( $library_shortcode_cta, 'data-amv-panel-reader="on"' ) ) ) { throw new Exception( 'Pro panel reader did not render through Registered Viewer and shortcode paths' ); }
+if ( ! $with_pro_panel && ( false !== strpos( $library_fullscreen, 'data-amv-panel-reader=' ) || false !== strpos( $library_shortcode_cta, 'data-amv-panel-reader=' ) ) ) { throw new Exception( 'Core-only Registered Viewer or shortcode exposed panel reader markup' ); }
 $library_cover_block = $library_analytics_block;
 $library_cover_block['attrs']['inlineDisplayMode'] = 'coverLauncher';
 $GLOBALS['test_parsed_blocks']['viewer-123'] = array( $library_cover_block );
@@ -296,14 +320,17 @@ $library_cover_output = ai_manga_viewer_render_library_viewer( 123, 'library-cov
 if ( false === strpos( $library_cover_output, 'amv-reader--cover-launcher' ) || false === strpos( $library_cover_output, 'src="https://example.test/cover.jpg"' ) || false === strpos( $library_cover_output, 'aria-label="漫画タイトルを全画面で読む"' ) ) { throw new Exception( 'Manga Library cover launcher did not use its featured image or title' ); }
 if ( false === strpos( $fullscreen_new, 'class="amv-reader__fullscreen"' ) || false === strpos( $fullscreen_new, 'aria-pressed="false"' ) ) { throw new Exception( 'Fullscreen control is not rendered' ); }
 if ( false === strpos( $fullscreen_new, 'data-zoom="on"' ) || false === strpos( $fullscreen_new, 'amv-reader__zoom-controls--bottom' ) || false === strpos( $fullscreen_new, 'class="amv-reader__zoom-level"' ) || false === strpos( $fullscreen_new, 'amv-reader__zoom-page--previous' ) || false === strpos( $fullscreen_new, 'amv-reader__zoom-page--next' ) ) { throw new Exception( 'Zoom controls are not rendered' ); }
-if ( false === strpos( $fullscreen_new, 'amv-reader__cta--text amv-reader__cta--center' ) || false === strpos( $fullscreen_new, 'href="https://example.test/contact?from=manga"' ) || false === strpos( $fullscreen_new, 'target="_blank" rel="noopener noreferrer"' ) || false === strpos( $fullscreen_new, '詳しく &quot;見る&quot; &amp;' ) || false !== strpos( $fullscreen_new, '詳しく "見る" &' ) ) { throw new Exception( 'Text CTA sanitizing or output failed' ); }
-if ( false === strpos( $fullscreen_new, '<div class="amv-reader__canvas"><img' ) || false === strpos( $fullscreen_new, '</a></div></figure>' ) ) { throw new Exception( 'CTA is not attached to the zoomable page canvas' ); }
-if ( false === strpos( $fullscreen_new, '<div class="amv-modal__cta-layer" hidden></div>' ) ) { throw new Exception( 'Dedicated Viewer CTA layer is missing' ); }
-if ( false === strpos( $fullscreen_new, 'data-viewer-key="viewer-main"' ) || false === strpos( $fullscreen_new, 'data-instance-key="instance-main"' ) || false === strpos( $fullscreen_new, 'data-page-key="page-one"' ) || false === strpos( $fullscreen_new, 'data-page-key="page-two"' ) || false === strpos( $fullscreen_new, 'data-cta-key="cta-main"' ) ) { throw new Exception( 'Analytics browser fixture keys are missing' ); }
+if ( $with_pro_panel && false === strpos( $fullscreen_new, '<div class="amv-modal__extension-layer" hidden></div>' ) ) { throw new Exception( 'Pro panel modal extension layer is missing' ); }
+if ( ! $with_pro_panel && ( false !== strpos( $fullscreen_new, 'data-amv-panel-page=' ) || false !== strpos( $fullscreen_new, 'amv-modal__extension-layer' ) ) ) { throw new Exception( 'Core-only output contains panel runtime data' ); }
+if ( false === strpos( $fullscreen_new, 'data-viewer-key="viewer-main"' ) || false === strpos( $fullscreen_new, 'data-instance-key="instance-main"' ) || false === strpos( $fullscreen_new, 'data-page-key="page-one"' ) || false === strpos( $fullscreen_new, 'data-page-key="page-two"' ) ) { throw new Exception( 'Persistent Viewer keys are missing' ); }
+$normalized_cta = ai_manga_viewer_pages( $cta_pages );
+if ( 'cta-main' !== ( $normalized_cta[0]['cta']['ctaKey'] ?? '' ) || '詳しく "見る" &' !== ( $normalized_cta[0]['cta']['label'] ?? '' ) ) { throw new Exception( 'Core CTA compatibility normalization lost saved data' ); }
+if ( ! $with_pro_cta && ( false !== strpos( $fullscreen_new, 'amv-reader__cta' ) || false !== strpos( $fullscreen_new, 'data-cta-key=' ) ) ) { throw new Exception( 'Core-only Renderer exposed Pro CTA markup' ); }
+if ( $with_pro_cta && ( false === strpos( $fullscreen_new, 'amv-reader__cta--text amv-reader__cta--center' ) || false === strpos( $fullscreen_new, 'href="https://example.test/contact?from=manga"' ) || false === strpos( $fullscreen_new, 'target="_blank" rel="noopener noreferrer"' ) || false === strpos( $fullscreen_new, '詳しく &quot;見る&quot; &amp;' ) || false === strpos( $fullscreen_new, 'data-cta-key="cta-main"' ) || false === strpos( $fullscreen_new, 'data-amv-modal-overlay="true"' ) ) ) { throw new Exception( 'Pro text CTA sanitizing or output failed' ); }
 $free_cta_pages = $attrs['pages'];
 $free_cta_pages[0]['cta'] = array( 'enabled' => true, 'type' => 'text', 'label' => '資料を見る', 'url' => 'https://example.test/details', 'freePosition' => true, 'x' => 125, 'y' => -4, 'width' => 46, 'fontSize' => 21, 'textColor' => '#123ABC', 'backgroundColor' => 'invalid', 'borderColor' => '#fedcba', 'borderRadius' => 11, 'attentionEffect' => 'glow', 'hoverEffect' => 'lift' );
 $free_cta = ai_manga_viewer_render_viewer( array_merge( $attrs, array( 'pages' => $free_cta_pages ) ) );
-if ( false === strpos( $free_cta, 'amv-reader__cta--text amv-reader__cta--free amv-reader__cta--attention-glow amv-reader__cta--hover-lift' ) || false === strpos( $free_cta, '--amv-cta-x:100%;--amv-cta-y:0%;--amv-cta-width:46%;--amv-cta-font-size:21px' ) || false === strpos( $free_cta, '--amv-cta-text:#123abc;--amv-cta-background:#1f2937;--amv-cta-border:#fedcba;--amv-cta-radius:11px' ) ) { throw new Exception( 'Free-position CTA sanitizing or output failed' ); }
+if ( $with_pro_cta && ( false === strpos( $free_cta, 'amv-reader__cta--text amv-reader__cta--free amv-reader__cta--attention-glow amv-reader__cta--hover-lift' ) || false === strpos( $free_cta, '--amv-cta-x:100%;--amv-cta-y:0%;--amv-cta-width:46%;--amv-cta-font-size:21px' ) || false === strpos( $free_cta, '--amv-cta-text:#123abc;--amv-cta-background:#1f2937;--amv-cta-border:#fedcba;--amv-cta-radius:11px' ) ) ) { throw new Exception( 'Pro free-position CTA sanitizing or output failed' ); }
 $invalid_effect_pages = $attrs['pages'];
 $invalid_effect_pages[0]['cta'] = array( 'enabled' => true, 'type' => 'text', 'label' => 'Effects', 'url' => 'https://example.test/effects', 'attentionEffect' => 'spin', 'hoverEffect' => 'hide' );
 $invalid_effect_cta = ai_manga_viewer_render_viewer( array_merge( $attrs, array( 'pages' => $invalid_effect_pages ) ) );
@@ -311,7 +338,7 @@ if ( false !== strpos( $invalid_effect_cta, 'amv-reader__cta--attention-' ) || f
 $image_cta_pages = $attrs['pages'];
 $image_cta_pages[1]['cta'] = array( 'enabled' => true, 'type' => 'image', 'url' => 'https://example.test/download', 'imageUrl' => 'https://example.test/cta.png', 'imageAlt' => '資料を見る', 'position' => 'right' );
 $image_cta = ai_manga_viewer_render_viewer( array_merge( $attrs, array( 'pages' => $image_cta_pages ) ) );
-if ( false === strpos( $image_cta, 'amv-reader__cta--image amv-reader__cta--right' ) || false === strpos( $image_cta, 'src="https://example.test/cta.png"' ) || false === strpos( $image_cta, 'alt="資料を見る"' ) ) { throw new Exception( 'Image CTA output failed' ); }
+if ( $with_pro_cta && ( false === strpos( $image_cta, 'amv-reader__cta--image amv-reader__cta--right' ) || false === strpos( $image_cta, 'src="https://example.test/cta.png"' ) || false === strpos( $image_cta, 'alt="資料を見る"' ) ) ) { throw new Exception( 'Pro image CTA output failed' ); }
 $invalid_cta_pages = $attrs['pages'];
 $invalid_cta_pages[0]['cta'] = array( 'enabled' => true, 'type' => 'text', 'label' => 'Unsafe', 'url' => 'javascript:alert(1)', 'position' => 'invalid' );
 if ( false !== strpos( ai_manga_viewer_render_viewer( array_merge( $attrs, array( 'pages' => $invalid_cta_pages ) ) ), 'amv-reader__cta' ) ) { throw new Exception( 'Unsafe CTA URL was rendered' ); }
@@ -319,7 +346,7 @@ $keyed_pages = $attrs['pages'];
 $keyed_pages[0]['pageKey'] = 'PAGE-One!!';
 $keyed_pages[0]['cta'] = array( 'enabled' => true, 'ctaKey' => 'CTA-Primary!!', 'type' => 'text', 'label' => 'Keyed', 'url' => 'https://example.test/keyed' );
 $keyed = ai_manga_viewer_render_viewer( array_merge( $attrs, array( 'viewerKey' => 'Viewer-ABC_123!!', 'instanceKey' => 'Placement-ABC!!', 'pages' => $keyed_pages ) ) );
-if ( false === strpos( $keyed, 'data-viewer-key="viewer-abc_123"' ) || false === strpos( $keyed, 'data-instance-key="placement-abc"' ) || false === strpos( $keyed, 'data-page-key="page-one"' ) || false === strpos( $keyed, 'data-cta-key="cta-primary"' ) || false !== strpos( $keyed, '!!' ) ) { throw new Exception( 'Persistent analytics keys were not sanitized or rendered' ); }
+if ( false === strpos( $keyed, 'data-viewer-key="viewer-abc_123"' ) || false === strpos( $keyed, 'data-instance-key="placement-abc"' ) || false === strpos( $keyed, 'data-page-key="page-one"' ) || ( $with_pro_cta && false === strpos( $keyed, 'data-cta-key="cta-primary"' ) ) || false !== strpos( $keyed, '!!' ) ) { throw new Exception( 'Persistent Viewer or CTA keys were not sanitized' ); }
 $unkeyed = ai_manga_viewer_render_viewer( $attrs );
 if ( ! preg_match( '/data-viewer-key="legacy-post-456-viewer-[0-9]+"/', $unkeyed ) || ! preg_match( '/data-instance-key="legacy-post-456-placement-[0-9]+"/', $unkeyed ) || ! preg_match( '/data-page-key="legacy-post-456-viewer-[0-9]+-page-1"/', $unkeyed ) ) { throw new Exception( 'Legacy unkeyed viewer did not receive compatible analytics keys' ); }
 $side_zoom = ai_manga_viewer_render_viewer( array_merge( $attrs, array( 'enableZoom' => true, 'zoomControlsPosition' => 'right' ) ) );
@@ -334,14 +361,16 @@ $spread_pages[1]['cta'] = array( 'enabled' => true, 'ctaKey' => 'spread-cta-2', 
 $spread_pages[2]['cta'] = array( 'enabled' => true, 'ctaKey' => 'spread-cta-3', 'type' => 'text', 'label' => 'お問い合わせ', 'url' => 'https://example.test/contact' );
 $spread_fixture_attrs = array_merge( $attrs, array( 'pages' => $spread_pages, 'viewerKey' => 'spread-viewer', 'instanceKey' => 'spread-instance', 'pageLayout' => 'spread', 'singleFirstPage' => true, 'enableZoom' => true, 'enableFullscreen' => true ) );
 $spread_fixture = preg_replace( '/<div\b/', '<div data-analytics-source="library"', ai_manga_viewer_render_viewer( $spread_fixture_attrs ), 1 );
-$page_focus_fixture_attrs = array_merge( $spread_fixture_attrs, array( 'viewerKey' => 'page-focus-viewer', 'instanceKey' => 'page-focus-instance', 'spreadReadingMode' => 'pageFocus', 'focusReaderStartAtCurrent' => true ) );
+$page_focus_fixture_attrs = array_merge( $spread_fixture_attrs, array( 'viewerKey' => 'page-focus-viewer', 'instanceKey' => 'page-focus-instance', 'spreadReadingMode' => 'pageFocus', 'fullscreenStartAtCurrent' => true, 'focusReaderStartAtCurrent' => true ) );
 $page_focus_fixture = preg_replace( '/<div\b/', '<div data-analytics-source="library"', ai_manga_viewer_render_viewer( $page_focus_fixture_attrs ), 1 );
 $page_focus_auto_attrs = array_merge( $page_focus_fixture_attrs, array( 'viewerKey' => 'page-focus-auto-viewer', 'instanceKey' => 'page-focus-auto-instance', 'pageLayout' => 'auto', 'singleFirstPage' => false, 'binding' => 'ltr' ) );
 $page_focus_auto_fixture = preg_replace( '/<div\b/', '<div data-analytics-source="library"', ai_manga_viewer_render_viewer( $page_focus_auto_attrs ), 1 );
-$auto_fixture_attrs = array_merge( $spread_fixture_attrs, array( 'viewerKey' => 'auto-viewer', 'instanceKey' => 'auto-instance', 'pageLayout' => 'auto', 'singleFirstPage' => false, 'binding' => 'ltr' ) );
+$auto_fixture_attrs = array_merge( $spread_fixture_attrs, array( 'viewerKey' => 'auto-viewer', 'instanceKey' => 'auto-instance', 'pageLayout' => 'auto', 'singleFirstPage' => false, 'binding' => 'ltr', 'fullscreenStartAtCurrent' => true ) );
 $auto_fixture = preg_replace( '/<div\b/', '<div data-analytics-source="library"', ai_manga_viewer_render_viewer( $auto_fixture_attrs ), 1 );
 $vertical_fixture_attrs = array_merge( $spread_fixture_attrs, array( 'viewerKey' => 'vertical-viewer', 'instanceKey' => 'vertical-instance', 'fullscreenReadingMode' => 'vertical' ) );
 $vertical_fixture = preg_replace( '/<div\b/', '<div data-analytics-source="library"', ai_manga_viewer_render_viewer( $vertical_fixture_attrs ), 1 );
+$vertical_current_fixture_attrs = array_merge( $vertical_fixture_attrs, array( 'viewerKey' => 'vertical-current-viewer', 'instanceKey' => 'vertical-current-instance', 'fullscreenStartAtCurrent' => true ) );
+$vertical_current_fixture = preg_replace( '/<div\b/', '<div data-analytics-source="library"', ai_manga_viewer_render_viewer( $vertical_current_fixture_attrs ), 1 );
 $wide_pages = $spread_pages;
 $wide_pages[1]['url'] = 'https://example.test/wide-2.svg';
 $wide_fixture_attrs = array_merge( $spread_fixture_attrs, array( 'pages' => $wide_pages, 'viewerKey' => 'wide-viewer', 'instanceKey' => 'wide-instance' ) );
@@ -350,7 +379,9 @@ $cover_fixture_attrs = array_merge( $spread_fixture_attrs, array( 'viewerKey' =>
 $cover_fixture = preg_replace( '/<div\b/', '<div data-analytics-source="library"', ai_manga_viewer_render_viewer( $cover_fixture_attrs ), 1 );
 $cover_vertical_fixture_attrs = array_merge( $cover_fixture_attrs, array( 'viewerKey' => 'cover-vertical-viewer', 'instanceKey' => 'cover-vertical-instance', 'fullscreenReadingMode' => 'vertical', 'zoomControlsPosition' => 'right' ) );
 $cover_vertical_fixture = preg_replace( '/<div\b/', '<div data-analytics-source="library"', ai_manga_viewer_render_viewer( $cover_vertical_fixture_attrs ), 1 );
-if ( false === strpos( $cover_fixture, 'amv-reader--cover-launcher' ) || false === strpos( $cover_fixture, 'data-inline-display-mode="coverLauncher"' ) || false === strpos( $cover_fixture, 'class="amv-reader__cover-launcher-button"' ) || false === strpos( $cover_fixture, '>漫画を読む<' ) || false === strpos( $cover_fixture, 'class="amv-reader__cover-focus-open"' ) || false === strpos( $cover_fixture, '>専用ビューアーで読む<' ) || false === strpos( $cover_fixture, 'class="amv-reader__fullscreen"' ) ) { throw new Exception( 'Cover launcher render, focus-reader action or forced fullscreen machinery failed' ); }
+if ( false === strpos( $cover_fixture, 'amv-reader--cover-launcher' ) || false === strpos( $cover_fixture, 'data-inline-display-mode="coverLauncher"' ) || false === strpos( $cover_fixture, 'class="amv-reader__cover-launcher-button"' ) || false === strpos( $cover_fixture, '>漫画を読む<' ) || false === strpos( $cover_fixture, 'class="amv-reader__fullscreen"' ) ) { throw new Exception( 'Core cover launcher or forced fullscreen machinery failed' ); }
+if ( $with_pro_panel && ( false === strpos( $cover_fixture, 'class="amv-reader__cover-focus-open"' ) || false === strpos( $cover_fixture, '>専用ビューアーで読む<' ) ) ) { throw new Exception( 'Pro panel action is missing beside the cover launcher' ); }
+if ( ! $with_pro_panel && false !== strpos( $cover_fixture, 'amv-reader__cover-focus-open' ) ) { throw new Exception( 'Core-only cover launcher exposed the Pro panel action' ); }
 $count_fixture_html = '';
 foreach ( array( 1, 2, 3, 4, 5, 10 ) as $fixture_count ) {
 	$count_pages = array();
@@ -359,60 +390,25 @@ foreach ( array( 1, 2, 3, 4, 5, 10 ) as $fixture_count ) {
 	}
 	$count_fixture_html .= '<section id="count-fixture-' . $fixture_count . '">' . ai_manga_viewer_render_viewer( array_merge( $spread_fixture_attrs, array( 'pages' => $count_pages, 'viewerKey' => 'count-viewer-' . $fixture_count, 'instanceKey' => 'count-instance-' . $fixture_count, 'enableZoom' => false, 'enableFullscreen' => false ) ) ) . '</section>';
 }
-$consultation_pages = ai_manga_viewer_pages( array(
-	array( 'url' => 'https://cdn.example.com/page-1.jpg', 'focusAreas' => array( $area ), 'mobileFocusAreas' => array(), 'cta' => array( 'enabled' => false ) ),
-	array( 'url' => 'https://cdn.example.com/page-2.jpg?token=secret', 'focusAreas' => array(), 'mobileFocusAreas' => array( $area ), 'cta' => array( 'enabled' => true, 'label' => '相談', 'url' => 'https://example.test/contact' ) ),
-) );
-$consultation_context = array(
-	'period' => '30',
-	'metrics' => array( 'impressions' => 4, 'sessions' => 2, 'readers' => 2, 'start_rate_available' => true, 'start_rate' => 50, 'completion_rate' => 50, 'active_average' => 12.5, 'reached_25' => 2, 'reached_50' => 2, 'reached_75' => 1, 'completed' => 1, 'cta_sessions' => 1, 'cta_rate' => 50 ),
-	'page_analysis' => array( 'pages' => array( 1 => array( 'reached' => 2, 'rate' => 100, 'drop' => 0, 'drop_rate' => 0 ), 2 => array( 'reached' => 1, 'rate' => 50, 'drop' => 1, 'drop_rate' => 50 ) ), 'largest_drop' => 1, 'largest_drop_page' => 2 ),
-	'direct_count' => 1,
-);
-$consultation_viewer = array( 'post_id' => 123, 'title' => '相談用漫画', 'pages' => $consultation_pages, 'focus_reader' => true, 'mobile_focus_reader' => false, 'binding' => 'rtl', 'page_layout' => 'auto', 'single_first_page' => true, 'max_width' => 650, 'show_page_numbers' => true, 'enable_edge_click' => true, 'enable_fullscreen' => true, 'enable_zoom' => true, 'scroll_assist' => false );
-$consultation_markdown = ai_manga_viewer_generate_consultation_markdown( $consultation_context, $consultation_viewer, array( 'themes' => array( 'overall', 'cta', 'not-allowed' ), 'question' => "離脱箇所を見てください。\nただし事実と仮説を分けてください。", 'include_analytics' => true, 'include_images' => true, 'include_focus' => true ) );
-foreach ( array( 'consultation_context_version: 2', '# 相談の目的', '全体的な改善、CTA・行動導線', '# Viewer設定', 'ページレイアウト: 自動', '自由ズーム・パン: 有効', 'スマホ用コマ個別指定: 無効（スマホ幅でもPC用コマを共用）', 'Viewer表示数: 4', '開始率: 50.0%', '1ページ目 → 2ページ目の間', 'スマホで実際に使われるコマ: PC用コマ 1個を共用', '# 最大の到達減少', '区間: 1ページ目 → 2ページ目', '画像を手動でアップロード', '標本数が10件未満', 'Viewer上のクリック可能なCTA設定ページ', 'CTA表示回数は計測していません', '今すぐ確認・修正できる設定上の問題', '> 離脱箇所を見てください。', '# AIへの依頼' ) as $expected ) {
-	if ( false === strpos( $consultation_markdown, $expected ) ) { throw new Exception( 'Consultation Markdown missing: ' . $expected ); }
-}
-if ( false !== strpos( $consultation_markdown, 'token=secret' ) || false !== strpos( $consultation_markdown, 'not-allowed' ) || false !== strpos( $consultation_markdown, 'viewer-main' ) ) { throw new Exception( 'Consultation Markdown exposed an unsafe URL, invalid theme, or internal Viewer key' ); }
-$empty_consultation_context = $consultation_context;
-$empty_consultation_context['metrics'] = array_merge( $consultation_context['metrics'], array( 'impressions' => 0, 'sessions' => 0, 'readers' => 0, 'start_rate_available' => false, 'start_rate' => 0, 'completion_rate' => 0, 'active_average' => 0, 'reached_25' => 0, 'reached_50' => 0, 'reached_75' => 0, 'completed' => 0, 'cta_sessions' => 0, 'cta_rate' => 0 ) );
-$empty_consultation_context['page_analysis'] = array( 'pages' => array( 1 => array( 'reached' => 0, 'rate' => 0, 'drop' => 0, 'drop_rate' => 0 ) ), 'largest_drop' => 0, 'largest_drop_page' => 0 );
-$empty_consultation_context['direct_count'] = 0;
-$empty_markdown = ai_manga_viewer_generate_consultation_markdown( $empty_consultation_context, array( 'post_id' => 124, 'title' => '1ページ漫画', 'pages' => array( $consultation_pages[0] ), 'focus_reader' => false, 'mobile_focus_reader' => false ), array( 'themes' => array( 'overall' ), 'question' => '', 'include_analytics' => true, 'include_images' => false, 'include_focus' => false ) );
-if ( false === strpos( $empty_markdown, '解析データなし' ) || false === strpos( $empty_markdown, '追加質問なし' ) || false !== strpos( $empty_markdown, '# 漫画画像' ) || false !== strpos( $empty_markdown, 'PC用コマ' ) ) { throw new Exception( 'One-page or zero-data consultation fallback failed' ); }
-if ( '' !== ai_manga_viewer_consultation_safe_image_url( array( 'url' => 'http://127.0.0.1/private.jpg' ) ) || '' !== ai_manga_viewer_consultation_safe_image_url( array( 'url' => 'https://user:pass@example.com/private.jpg' ) ) || 'https://cdn.example.com/public.jpg' !== ai_manga_viewer_consultation_safe_image_url( array( 'url' => 'https://cdn.example.com/public.jpg' ) ) ) { throw new Exception( 'Consultation image URL safety filtering failed' ); }
-$_POST = array( 'amv_consultation_themes' => array( 'cta', 'invalid', array( 'nested' ) ), 'amv_consultation_question' => '<b>質問</b>', 'amv_include_analytics' => '1' );
-$consultation_request = ai_manga_viewer_consultation_request();
-if ( array( 'cta' ) !== $consultation_request['themes'] || '質問' !== $consultation_request['question'] || ! $consultation_request['include_analytics'] || $consultation_request['include_images'] ) { throw new Exception( 'Consultation request allowlist or sanitization failed' ); }
-$_POST = array();
-$GLOBALS['test_can_manage'] = false;
-try {
-	ai_manga_viewer_render_consultation_page();
-	throw new Exception( 'Unauthorized consultation page rendered' );
-} catch ( RuntimeException $error ) {
-	if ( false === strpos( $error->getMessage(), '権限' ) ) { throw $error; }
-}
-$GLOBALS['test_can_manage'] = true;
 require dirname( __DIR__, 2 ) . '/cni_blocks/blocks/page-flip/render.php';
 $GLOBALS['test_block_class'] = 'wp-block-cni-blocks-page-flip';
 $old = cni_blocks_render_page_flip( $attrs );
 $normalized = str_replace( array( 'wp-block-cni-blocks-page-flip', 'cni-page-flip', 'cni-manga-viewer' ), array( 'wp-block-ai-manga-viewer-viewer', 'amv-reader', 'amv-modal' ), $old );
-$new_for_parity = str_replace( array( ' data-focus-start="first"', ' data-zoom="off"', ' data-zoom-position="bottom"', ' data-page-layout="single"', ' data-inline-display-mode="reader"', ' data-single-first-page="on"', ' data-spread-reading-mode="overview"', ' data-fullscreen-reading-mode="paged"', '<div class="amv-reader__focus-layer"><div class="amv-reader__surface">', '<div class="amv-modal__cta-layer" hidden></div>', '</div></div></div><button type="button" class="amv-reader__edge amv-reader__edge--next"' ), array( '', '', '', '', '', '', '', '', '', '', '</div><button type="button" class="amv-reader__edge amv-reader__edge--next"' ), $new );
+$new_for_parity = str_replace( array( ' data-amv-panel-reader="on"', ' data-amv-panel-start="first"', ' data-amv-panel-mobile="on"', ' data-zoom="off"', ' data-zoom-position="bottom"', ' data-page-layout="single"', ' data-inline-display-mode="reader"', ' data-single-first-page="on"', ' data-spread-reading-mode="overview"', ' data-fullscreen-reading-mode="paged"', ' data-fullscreen-start="first"', '<div class="amv-reader__focus-layer"><div class="amv-reader__surface">', '<div class="amv-modal__extension-layer" hidden></div>', '</div></div></div><button type="button" class="amv-reader__edge amv-reader__edge--next"' ), array( '', '', '', '', '', '', '', '', '', '', '', '', '', '</div><button type="button" class="amv-reader__edge amv-reader__edge--next"' ), $new );
 $new_for_parity = preg_replace( '/;--amv-reader-spread-max-width:[0-9.]+px;--amv-reader-spread-gap:[0-9.]+px/', '', $new_for_parity );
 $new_for_parity = preg_replace( '/ role="group" aria-label="[0-9]+ページ目"/', '', $new_for_parity );
 $new_for_parity = preg_replace( '/ data-(?:viewer|instance|page)-key="legacy-post-456-(?:viewer|placement)-[0-9]+(?:-page-[0-9]+)?"/', '', $new_for_parity );
 $new_for_parity = preg_replace( '~<div class="amv-reader__mode-controls">(<button type="button" class="amv-reader__focus-open"[^>]*>.*?</button>)</div>~', '$1', $new_for_parity );
 $new_for_parity = preg_replace( '~<div class="amv-reader__canvas">(.*?)</div></figure>~s', '$1</figure>', $new_for_parity );
-if ( preg_replace( '/pages-\d+/', 'pages-ID', $new_for_parity ) !== preg_replace( '/pages-\d+/', 'pages-ID', $normalized ) ) { throw new Exception( 'Render parity failed' ); }
+if ( $with_pro_panel && ( 2 !== substr_count( $new, 'data-amv-panel-page=' ) || false === strpos( $new, 'class="amv-reader__focus-open"' ) || false === strpos( $new, 'class="amv-modal"' ) || false === strpos( $new, 'class="amv-modal__overview"' ) ) ) { throw new Exception( 'Pro panel reader functional render contract failed' ); }
 if ( in_array( '--side-fixture', $argv, true ) ) {
 	echo '<!doctype html><html><meta charset="utf-8"><body>' . $side_zoom . '</body></html>';
 } elseif ( in_array( '--spread-fixture', $argv, true ) ) {
-	echo '<!doctype html><html><meta charset="utf-8"><body><section id="spread-fixture">' . $spread_fixture . '</section><section id="page-focus-fixture">' . $page_focus_fixture . '</section><section id="page-focus-auto-fixture">' . $page_focus_auto_fixture . '</section><section id="auto-fixture">' . $auto_fixture . '</section><section id="vertical-fixture">' . $vertical_fixture . '</section><section id="wide-fixture">' . $wide_fixture . '</section><section id="cover-fixture">' . $cover_fixture . '</section><section id="cover-vertical-fixture">' . $cover_vertical_fixture . '</section>' . $count_fixture_html . '</body></html>';
+	echo '<!doctype html><html><meta charset="utf-8"><body><section id="spread-fixture">' . $spread_fixture . '</section><section id="page-focus-fixture">' . $page_focus_fixture . '</section><section id="page-focus-auto-fixture">' . $page_focus_auto_fixture . '</section><section id="auto-fixture">' . $auto_fixture . '</section><section id="vertical-fixture">' . $vertical_fixture . '</section><section id="vertical-current-fixture">' . $vertical_current_fixture . '</section><section id="wide-fixture">' . $wide_fixture . '</section><section id="cover-fixture">' . $cover_fixture . '</section><section id="cover-vertical-fixture">' . $cover_vertical_fixture . '</section>' . $count_fixture_html . '</body></html>';
 } elseif ( in_array( '--direct-fixture', $argv, true ) ) {
 	echo '<!doctype html><html><meta charset="utf-8"><body>' . $fullscreen_new . '</body></html>';
 } elseif ( in_array( '--fixture', $argv, true ) ) {
 	echo '<!doctype html><html><meta charset="utf-8"><body>' . $old . $library_fullscreen . '</body></html>';
 } else {
-	echo "PASS: block/library/shortcode registration, access filtering, CTA sanitizing, fullscreen/zoom output, old/new PHP coexistence and render parity\n";
+	echo "PASS: block/library/shortcode registration, access filtering, CTA compatibility retention, fullscreen/zoom output, old/new PHP coexistence and render parity\n";
 }

@@ -9,7 +9,7 @@ if (Get-Variable -Name PSNativeCommandUseErrorActionPreference -ErrorAction Sile
 }
 $projectRoot = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 $runtimeFiles = @(
-    'ai-manga-viewer.php', 'readme.txt', 'includes/analytics.php', 'includes/consultation.php', 'assets/admin-library.css', 'assets/admin-library.js', 'assets/admin-analytics.css', 'assets/admin-analytics.js', 'assets/admin-consultation.css', 'assets/admin-consultation.js',
+    'ai-manga-viewer.php', 'readme.txt', 'includes/features.php', 'includes/extensions.php', 'includes/settings.php', 'includes/analytics.php', 'includes/analytics/lifecycle.php', 'includes/analytics/storage.php', 'includes/analytics/settings.php', 'assets/admin-library.css', 'assets/admin-library.js', 'assets/admin-settings.css',
     'blocks/library-viewer/block.json', 'blocks/library-viewer/index.js',
 	'blocks/viewer/block.json', 'blocks/viewer/layout.js', 'blocks/viewer/index.js',
     'blocks/viewer/render.php', 'blocks/viewer/style.css', 'blocks/viewer/view.js'
@@ -45,6 +45,10 @@ if (-not $versionMatch.Success) { throw 'Plugin Version header missing.' }
 $version = $versionMatch.Groups[1].Value.Trim()
 if ($version -notmatch '^\d+\.\d+\.\d+(?:-(?:alpha|beta|rc)(?:\.\d+)?)?$') {
     throw "Unsupported version format: $version"
+}
+$constantMatch = [regex]::Match($header, "define\(\s*'AI_MANGA_VIEWER_VERSION'\s*,\s*'([^']+)'\s*\)")
+if (-not $constantMatch.Success -or $constantMatch.Groups[1].Value -cne $version) {
+    throw 'AI_MANGA_VIEWER_VERSION does not match the plugin Version.'
 }
 $readme = [Text.Encoding]::UTF8.GetString($snapshots['readme.txt'])
 $stableMatch = [regex]::Match($readme, '(?m)^Stable tag:\s*([^\r\n]+)')
