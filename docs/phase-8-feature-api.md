@@ -10,7 +10,9 @@ Free / Proコード分割より先に、Pro候補機能の利用可否を問い�
 - `ai_manga_viewer_has_feature( $feature_id )`：登録済みIDの現在の可用性を返す。未知ID、空文字、非stringは`false`。
 - `ai_manga_viewer_get_feature_map()`：Registry全体をboolean mapへ変換する。
 
-正式Feature IDは`panel_reader`、`cta`、`analytics`、`ai_consultation`の4個。Phase 8Bではすべて`true`である。
+正式Feature IDは`panel_reader`、`cta`、`analytics`、`ai_consultation`の4個。Core単体ではすべて`false`で、互換性確認済みProがreadyになると`true`になる。
+
+Phase 8D-1以降、個別操作の可否は[Capability API](phase-8-capability-api.md)で判定する。Feature APIはモジュールの可用性を表す契約として継続する。
 
 `ai_manga_viewer_has_feature` filterは、初期可用性とFeature IDを受け取る。licenseやProアドオン判定はまだ接続しない。
 

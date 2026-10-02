@@ -9,7 +9,7 @@ if (Get-Variable -Name PSNativeCommandUseErrorActionPreference -ErrorAction Sile
 }
 $projectRoot = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 $runtimeFiles = @(
-    'ai-manga-viewer.php', 'readme.txt', 'includes/features.php', 'includes/extensions.php', 'includes/settings.php', 'includes/analytics.php', 'includes/analytics/lifecycle.php', 'includes/analytics/storage.php', 'includes/analytics/settings.php', 'assets/admin-library.css', 'assets/admin-library.js', 'assets/admin-settings.css',
+    'ai-manga-viewer.php', 'readme.txt', 'includes/features.php', 'includes/capabilities.php', 'includes/extensions.php', 'includes/settings.php', 'includes/analytics.php', 'includes/analytics/lifecycle.php', 'includes/analytics/storage.php', 'includes/analytics/settings.php', 'assets/admin-library.css', 'assets/admin-library.js', 'assets/admin-settings.css',
     'blocks/library-viewer/block.json', 'blocks/library-viewer/index.js',
 	'blocks/viewer/block.json', 'blocks/viewer/layout.js', 'blocks/viewer/index.js',
     'blocks/viewer/render.php', 'blocks/viewer/style.css', 'blocks/viewer/view.js'

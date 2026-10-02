@@ -3,7 +3,7 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 $root = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 $fixture = Join-Path $PSScriptRoot ('.release-test-' + [guid]::NewGuid().ToString('N'))
-$files = @('ai-manga-viewer.php', 'readme.txt', 'includes/features.php', 'includes/extensions.php', 'includes/settings.php', 'includes/analytics.php', 'includes/analytics/lifecycle.php', 'includes/analytics/storage.php', 'includes/analytics/settings.php', 'assets/admin-library.css', 'assets/admin-library.js', 'assets/admin-settings.css', 'blocks/library-viewer/block.json',
+$files = @('ai-manga-viewer.php', 'readme.txt', 'includes/features.php', 'includes/capabilities.php', 'includes/extensions.php', 'includes/settings.php', 'includes/analytics.php', 'includes/analytics/lifecycle.php', 'includes/analytics/storage.php', 'includes/analytics/settings.php', 'assets/admin-library.css', 'assets/admin-library.js', 'assets/admin-settings.css', 'blocks/library-viewer/block.json',
     'blocks/library-viewer/index.js', 'blocks/viewer/block.json',
     'blocks/viewer/layout.js', 'blocks/viewer/index.js', 'blocks/viewer/view.js', 'blocks/viewer/render.php',
     'blocks/viewer/style.css', 'scripts/build-release.ps1')

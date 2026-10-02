@@ -23,6 +23,7 @@ if ( ! defined( 'AI_MANGA_VIEWER_PLUGIN_FILE' ) ) {
 }
 
 require_once plugin_dir_path( __FILE__ ) . 'includes/features.php';
+require_once plugin_dir_path( __FILE__ ) . 'includes/capabilities.php';
 require_once plugin_dir_path( __FILE__ ) . 'includes/extensions.php';
 require_once plugin_dir_path( __FILE__ ) . 'includes/settings.php';
 require_once plugin_dir_path( __FILE__ ) . 'blocks/viewer/render.php';
@@ -46,9 +47,9 @@ function ai_manga_viewer_register_blocks() {
 		filemtime( $path . 'index.js' )
 	);
 	wp_register_script( 'ai-manga-viewer-view', $url . 'view.js', array( 'ai-manga-viewer-layout' ), filemtime( $path . 'view.js' ), true );
-	$feature_script = ai_manga_viewer_feature_bootstrap_script();
-	wp_add_inline_script( 'ai-manga-viewer-editor', $feature_script, 'before' );
-	wp_add_inline_script( 'ai-manga-viewer-view', $feature_script, 'before' );
+	$bootstrap_script = ai_manga_viewer_feature_bootstrap_script() . ai_manga_viewer_capability_bootstrap_script();
+	wp_add_inline_script( 'ai-manga-viewer-editor', $bootstrap_script, 'before' );
+	wp_add_inline_script( 'ai-manga-viewer-view', $bootstrap_script, 'before' );
 	wp_register_style( 'ai-manga-viewer-style', $url . 'style.css', array(), filemtime( $path . 'style.css' ) );
 	wp_set_script_translations( 'ai-manga-viewer-editor', 'ai-manga-viewer' );
 	register_block_type(
@@ -67,7 +68,7 @@ function ai_manga_viewer_register_blocks() {
 		array( 'wp-api-fetch', 'wp-blocks', 'wp-i18n', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-data' ),
 		filemtime( $library_path . 'index.js' )
 	);
-	wp_add_inline_script( 'ai-manga-viewer-library-editor', $feature_script, 'before' );
+	wp_add_inline_script( 'ai-manga-viewer-library-editor', $bootstrap_script, 'before' );
 	wp_set_script_translations( 'ai-manga-viewer-library-editor', 'ai-manga-viewer' );
 	register_block_type(
 		$library_path,

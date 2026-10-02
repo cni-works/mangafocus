@@ -21,6 +21,7 @@ const html = execFileSync('php', [path.join(__dirname, 'render-smoke.php'), '--s
     });
     await page.setContent(html);
     await page.evaluate(() => {
+      window.aiMangaViewerCapabilities = { analytics: { collection: true } };
       window.aiMangaViewerProAnalytics = { enabled: true, restUrl: 'https://example.test/wp-json/ai-manga-viewer/v1/events' };
       window.__spreadEvents = [];
       document.addEventListener('amv:reader-event', event => window.__spreadEvents.push(event.detail));

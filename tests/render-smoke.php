@@ -112,10 +112,12 @@ $with_pro_cta = in_array( '--pro-cta-fixture', $argv, true );
 $with_pro_panel = in_array( '--pro-panel-fixture', $argv, true );
 if ( $with_pro_cta ) {
 	add_filter( 'ai_manga_viewer_has_feature', function( $available, $feature_id ) { return 'cta' === $feature_id ? true : $available; }, 30, 2 );
+	add_filter( 'ai_manga_viewer_capability_map', function( $map ) { $map['cta']['runtime'] = true; $map['cta']['editor'] = true; return $map; }, 10 );
 	require dirname( __DIR__, 2 ) . '/AI Manga Viewer Pro/includes/modules/cta/renderer.php';
 }
 if ( $with_pro_panel ) {
 	add_filter( 'ai_manga_viewer_has_feature', function( $available, $feature_id ) { return 'panel_reader' === $feature_id ? true : $available; }, 30, 2 );
+	add_filter( 'ai_manga_viewer_capability_map', function( $map ) { $map['panel_reader']['runtime'] = true; $map['panel_reader']['editor'] = true; return $map; }, 10 );
 	require dirname( __DIR__, 2 ) . '/AI Manga Viewer Pro/includes/modules/panel-reader/renderer.php';
 }
 foreach ( $GLOBALS['actions']['init'] as $callback ) { call_user_func( $callback ); }
@@ -132,7 +134,9 @@ $GLOBALS['test_can_edit'] = true;
 if ( ! call_user_func( $GLOBALS['rest_routes']['ai-manga-viewer/v1/library']['permission_callback'] ) ) { throw new Exception( 'Library registration route rejected an authorized editor' ); }
 if ( 3 !== count( $GLOBALS['registered_settings'] ?? array() ) || 'manage_options' !== ( $GLOBALS['submenu_pages']['ai-manga-viewer-analytics']['capability'] ?? '' ) || isset( $GLOBALS['submenu_pages']['ai-manga-viewer-analytics-report'], $GLOBALS['submenu_pages']['ai-manga-viewer-consultation'] ) || 'edit.php?post_type=amv_viewer' !== ( $GLOBALS['submenu_pages']['ai-manga-viewer-analytics']['parent'] ?? '' ) || ( $GLOBALS['actions']['admin_post_ai_manga_viewer_delete_analytics'][0] ?? '' ) !== 'ai_manga_viewer_handle_delete_analytics' ) { throw new Exception( 'Core Analytics lifecycle settings boundary failed' ); }
 $feature_bootstrap = 'window.aiMangaViewerFeatures={"panel_reader":' . ( $with_pro_panel ? 'true' : 'false' ) . ',"cta":' . ( $with_pro_cta ? 'true' : 'false' ) . ',"analytics":false,"ai_consultation":false};';
-if ( 'before' !== ( $GLOBALS['inline_scripts']['ai-manga-viewer-editor']['position'] ?? '' ) || $feature_bootstrap !== ( $GLOBALS['inline_scripts']['ai-manga-viewer-editor']['data'] ?? '' ) || 'before' !== ( $GLOBALS['inline_scripts']['ai-manga-viewer-library-editor']['position'] ?? '' ) || $feature_bootstrap !== ( $GLOBALS['inline_scripts']['ai-manga-viewer-library-editor']['data'] ?? '' ) ) { throw new Exception( 'Editor feature configuration failed' ); }
+$capability_bootstrap = 'window.aiMangaViewerCapabilities={"panel_reader":{"runtime":' . ( $with_pro_panel ? 'true' : 'false' ) . ',"editor":' . ( $with_pro_panel ? 'true' : 'false' ) . '},"cta":{"runtime":' . ( $with_pro_cta ? 'true' : 'false' ) . ',"editor":' . ( $with_pro_cta ? 'true' : 'false' ) . '},"analytics":{"collection":false,"report":false},"ai_consultation":{"admin":false}};';
+$client_bootstrap = $feature_bootstrap . $capability_bootstrap;
+if ( 'before' !== ( $GLOBALS['inline_scripts']['ai-manga-viewer-editor']['position'] ?? '' ) || $client_bootstrap !== ( $GLOBALS['inline_scripts']['ai-manga-viewer-editor']['data'] ?? '' ) || 'before' !== ( $GLOBALS['inline_scripts']['ai-manga-viewer-library-editor']['position'] ?? '' ) || $client_bootstrap !== ( $GLOBALS['inline_scripts']['ai-manga-viewer-library-editor']['data'] ?? '' ) ) { throw new Exception( 'Editor feature/capability configuration failed' ); }
 if ( 'before' !== ( $GLOBALS['inline_scripts']['ai-manga-viewer-view']['position'] ?? '' ) || false === strpos( $GLOBALS['inline_scripts']['ai-manga-viewer-view']['data'] ?? '', $feature_bootstrap ) ) { throw new Exception( 'Frontend feature bootstrap failed' ); }
 if ( isset( $GLOBALS['inline_scripts']['ai-manga-viewer-analytics-transport'] ) || in_array( 'ai-manga-viewer-analytics-transport', $GLOBALS['scripts']['ai-manga-viewer-view'] ?? array(), true ) ) { throw new Exception( 'Pro Analytics transport leaked into Core.' ); }
 $cover_callback = $GLOBALS['rest_fields']['amv_viewer']['amv_cover_url']['get_callback'];

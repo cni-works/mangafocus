@@ -103,6 +103,7 @@ assert.equal(registered['ai-manga-viewer/library-viewer'].save(), null);
       });
       await page.setContent(html);
       await page.evaluate(() => {
+        window.aiMangaViewerCapabilities = { analytics: { collection: true } };
         window.aiMangaViewerProAnalytics = { enabled: null, restUrl: 'https://example.test/wp-json/ai-manga-viewer/v1/events', configUrl: 'https://example.test/wp-json/ai-manga-viewer/v1/config' };
         let fullscreenElement = null;
         Object.defineProperty(document, 'fullscreenElement', { configurable: true, get: () => fullscreenElement });
@@ -383,6 +384,7 @@ assert.equal(registered['ai-manga-viewer/library-viewer'].save(), null);
     const direct = await browser.newPage({ viewport: { width: 1000, height: 800 } });
     await direct.setContent(directHtml);
     await direct.evaluate(() => {
+      window.aiMangaViewerCapabilities = { analytics: { collection: true } };
       window.aiMangaViewerProAnalytics = { enabled: true, restUrl: 'https://example.test/wp-json/ai-manga-viewer/v1/events' };
       window.__amvReaderEvents = [];
       document.addEventListener('amv:reader-event', event => window.__amvReaderEvents.push(event.detail));
@@ -409,6 +411,7 @@ assert.equal(registered['ai-manga-viewer/library-viewer'].save(), null);
     });
     await disabledAnalytics.setContent(html);
     await disabledAnalytics.evaluate(() => {
+      window.aiMangaViewerCapabilities = { analytics: { collection: true } };
       window.aiMangaViewerProAnalytics = { enabled: null, restUrl: 'https://example.test/wp-json/ai-manga-viewer/v1/events', configUrl: 'https://example.test/wp-json/ai-manga-viewer/v1/config' };
       window.__disabledReaderEvents = [];
       document.addEventListener('amv:reader-event', event => window.__disabledReaderEvents.push(event.detail));
@@ -429,6 +432,7 @@ assert.equal(registered['ai-manga-viewer/library-viewer'].save(), null);
     });
     await impressionPage.setContent(html);
     await impressionPage.evaluate(() => {
+      window.aiMangaViewerCapabilities = { analytics: { collection: true } };
       window.aiMangaViewerProAnalytics = { enabled: true, restUrl: 'https://example.test/wp-json/ai-manga-viewer/v1/events' };
       document.body.insertAdjacentHTML('afterbegin', '<div style="height:1800px"></div>');
       window.__impressionEvents = [];
@@ -454,6 +458,7 @@ assert.equal(registered['ai-manga-viewer/library-viewer'].save(), null);
       return route.fulfill({ status: 200, contentType: 'text/html', body: html });
     });
     await resume.addInitScript(() => {
+      window.aiMangaViewerCapabilities = { analytics: { collection: true } };
       window.aiMangaViewerProAnalytics = { enabled: null, restUrl: 'https://example.test/wp-json/ai-manga-viewer/v1/events', configUrl: 'https://example.test/wp-json/ai-manga-viewer/v1/config' };
       window.__amvReaderEvents = [];
       document.addEventListener('amv:reader-event', event => window.__amvReaderEvents.push(event.detail));
