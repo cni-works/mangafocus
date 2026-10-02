@@ -214,7 +214,12 @@ function ai_manga_viewer_render_viewer( $attributes ) {
 		$cover_url   = $cover_url ?: ai_manga_viewer_viewer_image_url( $pages[0] );
 		$viewer_title = sanitize_text_field( $attributes['_viewerTitle'] ?? '' );
 		$cover_alt   = '' !== $viewer_title ? $viewer_title : $pages[0]['alt'];
-		$button_label = '' !== $viewer_title ? sprintf( __( '%sを全画面で読む', 'ai-manga-viewer' ), $viewer_title ) : __( '漫画を全画面で読む', 'ai-manga-viewer' );
+		if ( '' !== $viewer_title ) {
+			/* translators: %s: manga title. */
+			$button_label = sprintf( __( '%sを全画面で読む', 'ai-manga-viewer' ), $viewer_title );
+		} else {
+			$button_label = __( '漫画を全画面で読む', 'ai-manga-viewer' );
+		}
 		$output .= '<div class="amv-reader__cover-launcher">';
 		if ( $cover_url ) {
 			$output .= '<img class="amv-reader__cover-image" src="' . esc_url( $cover_url ) . '" alt="' . esc_attr( $cover_alt ) . '" loading="eager" decoding="async" fetchpriority="high" />';
@@ -231,7 +236,9 @@ function ai_manga_viewer_render_viewer( $attributes ) {
 	$output .= '<div class="amv-reader__surface">';
 	foreach ( $pages as $index => $page ) {
 		list( $image_width, $image_height ) = ai_manga_viewer_page_dimensions( $page );
-		$output .= '<figure class="amv-reader__page' . ( 0 === $index ? ' is-active' : '' ) . '" data-page-index="' . esc_attr( (string) $index ) . '"' . ( '' !== $page['pageKey'] ? ' data-page-key="' . esc_attr( $page['pageKey'] ) . '"' : '' ) . ( $image_width && $image_height ? ' data-image-width="' . esc_attr( (string) $image_width ) . '" data-image-height="' . esc_attr( (string) $image_height ) . '"' : '' ) . ' data-viewer-src="' . esc_url( ai_manga_viewer_viewer_image_url( $page ) ) . '" role="group" aria-label="' . esc_attr( sprintf( __( '%dページ目', 'ai-manga-viewer' ), $index + 1 ) ) . '"><div class="amv-reader__canvas">' . ai_manga_viewer_image( $page, $index ) . ai_manga_viewer_extension_page_overlay( $page, $index, $extension_context ) . '</div></figure>';
+		/* translators: %d: one-based page number. */
+		$page_label = sprintf( __( '%dページ目', 'ai-manga-viewer' ), $index + 1 );
+		$output .= '<figure class="amv-reader__page' . ( 0 === $index ? ' is-active' : '' ) . '" data-page-index="' . esc_attr( (string) $index ) . '"' . ( '' !== $page['pageKey'] ? ' data-page-key="' . esc_attr( $page['pageKey'] ) . '"' : '' ) . ( $image_width && $image_height ? ' data-image-width="' . esc_attr( (string) $image_width ) . '" data-image-height="' . esc_attr( (string) $image_height ) . '"' : '' ) . ' data-viewer-src="' . esc_url( ai_manga_viewer_viewer_image_url( $page ) ) . '" role="group" aria-label="' . esc_attr( $page_label ) . '"><div class="amv-reader__canvas">' . ai_manga_viewer_image( $page, $index ) . ai_manga_viewer_extension_page_overlay( $page, $index, $extension_context ) . '</div></figure>';
 	}
 	$output .= '</div>';
 	$output .= '</div>';

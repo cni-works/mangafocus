@@ -79,6 +79,11 @@
 	background: #edfaef;
 }
 
+.amv-settings .amv-settings__status.is-limited {
+	color: #6e4b00;
+	background: #fff4ce;
+}
+
 .amv-settings .amv-settings__status.is-unavailable {
 	color: #50575e;
 	background: #f0f0f1;

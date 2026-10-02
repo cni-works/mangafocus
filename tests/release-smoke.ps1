@@ -50,6 +50,12 @@ try {
     [IO.File]::WriteAllBytes($js, $jsBytes)
 
     & $builder -Force | Out-Null
+    $firstRebuildHash = (Get-FileHash -LiteralPath $zip -Algorithm SHA256).Hash
+    & $builder -Force | Out-Null
+    $secondRebuildHash = (Get-FileHash -LiteralPath $zip -Algorithm SHA256).Hash
+    if ($firstRebuildHash -cne $secondRebuildHash) {
+        throw 'Consecutive builds must produce the same ZIP hash.'
+    }
     $archive = [IO.Compression.ZipFile]::OpenRead($zip)
     try {
         $expected = @($files | Where-Object { $_ -notlike 'scripts/*' } | ForEach-Object { 'ai-manga-viewer/' + $_ })

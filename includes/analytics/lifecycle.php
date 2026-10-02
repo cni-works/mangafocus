@@ -143,9 +143,12 @@ function ai_manga_viewer_cleanup_analytics_data() {
 	$tables = ai_manga_viewer_analytics_tables();
 	$days   = (int) ai_manga_viewer_sanitize_retention_days( get_option( 'ai_manga_viewer_analytics_retention_days', '90' ) );
 	$cutoff = gmdate( 'Y-m-d H:i:s', time() - DAY_IN_SECONDS * $days );
-	$wpdb->query( $wpdb->prepare( "DELETE FROM {$tables['events']} WHERE received_at < %s", $cutoff ) );
-	$wpdb->query( $wpdb->prepare( "DELETE FROM {$tables['reaches']} WHERE first_reached_at < %s", $cutoff ) );
-	$wpdb->query( $wpdb->prepare( "DELETE FROM {$tables['sessions']} WHERE last_activity_at < %s", $cutoff ) );
+	// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Retention cleanup targets plugin-owned event rows; cached reads are not used.
+	$wpdb->query( $wpdb->prepare( 'DELETE FROM %i WHERE received_at < %s', $tables['events'], $cutoff ) );
+	// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Retention cleanup targets plugin-owned reach rows; cached reads are not used.
+	$wpdb->query( $wpdb->prepare( 'DELETE FROM %i WHERE first_reached_at < %s', $tables['reaches'], $cutoff ) );
+	// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Retention cleanup targets plugin-owned session rows; cached reads are not used.
+	$wpdb->query( $wpdb->prepare( 'DELETE FROM %i WHERE last_activity_at < %s', $tables['sessions'], $cutoff ) );
 }
 add_action( 'ai_manga_viewer_analytics_daily_cleanup', 'ai_manga_viewer_cleanup_analytics_data' );
 
@@ -157,7 +160,8 @@ function ai_manga_viewer_uninstall_analytics() {
 	}
 	global $wpdb;
 	foreach ( array_reverse( ai_manga_viewer_analytics_tables() ) as $table ) {
-		$wpdb->query( "DROP TABLE IF EXISTS $table" );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.DirectDatabaseQuery.SchemaChange -- Explicit uninstall opt-in requires dropping the plugin-owned Analytics tables.
+		$wpdb->query( $wpdb->prepare( 'DROP TABLE IF EXISTS %i', $table ) );
 	}
 	delete_option( 'ai_manga_viewer_analytics_enabled' );
 	delete_option( 'ai_manga_viewer_analytics_retention_days' );

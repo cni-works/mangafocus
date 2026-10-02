@@ -7,10 +7,19 @@ location, separate from the plugin runtime package:
 - `icon-256x256.png`
 - `banner-772x250.png`
 - `banner-1544x500.png`
+- `screenshot-1.jpg`: block editor page setup
+- `screenshot-2.jpg`: standard single-page view
+- `screenshot-3.jpg`: spread view
+- `screenshot-4.jpg`: fullscreen view
+- `screenshot-5.jpg`: vertical reading view
+- `screenshot-6.jpg`: Manga Library list
 
 `banner-772x250.png` is a lossless PNG conversion of the supplied
 `branding/source/banner-772x250.jpg`. The other three public candidates retain
 the supplied PNG bytes.
+
+The six screenshot files retain the supplied JPEG bytes. Their lowercase
+filenames match the WordPress.org screenshot numbering used by `readme.txt`.
 
 The Core release script uses an explicit runtime allowlist. Do not add this
 directory or `branding/` to that allowlist.

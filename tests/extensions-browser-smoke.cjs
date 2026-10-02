@@ -81,6 +81,10 @@ const html = execFileSync('php', [path.join(__dirname, 'render-smoke.php'), '--s
     await page.route('https://example.test/**', route => route.fulfill({ contentType: 'image/svg+xml', body: '<svg xmlns="http://www.w3.org/2000/svg" width="600" height="900"><rect width="100%" height="100%" fill="#ddd"/></svg>' }));
     await page.setContent(html);
     await page.evaluate(() => {
+      window.wp = { i18n: {
+        __: text => ({ '次のページ': 'Translated next page', '全画面を終了': 'Translated exit fullscreen' }[text] || text),
+        sprintf: (format, ...values) => { let next = 0; return format.replace(/%(?:(\d+)\$)?d/g, (match, position) => String(values[position ? Number(position) - 1 : next++])); }
+      } };
       window.__extensionEvents = [];
       ['amv:viewer-ready', 'amv:viewer-viewchange', 'amv:viewer-fullscreenchange', 'amv:viewer-modechange', 'amv:viewer-interaction'].forEach(name => document.addEventListener(name, event => window.__extensionEvents.push({ name, detail: event.detail })));
       let fullscreenElement = null;
@@ -98,6 +102,7 @@ const html = execFileSync('php', [path.join(__dirname, 'render-smoke.php'), '--s
       const spread = window.aiMangaViewer.getInstance(spreadRoot);
       const sameSpread = window.aiMangaViewer.getInstance('spread-instance');
       const auto = window.aiMangaViewer.getInstance('auto-instance');
+      const translatedNextLabel = spreadRoot.querySelector('.amv-reader__edge--next').getAttribute('aria-label');
       const fixtureInstances = ['page-focus-instance', 'vertical-instance', 'vertical-current-instance', 'cover-instance'].map(key => !!window.aiMangaViewer.getInstance(key));
       const initial = spread.getState();
       const invalid = spread.goToPage(99);
@@ -110,6 +115,7 @@ const html = execFileSync('php', [path.join(__dirname, 'render-smoke.php'), '--s
       const opened = spread.openFullscreen();
       await new Promise(resolve => setTimeout(resolve, 20));
       const fullscreen = spread.isFullscreen();
+      const translatedFullscreenLabel = spreadRoot.querySelector('.amv-reader__fullscreen').textContent;
       const closed = spread.closeFullscreen();
       await new Promise(resolve => setTimeout(resolve, 20));
       autoRoot.remove();
@@ -117,6 +123,8 @@ const html = execFileSync('php', [path.join(__dirname, 'render-smoke.php'), '--s
         version: window.aiMangaViewer.extensionApiVersion,
         sameSpread: spread === sameSpread,
         separate: spread !== auto,
+        translatedNextLabel,
+        translatedFullscreenLabel,
         fixtureInstances,
         removedInstance: window.aiMangaViewer.getInstance('auto-instance'),
         missing: window.aiMangaViewer.getInstance('missing-instance'),
@@ -141,6 +149,8 @@ const html = execFileSync('php', [path.join(__dirname, 'render-smoke.php'), '--s
     assert.equal(result.version, 1);
     assert.equal(result.sameSpread, true);
     assert.equal(result.separate, true);
+    assert.equal(result.translatedNextLabel, 'Translated next page');
+    assert.equal(result.translatedFullscreenLabel, 'Translated exit fullscreen');
     assert.deepEqual(result.fixtureInstances, [true, true, true, true]);
     assert.equal(result.removedInstance, null);
     assert.equal(result.missing, null);

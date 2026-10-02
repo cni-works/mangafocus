@@ -2,11 +2,12 @@
 /**
  * Plugin Name: AI Manga Viewer
  * Description: AI Manga Viewer – Manga Reader for WordPress / WordPress用AI漫画ビューアー
- * Version: 0.3.0-alpha
+ * Version: 0.3.0
  * Requires at least: 6.3
  * Requires PHP: 7.4
  * Author: CNI
  * License: GPLv2 or later
+ * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: ai-manga-viewer
  */
 
@@ -15,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( ! defined( 'AI_MANGA_VIEWER_VERSION' ) ) {
-	define( 'AI_MANGA_VIEWER_VERSION', '0.3.0-alpha' );
+	define( 'AI_MANGA_VIEWER_VERSION', '0.3.0' );
 }
 
 if ( ! defined( 'AI_MANGA_VIEWER_PLUGIN_FILE' ) ) {
@@ -46,12 +47,13 @@ function ai_manga_viewer_register_blocks() {
 		array( 'ai-manga-viewer-layout', 'wp-api-fetch', 'wp-blocks', 'wp-i18n', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-data', 'wp-hooks' ),
 		filemtime( $path . 'index.js' )
 	);
-	wp_register_script( 'ai-manga-viewer-view', $url . 'view.js', array( 'ai-manga-viewer-layout' ), filemtime( $path . 'view.js' ), true );
+	wp_register_script( 'ai-manga-viewer-view', $url . 'view.js', array( 'ai-manga-viewer-layout', 'wp-i18n' ), filemtime( $path . 'view.js' ), true );
 	$bootstrap_script = ai_manga_viewer_feature_bootstrap_script() . ai_manga_viewer_capability_bootstrap_script();
 	wp_add_inline_script( 'ai-manga-viewer-editor', $bootstrap_script, 'before' );
 	wp_add_inline_script( 'ai-manga-viewer-view', $bootstrap_script, 'before' );
 	wp_register_style( 'ai-manga-viewer-style', $url . 'style.css', array(), filemtime( $path . 'style.css' ) );
 	wp_set_script_translations( 'ai-manga-viewer-editor', 'ai-manga-viewer' );
+	wp_set_script_translations( 'ai-manga-viewer-view', 'ai-manga-viewer' );
 	register_block_type(
 		$path,
 		array(
@@ -296,7 +298,9 @@ function ai_manga_viewer_library_column( $column, $post_id ) {
 			),
 			admin_url( 'edit.php' )
 		);
-		echo '<div class="amv-library-meta"><span class="amv-library-badge amv-library-badge--status is-' . esc_attr( sanitize_html_class( $status_name ) ) . '">' . esc_html( $status ? $status->label : $status_name ) . '</span><span class="amv-library-badge">' . esc_html( sprintf( _n( '%sページ', '%sページ', $page_count, 'ai-manga-viewer' ), number_format_i18n( $page_count ) ) ) . '</span><span class="amv-library-meta__id">' . esc_html__( 'Viewer ID:', 'ai-manga-viewer' ) . ' ' . esc_html( (string) absint( $post_id ) ) . '</span><span class="amv-library-meta__modified">' . esc_html__( '更新:', 'ai-manga-viewer' ) . ' ' . ( $modified ? esc_html( $modified ) : '<span aria-hidden="true">—</span>' ) . '</span></div>';
+		/* translators: %s: number of pages in the manga. */
+		$page_count_label = sprintf( _n( '%sページ', '%sページ', $page_count, 'ai-manga-viewer' ), number_format_i18n( $page_count ) );
+		echo '<div class="amv-library-meta"><span class="amv-library-badge amv-library-badge--status is-' . esc_attr( sanitize_html_class( $status_name ) ) . '">' . esc_html( $status ? $status->label : $status_name ) . '</span><span class="amv-library-badge">' . esc_html( $page_count_label ) . '</span><span class="amv-library-meta__id">' . esc_html__( 'Viewer ID:', 'ai-manga-viewer' ) . ' ' . esc_html( (string) absint( $post_id ) ) . '</span><span class="amv-library-meta__modified">' . esc_html__( '更新:', 'ai-manga-viewer' ) . ' ' . ( $modified ? esc_html( $modified ) : '<span aria-hidden="true">—</span>' ) . '</span></div>';
 		echo '<div class="amv-library-primary-actions">';
 		if ( $edit_url ) {
 			echo '<a class="button button-small" href="' . esc_url( $edit_url ) . '">' . esc_html__( '編集', 'ai-manga-viewer' ) . '</a>';
@@ -314,7 +318,9 @@ function ai_manga_viewer_library_column( $column, $post_id ) {
 		} else {
 			echo '<span class="amv-library-analytics-state">' . esc_html__( '漫画解析は現在利用できません', 'ai-manga-viewer' ) . '</span>';
 		}
-		echo '<span class="amv-library-shortcode"><button type="button" class="amv-library-shortcode__copy" data-shortcode="' . esc_attr( $shortcode ) . '" data-default-label="' . esc_attr__( 'コピー', 'ai-manga-viewer' ) . '" data-copied-label="' . esc_attr__( 'コピーしました', 'ai-manga-viewer' ) . '" data-success-message="' . esc_attr__( 'ショートコードをコピーしました。', 'ai-manga-viewer' ) . '" data-error-message="' . esc_attr__( 'コピーできませんでした。', 'ai-manga-viewer' ) . '" aria-label="' . esc_attr( sprintf( __( 'ショートコード %s をコピー', 'ai-manga-viewer' ), $shortcode ) ) . '" title="' . esc_attr__( 'クリックしてショートコードをコピー', 'ai-manga-viewer' ) . '"><code class="amv-library-shortcode__code">' . esc_html( $shortcode ) . '</code><span class="amv-library-shortcode__feedback" aria-hidden="true">' . esc_html__( 'コピー', 'ai-manga-viewer' ) . '</span></button><span class="screen-reader-text amv-library-shortcode__status" aria-live="polite"></span></span></div>';
+		/* translators: %s: shortcode copied by the button. */
+		$shortcode_aria_label = sprintf( __( 'ショートコード %s をコピー', 'ai-manga-viewer' ), $shortcode );
+		echo '<span class="amv-library-shortcode"><button type="button" class="amv-library-shortcode__copy" data-shortcode="' . esc_attr( $shortcode ) . '" data-default-label="' . esc_attr__( 'コピー', 'ai-manga-viewer' ) . '" data-copied-label="' . esc_attr__( 'コピーしました', 'ai-manga-viewer' ) . '" data-success-message="' . esc_attr__( 'ショートコードをコピーしました。', 'ai-manga-viewer' ) . '" data-error-message="' . esc_attr__( 'コピーできませんでした。', 'ai-manga-viewer' ) . '" aria-label="' . esc_attr( $shortcode_aria_label ) . '" title="' . esc_attr__( 'クリックしてショートコードをコピー', 'ai-manga-viewer' ) . '"><code class="amv-library-shortcode__code">' . esc_html( $shortcode ) . '</code><span class="amv-library-shortcode__feedback" aria-hidden="true">' . esc_html__( 'コピー', 'ai-manga-viewer' ) . '</span></button><span class="screen-reader-text amv-library-shortcode__status" aria-live="polite"></span></span></div>';
 		return;
 	}
 	if ( 'amv_modified' === $column ) {
@@ -334,10 +340,10 @@ function ai_manga_viewer_library_column( $column, $post_id ) {
 	$edit_url = get_edit_post_link( $post_id, 'raw' );
 	$content  = $cover ? wp_kses_post( $cover ) : '<span class="amv-library-cover-placeholder">' . esc_html__( '表紙未設定', 'ai-manga-viewer' ) . '</span>';
 	if ( $edit_url ) {
-		echo '<a class="amv-library-cover-link" href="' . esc_url( $edit_url ) . '" aria-label="' . esc_attr__( 'この漫画を編集', 'ai-manga-viewer' ) . '">' . $content . '</a>';
+		echo '<a class="amv-library-cover-link" href="' . esc_url( $edit_url ) . '" aria-label="' . esc_attr__( 'この漫画を編集', 'ai-manga-viewer' ) . '">' . wp_kses_post( $content ) . '</a>';
 		return;
 	}
-	echo $content;
+	echo wp_kses_post( $content );
 }
 add_action( 'manage_amv_viewer_posts_custom_column', 'ai_manga_viewer_library_column', 10, 2 );
 
@@ -530,6 +536,38 @@ function ai_manga_viewer_register_library_routes() {
 		'methods'             => WP_REST_Server::CREATABLE,
 		'callback'            => 'ai_manga_viewer_register_direct_viewer',
 		'permission_callback' => function() { return current_user_can( 'edit_posts' ); },
+		'args'                => array(
+			'title'             => array(
+				'type'              => 'string',
+				'required'          => true,
+				'validate_callback' => function( $value ) { return is_string( $value ) && '' !== trim( $value ); },
+				'sanitize_callback' => 'sanitize_text_field',
+			),
+			'sourcePostId'      => array(
+				'type'              => 'integer',
+				'default'           => 0,
+				'validate_callback' => function( $value ) { return ( is_int( $value ) && 0 <= $value ) || ( is_string( $value ) && 1 === preg_match( '/^[0-9]+$/D', $value ) ); },
+				'sanitize_callback' => 'absint',
+			),
+			'sourceInstanceKey' => array(
+				'type'              => 'string',
+				'default'           => '',
+				'validate_callback' => function( $value ) { return is_string( $value ); },
+				'sanitize_callback' => 'sanitize_key',
+			),
+			'existingViewerId'  => array(
+				'type'              => 'integer',
+				'default'           => 0,
+				'validate_callback' => function( $value ) { return ( is_int( $value ) && 0 <= $value ) || ( is_string( $value ) && 1 === preg_match( '/^[0-9]+$/D', $value ) ); },
+				'sanitize_callback' => 'absint',
+			),
+			'attributes'        => array(
+				'type'              => 'object',
+				'required'          => true,
+				'validate_callback' => function( $value ) { return is_array( $value ); },
+				'sanitize_callback' => 'ai_manga_viewer_sanitize_library_attributes',
+			),
+		),
 	) );
 }
 add_action( 'rest_api_init', 'ai_manga_viewer_register_library_routes' );

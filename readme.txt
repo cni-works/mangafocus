@@ -1,60 +1,144 @@
 === AI Manga Viewer ===
+Contributors: cniworks
+Tags: manga, comic, viewer, reader, gutenberg
 Requires at least: 6.3
+Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.3.0-alpha
+Stable tag: 0.3.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-AI Manga Viewer – Manga Reader for WordPress
-AI Manga Viewer – WordPress用AI漫画ビューアー
-開発元: CNI
+Display image-based comics in WordPress with page turns, spreads, fullscreen reading, vertical scrolling, zoom, and reusable Manga Library entries.
 
 == Description ==
-AI漫画、通常の漫画、企業紹介漫画や冊子をページ送りとコマ読みで表示します。
-画像の追加・並び替え、右綴じ・左綴じ、1ページ／見開き／自動レイアウト、見開きを1ページずつ大きく読む表示、全画面表示、自由ズームと移動、PC/スマホ別コマ設定、専用コマビューアー、ページCTA、漫画ライブラリからの再利用に対応。
-開発α版。CNI Blocksを必要とせず、既存の漫画ビューアーと共存できます。
-旧ブロックの自動変換、Free/Pro制限、解析の任意期間、外部AI API、販売・更新機構はありません。漫画解析は開発中で、収集は既定OFFです。レポートは今日・昨日・7日・30日・90日・全期間から選択できます。AI相談資料は外部へ自動送信せず、選択した漫画と集計結果をMarkdownへ整理してコピーします。
+
+= About AI Manga Viewer =
+
+AI Manga Viewer is a WordPress plugin for publishing comics made from image files. It provides page-by-page reading, two-page spreads, fullscreen viewing, vertical scrolling, zoom and pan controls, and reusable Manga Library entries.
+
+The plugin does not generate images and does not send content to an AI API. It can display AI-assisted artwork, conventionally created comics, company introductions, brochures, and other image-based publications.
+
+= Free features =
+
+* A direct AI Manga Viewer block for posts and pages
+* Single-page, two-page spread, and responsive automatic layouts
+* Optional standalone cover pages and standalone handling for landscape images
+* Right-to-left and left-to-right binding
+* Fullscreen page navigation and vertical scrolling
+* A fullscreen mode that focuses on one page at a time within a spread
+* Zoom, pan, keyboard, swipe, and page-edge controls
+* A cover launcher that shows only the cover and a reading button in the page
+* Reuse through Manga Library, the Registered Viewer block, and shortcodes
+
+The one-page-at-a-time spread mode focuses on each complete page in reading order. It is separate from the panel reader planned for the Pro add-on, which uses author-defined panel regions.
+
+= Creating and reusing comics =
+
+Direct Viewer places an AI Manga Viewer block directly in a post or page and stores the comic configuration with that block.
+
+Manga Library stores a comic as a reusable entry. Select it with the Registered Viewer block or display it with a shortcode:
+
+`[ai_manga_viewer id="123"]`
+
+Registering a Direct Viewer in Manga Library creates an independent copy of its current configuration. Later edits are not synchronized automatically.
+
+= Layout and reading modes =
+
+Choose a single-page, spread, or automatic layout. Spread and automatic layouts can show the first page as a standalone cover and can keep landscape images on their own page.
+
+Fullscreen reading supports normal page navigation or continuous vertical scrolling. Spread-based comics can also focus on one complete page at a time while fullscreen.
+
+= Pro add-on =
+
+The Core plugin can be extended by a compatible Pro add-on. Planned Pro features include an author-defined panel reader, calls to action, analytics reports, and AI consultation material. These features are not included in the Free/Core plugin.
+
+When the Pro add-on is inactive, published content falls back to the regular Free Viewer. Saved Pro settings remain stored so that a compatible add-on can use them again later.
+
+= Data and privacy =
+
+Free/Core does not collect reader events on the public site. It does not send telemetry, use an external analytics service, depend on a CDN, or automatically send content to an external API.
+
+Analytics is disabled by default. If Pro Analytics is used, its data is designed to remain in the local database of the WordPress site. Administrators can configure the retention period and delete stored analytics data.
+
+Core contains the local Analytics table lifecycle, retention schedule, and deletion settings required for compatibility and stored-data management. Without the Pro add-on, no new reader events are collected.
+
+If a site owner uses an image URL hosted on another site, the reader's browser connects to that image host to retrieve the file.
 
 == Installation ==
-1. このプラグインの本体とblocksフォルダをwp-content/plugins/ai-manga-viewerへ配置します。
-2. 検証用WordPressでAI Manga Viewerを有効化します。
-3. ブロックエディターのAI Manga Viewerカテゴリから同名ブロックを追加します。
-4. メディアライブラリから画像を選択します。コマ読みはブロック設定で有効化します。
-5. 漫画ライブラリへ登録した漫画は、Classic Editor等で `[ai_manga_viewer id="123"]` のようにViewer IDを指定して表示できます。同じ投稿へ同じViewerを複数置く場合は、将来の解析で設置場所を分けられるよう `[ai_manga_viewer id="123" instance="sidebar"]` のように一意な設置キーを指定できます。
-6. Gutenbergでは「登録済みViewer」ブロックを追加し、表紙とタイトルから1冊選択できます。
-7. 漫画解析はManga Library登録済み漫画だけが対象で、初期状態はOFFです。開発中の保存基盤を検証する場合だけ「漫画ライブラリ → 解析設定」で有効化し、保存期間を設定します。
-8. 解析ON/OFFはキャッシュ対象外の設定APIから取得するため、ページキャッシュに古い設定値を固定しません。
+
+1. AI Manga Viewerをインストールし、有効化します。
+2. 投稿または固定ページで「AI Manga Viewer」ブロックを追加します。
+3. 「ページ画像を選択」から漫画画像を読む順に登録します。
+4. 1ページ、見開き、自動、綴じ方向、全画面、縦スクロール、ズームなどを設定します。
+5. プレビューでPCとスマートフォンの表示を確認して公開します。
+
+同じ漫画を複数の場所で利用する場合は、Direct Viewerの「漫画ライブラリに登録」からManga Libraryへコピーします。その後、投稿へ「登録済みViewer」ブロックを追加して作品を選ぶか、Manga Library一覧のショートコードを使用します。
+
+== Frequently Asked Questions ==
+
+= AI Manga ViewerはAIで漫画を生成しますか？ =
+
+いいえ。漫画画像をWordPress上で読みやすく表示するViewerです。画像生成機能はありません。
+
+= 通常の漫画画像にも使えますか？ =
+
+はい。AIで制作した画像に限らず、通常の漫画、企業紹介漫画、冊子などの画像にも利用できます。
+
+= Direct ViewerとManga Libraryの違いは何ですか？ =
+
+Direct Viewerは投稿や固定ページ内で直接作成します。Manga Libraryは漫画を独立した作品として管理し、登録済みViewerブロックやショートコードから複数箇所で再利用します。
+
+= Direct ViewerをManga Libraryへ登録した後も自動同期しますか？ =
+
+いいえ。登録時に独立したコピーを作成します。登録後はDirect ViewerとManga Library作品を別々に管理します。
+
+= 見開きと「1ページずつ大きく読む」の違いは何ですか？ =
+
+見開きは2ページを同時に表示します。「1ページずつ大きく読む」は、見開きの構造を維持しながら、全画面で片方のページ全体へ順番に注目する表示です。コマ枠を使うProのコマ読みとは異なります。
+
+= Free版だけで使えますか？ =
+
+はい。ページ送り、見開き、自動切替、全画面、縦スクロール、ズーム、Manga Library、登録済みViewer、ショートコードなどをFree/Core単体で利用できます。
+
+= Pro Add-onを無効化すると漫画が表示されなくなりますか？ =
+
+通常のFree Viewerとして表示を継続します。保存済みのPro設定は削除されず、互換性のあるPro Add-onを再び有効化した場合に再利用できます。
+
+= 解析データは外部サービスへ送信されますか？ =
+
+Free/Coreは外部Analyticsサービスへ読者データを送信しません。Pro Analyticsを利用する場合も、データはWordPressサイトのローカルデータベースへ保存する設計です。解析は既定でOFFです。
+
+= アンインストールすると漫画データは消えますか？ =
+
+Manga Library投稿と投稿メタデータは自動削除しません。Analyticsテーブルと設定も既定では保持します。「アンインストール時に削除」を有効にした場合だけAnalyticsテーブルと設定を削除します。定期削除スケジュールはアンインストール時に解除されます。
+
+== Screenshots ==
+
+1. ブロックエディターで漫画ページを設定
+2. 通常の1ページ表示
+3. 見開き表示
+4. 全画面でページ送り
+5. 全画面で縦スクロール
+6. Manga Library
 
 == Changelog ==
-= 0.3.0-alpha =
-Manga Library、登録済みViewerブロック、ショートコード、CTA、漫画解析、Viewer表示計測、AI相談資料の基盤を統合。
-1ページ・見開き・自動レイアウトと、見開き全体表示・pageFocus読書モードを追加。
-Manga Libraryの表紙管理、管理一覧、解析導線と、通常・全画面・専用Viewer間の閲覧位置同期を改善。
+
+= 0.3.0 =
+
+* Manga Library、登録済みViewerブロック、ショートコードを追加。
+* 1ページ、見開き、自動切替、先頭ページ単独表示、横長ページ単独表示を追加。
+* 全画面の「1ページずつ大きく読む」表示、縦スクロール、ズーム、表紙から全画面で読む表示を追加。
+* Manga Libraryの表紙管理、管理一覧、Direct Viewerからのコピー登録を追加。
+* Feature API、Capability API、Extension APIと、Pro設定を保持する互換schemaを追加。
+* Analyticsのローカル保存・retention・cleanup基盤を追加。Free/Core単体にはcollectorとreportを含めない構成へ分離。
+* WordPress.org申請に向けてfrontend i18n、REST引数定義、readme、再現可能なRelease buildを整備。
 
 = 0.2.0-alpha =
-左右綴じに応じたページ送り・スワイプ・キー操作とページめくり表現を修正。
-専用ビューアーの開始位置設定、全画面表示、全画面内の操作案内と最終ページからの終了動作を追加。
-読者が操作する自由ズーム、ピンチ操作、拡大中の画像移動を追加。
-1ページ・見開き・自動レイアウトと、見開き構造を保ったまま論理ページ順に1ページずつ大きく読むpageFocusを追加。既存Viewerは従来の1ページ表示または見開き全体表示を維持。
-ズーム操作の下・右・左配置と、拡大解除を兼ねた小型ページ送りを追加。PCの左右配置は漫画外、スマホ・タブレットではピンチ操作を優先。
-漫画ライブラリの登録・編集基盤と、表紙を中心にしたカード型管理一覧を追加。
-漫画ライブラリの表紙から登録漫画の編集画面を開ける操作を追加。
-漫画ライブラリ一覧を、4:3の表紙全体とViewer情報を横に並べるPC 2カラム表示へ変更。解析リンクとコンパクトなショートコードコピーを追加。
-投稿内へ直接配置したViewerを、元ブロックを残したまま漫画ライブラリの下書きへコピーする登録機能を追加。登録後は編集、ショートコード取得、登録済みViewerブロックへの明示的な切替に対応。
-登録済み漫画をViewer IDで1冊表示するショートコードと、管理一覧からのコピー操作を追加。
-漫画ライブラリから表紙を見て1冊選び、選択内容と公開表示を確認できる「登録済みViewer」ブロックを追加。
-任意ページへ文字または画像のCTAを配置し、リンク先・別タブ・下部の左右中央を設定する基盤を追加。
-漫画・設置場所・ページ・CTAの識別キーと、既定OFFの読書イベントREST・保存基盤、有効閲覧時間、HMAC化した匿名読者と30分以内の再開判定、7・30・90日の最小解析画面を追加。
-解析対象をManga Library登録済みViewerに限定。直接配置Viewerの表示機能と既存解析データは維持し、新規イベント送信と管理画面集計から除外。
-管理者向けの解析ON/OFF、詳細データ保存期間、日次削除、全データ削除、アンインストール時削除設定を追加。
-漫画解析へ日別の推定読者・読書開始グラフと、漫画別のページ到達率表示を追加。
-日別グラフのクリック詳細、人数目盛り、ページ間の減少表示を追加。
-漫画解析を表紙カードから1冊選ぶ構成へ整理し、主要KPI、最終到達ドーナツ、日別指標切替、読書進行、最大離脱、CTA詳細を追加。
-Viewerの50%以上が1秒間画面内へ入った表示を読書開始と分けて計測し、Viewer表示数と開始率を解析画面へ追加。
-選択したManga Library Viewerの相談テーマ、自由入力、解析集計、画像URL、コマ情報をプロバイダー非依存のMarkdownへ整理し、プレビュー・コピーできるAI相談資料画面を追加。外部AIへの自動送信は行わない。
-「すべての漫画」は全体KPI・日別推移・表紙付き比較に絞り、内部識別情報を折りたたみへ移動。
-個別解析の中段をPCでは2カラム、900px以下では1カラムに整理。日別グラフを縮小し、漫画セレクターの表紙を4:3へ変更。
-直接配置Viewerの編集設定へ、漫画ライブラリ登録と登録済みViewerへの明示的な切替導線を追加。登録後も元Viewerとの自動同期は行わない。
+
+* ページ送り、右綴じ・左綴じ、スワイプ、キー操作を改善。
+* 全画面表示、自由ズーム、ピンチ、パンを追加。
+* Manga Libraryと登録済みViewerの初期基盤を追加。
 
 = 0.1.0-alpha =
-CNI Blocks 1.43.0の漫画ビューアーを独立化。保存属性を維持し、識別子を分離。
+
+* AI Manga Viewerを独立したWordPressプラグインとして初期化。

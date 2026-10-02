@@ -1,12 +1,12 @@
 # AI Manga Viewer 開発方針
 
-2026-09-30時点。現在0.3.0-alpha。日程や将来の版番号を固定せず、実機検証と利用者の反応で更新する。
+2026-10-02時点。現在0.3.0。日程や将来の版番号を固定せず、実機検証と利用者の反応で更新する。
 
 Phase 1.5〜2の安定化を経て、Phase 3の全画面・自由ズーム・パンを専用テストサイトで確認し、追加Aとして1ページ・見開き・自動のページレイアウトをローカル実装した。Phase 4のManga Library・1冊参照基盤と、Phase 5のCTA最小実装をローカルで進行中。Phase 6は漫画解析の識別キー、Viewer表示、ブラウザー内イベント、既定OFFのREST・DB保存基盤、有効閲覧時間、匿名読者と30分以内の再開判定、最小集計画面までローカル実装した。Phase 7Aは外部AIへ送信せず、相談テーマ・Viewer設定・集計結果・画像URLをMarkdownへ整理してコピーする基盤をローカル実装し、初回実証を受けてページ間の到達減少とスマホで実際に使われるコマ設定が正しく伝わるVersion 2へ更新した。Phase 8AではFree / Proの製品境界と停止時の安全なフォールバックを正式化した。安定化は[Phase 2検証記録](phase-2-validation.md)、通常閲覧は[Phase 3検証記録](phase-3-validation.md)、登録基盤は[Phase 4検証記録](phase-4-validation.md)、CTAは[Phase 5検証記録](phase-5-validation.md)、解析は[Phase 6設計方針](phase-6-analytics-design.md)、AI相談は[Phase 7A設計方針](phase-7-consultation-design.md)、製品境界は[Phase 8A Free / Pro製品設計](phase-8-free-pro-design.md)を参照する。
 
 ## 商品の価値
 
-AIで作った漫画をWordPressで綺麗に読ませる。通常漫画・企業紹介・冊子にも使える。α版では全機能を維持し、販売向けの制限やライセンス機構はまだ導入しない。
+AIで作った漫画をWordPressで綺麗に読ませる。通常漫画・企業紹介・冊子にも使える。漫画の公開・閲覧機能はFree/Core、コマ読み・CTA・Analytics・AI相談はPro Add-onとして分離する。
 
 Freeは読者自身が拡大・移動して快適に読める通常ビューアーと公開基盤、Proは作者がコマの位置・順序・倍率を指定し、誘導・分析・改善まで行う機能群とする。無料側の自由ズームを充実させ、コマ読みをProの強みとして磨く。初期の製品境界と停止時挙動は[Phase 8A仕様](phase-8-free-pro-design.md)を基準とし、将来機能は実装前に個別評価する。
 
@@ -14,7 +14,7 @@ Freeは読者自身が拡大・移動して快適に読める通常ビューア�
 
 ## 現在の実装と設計の出発点
 
-0.3.0-alphaは直接編集用の`ai-manga-viewer/viewer`と参照表示用の`ai-manga-viewer/library-viewer`を持つAPI v3の動的ブロック構成。index.jsのsaveはnullで、直接編集の設定は投稿本文のブロックコメント内のattributesに保存され、PHPのrender_callbackで表示される。管理用CPT `amv_viewer`、1冊用ショートコード、表紙から登録済みViewerを選ぶブロックの基盤は追加済みだが、PDF入力、表示モード選択、複数冊一覧はまだない。
+0.3.0は直接編集用の`ai-manga-viewer/viewer`と参照表示用の`ai-manga-viewer/library-viewer`を持つAPI v3の動的ブロック構成。index.jsのsaveはnullで、直接編集の設定は投稿本文のブロックコメント内のattributesに保存され、PHPのrender_callbackで表示される。管理用CPT `amv_viewer`、1冊用ショートコード、表紙から登録済みViewerを選ぶブロックの基盤は追加済みだが、PDF入力、表示モード選択、複数冊一覧はまだない。
 
 18属性は`pages`、`binding`、`maxWidth`、`showPageNumbers`、`enableEdgeClick`、`showGuideArrowOnAllPages`、`enableAnimation`、`scrollAssist`、`scrollAssistPosition`、`scrollAssistStrength`、`focusReader`、`mobileFocusReader`、`focusReaderStartAtCurrent`、`enableFullscreen`、`enableZoom`、`zoomControlsPosition`、`viewerKey`、`instanceKey`。pages内には画像のid/url/alt/thumbnailUrl、focusAreas/mobileFocusAreas、永続的なpageKey、任意のCTA設定とctaKeyを保持する。align/anchor等のブロックサポート由来の設定も互換対象に含める。
 

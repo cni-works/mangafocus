@@ -70,7 +70,7 @@ function wp_add_inline_script( $handle, $data, $position = 'after' ) { $GLOBALS[
 function wp_enqueue_script( $handle, $url = '', $deps = array(), $version = false, $footer = false ) { $GLOBALS['enqueued_scripts'][$handle] = compact( 'url', 'deps', 'version', 'footer' ); }
 function wp_register_style( $handle, $url, $deps, $version ) {}
 function wp_enqueue_style( $handle, $url = '', $deps = array(), $version = false ) { $GLOBALS['enqueued_styles'][$handle] = compact( 'url', 'deps', 'version' ); }
-function wp_set_script_translations( $handle, $domain ) {}
+function wp_set_script_translations( $handle, $domain ) { $GLOBALS['script_translations'][ $handle ] = $domain; }
 function get_current_screen() { return $GLOBALS['test_screen'] ?? null; }
 function register_block_type( $path, $settings ) {
 	$metadata = json_decode( file_get_contents( $path . 'block.json' ), true );
@@ -132,6 +132,26 @@ $GLOBALS['test_can_edit'] = false;
 if ( call_user_func( $GLOBALS['rest_routes']['ai-manga-viewer/v1/library']['permission_callback'] ) ) { throw new Exception( 'Library registration route allowed an unauthorized request' ); }
 $GLOBALS['test_can_edit'] = true;
 if ( ! call_user_func( $GLOBALS['rest_routes']['ai-manga-viewer/v1/library']['permission_callback'] ) ) { throw new Exception( 'Library registration route rejected an authorized editor' ); }
+$library_route_args = $GLOBALS['rest_routes']['ai-manga-viewer/v1/library']['args'] ?? array();
+if ( array( 'title', 'sourcePostId', 'sourceInstanceKey', 'existingViewerId', 'attributes' ) !== array_keys( $library_route_args ) || empty( $library_route_args['title']['required'] ) || empty( $library_route_args['attributes']['required'] ) ) { throw new Exception( 'Library registration REST argument schema is incomplete' ); }
+foreach ( $library_route_args as $argument ) {
+	if ( empty( $argument['type'] ) || ! is_callable( $argument['validate_callback'] ?? null ) || ! is_callable( $argument['sanitize_callback'] ?? null ) ) { throw new Exception( 'Library registration REST argument validation or sanitization is missing' ); }
+}
+if ( call_user_func( $library_route_args['title']['validate_callback'], '   ' ) || call_user_func( $library_route_args['sourcePostId']['validate_callback'], -1 ) || call_user_func( $library_route_args['sourcePostId']['validate_callback'], '1.5' ) || call_user_func( $library_route_args['attributes']['validate_callback'], 'invalid' ) ) { throw new Exception( 'Malformed Library registration REST arguments were accepted' ); }
+if ( ! call_user_func( $library_route_args['title']['validate_callback'], '登録漫画' ) || ! call_user_func( $library_route_args['sourcePostId']['validate_callback'], 456 ) || ! call_user_func( $library_route_args['attributes']['validate_callback'], array( 'pages' => array() ) ) ) { throw new Exception( 'Valid Library registration REST arguments were rejected' ); }
+if ( 'unsafe-title' !== call_user_func( $library_route_args['title']['sanitize_callback'], '<b>unsafe-title</b>' ) || 456 !== call_user_func( $library_route_args['sourcePostId']['sanitize_callback'], '456' ) || 'placement-one' !== call_user_func( $library_route_args['sourceInstanceKey']['sanitize_callback'], 'Placement-One!!' ) ) { throw new Exception( 'Library registration REST argument sanitization failed' ); }
+$sanitized_route_attributes = call_user_func(
+	$library_route_args['attributes']['sanitize_callback'],
+	array(
+		'pages' => array(
+			array(
+				'url' => 'https://example.test/page.jpg',
+				'alt' => '<b>page</b>',
+			),
+		),
+	)
+);
+if ( 'page' !== ( $sanitized_route_attributes['pages'][0]['alt'] ?? '' ) ) { throw new Exception( 'Library registration attributes were not sanitized by the REST argument schema' ); }
 if ( 3 !== count( $GLOBALS['registered_settings'] ?? array() ) || 'manage_options' !== ( $GLOBALS['submenu_pages']['ai-manga-viewer-analytics']['capability'] ?? '' ) || isset( $GLOBALS['submenu_pages']['ai-manga-viewer-analytics-report'], $GLOBALS['submenu_pages']['ai-manga-viewer-consultation'] ) || 'edit.php?post_type=amv_viewer' !== ( $GLOBALS['submenu_pages']['ai-manga-viewer-analytics']['parent'] ?? '' ) || ( $GLOBALS['actions']['admin_post_ai_manga_viewer_delete_analytics'][0] ?? '' ) !== 'ai_manga_viewer_handle_delete_analytics' ) { throw new Exception( 'Core Analytics lifecycle settings boundary failed' ); }
 $feature_bootstrap = 'window.aiMangaViewerFeatures={"panel_reader":' . ( $with_pro_panel ? 'true' : 'false' ) . ',"cta":' . ( $with_pro_cta ? 'true' : 'false' ) . ',"analytics":false,"ai_consultation":false};';
 $capability_bootstrap = 'window.aiMangaViewerCapabilities={"panel_reader":{"runtime":' . ( $with_pro_panel ? 'true' : 'false' ) . ',"editor":' . ( $with_pro_panel ? 'true' : 'false' ) . '},"cta":{"runtime":' . ( $with_pro_cta ? 'true' : 'false' ) . ',"editor":' . ( $with_pro_cta ? 'true' : 'false' ) . '},"analytics":{"collection":false,"report":false},"ai_consultation":{"admin":false}};';
@@ -142,7 +162,7 @@ if ( isset( $GLOBALS['inline_scripts']['ai-manga-viewer-analytics-transport'] ) 
 $cover_callback = $GLOBALS['rest_fields']['amv_viewer']['amv_cover_url']['get_callback'];
 if ( 'https://example.test/cover.jpg' !== $cover_callback( array( 'id' => 123 ) ) || '' !== $cover_callback( array( 'id' => 0 ) ) ) { throw new Exception( 'Manga Library cover REST field failed' ); }
 if ( in_array( 'wp-server-side-render', $GLOBALS['scripts']['ai-manga-viewer-library-editor'] ?? array(), true ) ) { throw new Exception( 'Registered Viewer editor must not load the full server-side preview dependency' ); }
-if ( ! in_array( 'wp-data', $GLOBALS['scripts']['ai-manga-viewer-editor'] ?? array(), true ) || ! in_array( 'wp-api-fetch', $GLOBALS['scripts']['ai-manga-viewer-editor'] ?? array(), true ) || ! in_array( 'wp-hooks', $GLOBALS['scripts']['ai-manga-viewer-editor'] ?? array(), true ) || ! in_array( 'wp-data', $GLOBALS['scripts']['ai-manga-viewer-library-editor'] ?? array(), true ) ) { throw new Exception( 'Editor migration, hook or instance-key dependency is missing' ); }
+if ( ! in_array( 'wp-data', $GLOBALS['scripts']['ai-manga-viewer-editor'] ?? array(), true ) || ! in_array( 'wp-api-fetch', $GLOBALS['scripts']['ai-manga-viewer-editor'] ?? array(), true ) || ! in_array( 'wp-hooks', $GLOBALS['scripts']['ai-manga-viewer-editor'] ?? array(), true ) || ! in_array( 'wp-data', $GLOBALS['scripts']['ai-manga-viewer-library-editor'] ?? array(), true ) || ! in_array( 'wp-i18n', $GLOBALS['scripts']['ai-manga-viewer-view'] ?? array(), true ) || 'ai-manga-viewer' !== ( $GLOBALS['script_translations']['ai-manga-viewer-view'] ?? '' ) ) { throw new Exception( 'Editor migration, hook, instance-key or frontend i18n dependency is missing' ); }
 if ( 1 !== AI_MANGA_VIEWER_EXTENSION_API_VERSION || 1 !== ai_manga_viewer_get_extension_api_version() ) { throw new Exception( 'Extension API version contract failed' ); }
 if ( function_exists( 'ai_manga_viewer_normalize_analytics_event' ) || function_exists( 'ai_manga_viewer_register_analytics_routes' ) || function_exists( 'ai_manga_viewer_render_analytics_report_page' ) ) { throw new Exception( 'Pro Analytics implementation leaked into Core.' ); }
 $library = $GLOBALS['post_types']['amv_viewer'] ?? null;

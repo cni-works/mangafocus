@@ -109,6 +109,8 @@ try {
     try {
         foreach ($relative in $runtimeFiles) {
             $entry = $archive.CreateEntry('ai-manga-viewer/' + $relative, [IO.Compression.CompressionLevel]::Optimal)
+            # Keep archives byte-for-byte reproducible instead of inheriting the build time.
+            $entry.LastWriteTime = [DateTimeOffset]::new(1980, 1, 1, 0, 0, 0, [TimeSpan]::Zero)
             $stream = $entry.Open()
             try { $stream.Write($snapshots[$relative], 0, $snapshots[$relative].Length) }
             finally { $stream.Dispose() }

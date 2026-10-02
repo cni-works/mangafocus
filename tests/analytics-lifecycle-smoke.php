@@ -35,8 +35,12 @@ class AMV_Lifecycle_WPDB {
 	public function get_charset_collate() { return 'DEFAULT CHARSET=utf8mb4'; }
 	public function prepare( $query, ...$values ) {
 		foreach ( $values as $value ) {
-			$replacement = is_int( $value ) ? (string) $value : "'" . str_replace( "'", "''", (string) $value ) . "'";
-			$query = preg_replace( '/%[sd]/', $replacement, $query, 1 );
+			if ( preg_match( '/%([ids])/', $query, $match ) && 'i' === $match[1] ) {
+				$replacement = '`' . str_replace( '`', '``', (string) $value ) . '`';
+			} else {
+				$replacement = is_int( $value ) ? (string) $value : "'" . str_replace( "'", "''", (string) $value ) . "'";
+			}
+			$query = preg_replace( '/%[ids]/', $replacement, $query, 1 );
 		}
 		return $query;
 	}
@@ -54,6 +58,28 @@ amv_expect( function_exists( 'ai_manga_viewer_store_analytics_event' ), 'Storage
 amv_expect( ! function_exists( 'ai_manga_viewer_analytics_report_data' ), 'Query module leaked into lifecycle boundary.' );
 amv_expect( ! function_exists( 'ai_manga_viewer_register_analytics_routes' ), 'REST module leaked into lifecycle boundary.' );
 amv_expect( ! function_exists( 'ai_manga_viewer_render_analytics_report_page' ), 'Admin module leaked into lifecycle boundary.' );
+
+$GLOBALS['wpdb']->queries = array();
+$stored = ai_manga_viewer_store_analytics_event( array(
+	'event_id'             => 'event-1',
+	'session_id'           => 'session-1',
+	'visitor_id'           => 'visitor-1',
+	'name'                 => 'page_reach',
+	'viewer_key'           => 'viewer-1',
+	'instance_key'         => 'instance-1',
+	'page_key'             => 'page-1',
+	'page_number'          => 1,
+	'page_count'           => 3,
+	'cta_key'              => '',
+	'mode'                 => 'standard',
+	'reading_started'      => 1,
+	'active_seconds_delta' => 0,
+	'occurred_at'          => 1,
+) );
+amv_expect( true === $stored, 'Analytics event storage failed.' );
+amv_expect( 5 === count( $GLOBALS['wpdb']->queries ), 'Analytics event transaction query count changed.' );
+amv_expect( 0 === preg_match( '/%[ids]/', implode( "\n", $GLOBALS['wpdb']->queries ) ), 'Prepared Analytics SQL retained placeholders.' );
+amv_expect( false !== strpos( implode( "\n", $GLOBALS['wpdb']->queries ), '`wp_amv_reader_events`' ), 'Analytics table identifier was not prepared.' );
 
 ai_manga_viewer_install_analytics_tables();
 amv_expect( 3 === count( $GLOBALS['amv_dbdelta'] ), 'Expected three Analytics tables.' );

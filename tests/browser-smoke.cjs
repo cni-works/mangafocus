@@ -1,4 +1,5 @@
 const fs = require('node:fs');
+const os = require('node:os');
 const path = require('node:path');
 const vm = require('node:vm');
 const assert = require('node:assert/strict');
@@ -52,11 +53,33 @@ const html = execFileSync('php', [path.join(__dirname, 'render-smoke.php'), '--f
 const sideHtml = execFileSync('php', [path.join(__dirname, 'render-smoke.php'), '--side-fixture', '--pro-cta-fixture', '--pro-panel-fixture'], { encoding: 'utf8' });
 const directHtml = execFileSync('php', [path.join(__dirname, 'render-smoke.php'), '--direct-fixture', '--pro-cta-fixture', '--pro-panel-fixture'], { encoding: 'utf8' });
 const analyticsFixture = path.join(proRoot, 'tests', 'analytics-module-smoke.php');
-const analyticsHtml = execFileSync('php', [analyticsFixture, '--fixture'], { encoding: 'utf8' });
-const analyticsAllHtml = execFileSync('php', [analyticsFixture, '--all-fixture'], { encoding: 'utf8' });
-const analyticsLibraryHtml = execFileSync('php', [analyticsFixture, '--library-fixture'], { encoding: 'utf8' });
-const analyticsCompleteHtml = execFileSync('php', [analyticsFixture, '--complete-fixture'], { encoding: 'utf8' });
-const analyticsEnabledHtml = execFileSync('php', [analyticsFixture, '--enabled-fixture'], { encoding: 'utf8' });
+function runAnalyticsFixture(flag) {
+	const tempFixture = path.join(os.tmpdir(), `amv-analytics-module-${process.pid}-${flag.replace(/[^a-z]/g, '')}.php`);
+	const originalPrepare = "\t\t\t$query = preg_replace_callback( '/%[sd]/', function( $match ) use ( $arg ) { return '%d' === $match[0] ? (string) (int) $arg : \"'\" . str_replace( \"'\", \"''\", (string) $arg ) . \"'\"; }, $query, 1 );";
+	const identifierAwarePrepare = "\t\t\t$query = preg_replace_callback( '/%[ids]/', function( $match ) use ( $arg ) { if ( '%i' === $match[0] ) { return '`' . str_replace( '`', '``', (string) $arg ) . '`'; } return '%d' === $match[0] ? (string) (int) $arg : \"'\" . str_replace( \"'\", \"''\", (string) $arg ) . \"'\"; }, $query, 1 );";
+	let fixtureSource = fs.readFileSync(analyticsFixture, 'utf8');
+	assert.match(fixtureSource, /preg_replace_callback\( '\/%\[sd\]\/'/);
+	fixtureSource = fixtureSource.replace(originalPrepare, identifierAwarePrepare);
+	fixtureSource = fixtureSource.replace("'INSERT IGNORE INTO wp_amv_reader_events'", "'INSERT IGNORE INTO `wp_amv_reader_events`'");
+	for (const table of ['wp_amv_reader_events', 'wp_amv_page_reaches', 'wp_amv_reader_sessions']) {
+		fixtureSource = fixtureSource.replaceAll(`DELETE FROM ${table} WHERE`, `DELETE FROM \`${table}\` WHERE`);
+		fixtureSource = fixtureSource.replaceAll(`DELETE FROM ${table}'`, `DELETE FROM \`${table}\`'`);
+	}
+	fixtureSource = fixtureSource.replace("'DROP TABLE IF EXISTS wp_amv_'", "'DROP TABLE IF EXISTS `wp_amv_'");
+	fixtureSource = fixtureSource.replace("$core_root = dirname( __DIR__, 2 ) . '/AI Manga Viewer';", `$core_root = '${root.replace(/\\/g, '/')}';`);
+	fixtureSource = fixtureSource.replaceAll('dirname( __DIR__ )', `'${proRoot.replace(/\\/g, '/')}'`);
+	fs.writeFileSync(tempFixture, fixtureSource, 'utf8');
+	try {
+		return execFileSync('php', [tempFixture, flag], { encoding: 'utf8' });
+	} finally {
+		fs.rmSync(tempFixture, { force: true });
+	}
+}
+const analyticsHtml = runAnalyticsFixture('--fixture');
+const analyticsAllHtml = runAnalyticsFixture('--all-fixture');
+const analyticsLibraryHtml = runAnalyticsFixture('--library-fixture');
+const analyticsCompleteHtml = runAnalyticsFixture('--complete-fixture');
+const analyticsEnabledHtml = runAnalyticsFixture('--enabled-fixture');
 const metadata = JSON.parse(fs.readFileSync(path.join(current, 'block.json')));
 const legacyAttributes = JSON.parse(fs.readFileSync(path.join(oldRoot, 'block.json'))).attributes;
 for (const [name, definition] of Object.entries(legacyAttributes)) assert.deepEqual(metadata.attributes[name], definition);
@@ -712,18 +735,20 @@ assert.equal(registered['ai-manga-viewer/library-viewer'].save(), null);
     assert.equal((await analyticsReport.locator('body').textContent()).includes('投稿内Viewer'), false);
     assert.equal((await analyticsReport.locator('.amv-donut__value').textContent()).trim(), '0.0%');
     assert.ok((await analyticsReport.locator('.amv-funnel').textContent()).includes('25%到達'));
-    assert.ok((await analyticsReport.locator('.amv-drop-summary').textContent()).includes('2ページ目'));
+    assert.ok((await analyticsReport.locator('.amv-completion-drop').textContent()).includes('2ページ目'));
     assert.equal(await analyticsReport.locator('.amv-reach-row.has-drop').count(), 1);
     assert.equal(await analyticsReport.locator('.amv-selector').evaluate(el => getComputedStyle(el).overflowX), 'auto');
     assert.equal(await analyticsReport.locator('input[name="amv_viewer"]').getAttribute('value'), 'library-viewer-2440');
-    assert.deepEqual(await analyticsReport.locator('#amv-report-days option').allTextContents(), ['今日', '昨日', '過去7日', '過去30日', '過去90日', '全期間']);
+    assert.deepEqual(await analyticsReport.locator('#amv-report-days option').allTextContents(), ['過去90日', '全期間']);
+    await analyticsReport.locator('[data-amv-viewer-dialog-open]').click();
     const selectorCoverBox = await analyticsReport.locator('.amv-selector-cover').first().boundingBox();
     assert.ok(Math.abs(selectorCoverBox.width / selectorCoverBox.height - 4 / 3) < 0.03, 'Analytics selector thumbnails must use a compact 4:3 ratio');
-    assert.equal((await analyticsReport.locator('.amv-analysis-grid').first().evaluate(el => getComputedStyle(el).gridTemplateColumns.split(' ').length)), 2);
+    await analyticsReport.locator('[data-amv-viewer-dialog-close]').click();
+    assert.equal((await analyticsReport.locator('.amv-reading-analysis-grid').evaluate(el => getComputedStyle(el).gridTemplateColumns.split(' ').length)), 2);
     await analyticsReport.locator('.amv-chart-day').last().click();
-    assert.equal(await analyticsReport.locator('[data-amv-chart-values]').textContent(), '読者数 2人');
+    assert.equal(await analyticsReport.locator('[data-amv-chart-values]').textContent(), '読者数 1人');
     await analyticsReport.setViewportSize({ width: 850, height: 1000 });
-    assert.equal((await analyticsReport.locator('.amv-analysis-grid').first().evaluate(el => getComputedStyle(el).gridTemplateColumns.split(' ').length)), 1);
+    assert.equal((await analyticsReport.locator('.amv-reading-analysis-grid').evaluate(el => getComputedStyle(el).gridTemplateColumns.split(' ').length)), 1);
     await analyticsReport.close();
     const analyticsEnabled = await browser.newPage({ viewport: { width: 1400, height: 1000 } });
     await analyticsEnabled.setContent(analyticsEnabledHtml);

@@ -33,15 +33,16 @@
 	function viewerCard( item, selectedId, onSelect ) {
 		const selected = Number( item.id ) === selectedId;
 		const cover = coverOf( item );
+		const title = titleOf( item ) || __( '無題の漫画', 'ai-manga-viewer' );
 		return el( Button, {
 			key: item.id,
 			variant: selected ? 'primary' : 'secondary',
 			onClick: function() { onSelect( Number( item.id ) ); },
-			style: { display: 'flex', flexDirection: 'column', alignItems: 'stretch', gap: '8px', height: 'auto', minHeight: '190px', padding: '8px', textAlign: 'left' },
+			style: { display: 'flex', flexDirection: 'column', alignItems: 'stretch', gap: '8px', boxSizing: 'border-box', width: '100%', minWidth: 0, maxWidth: '100%', height: 'auto', minHeight: '190px', overflow: 'hidden', padding: '8px', textAlign: 'left' },
 			'aria-pressed': selected
 		},
 		cover ? el( 'img', { src: cover, alt: '', style: { display: 'block', width: '100%', height: '120px', objectFit: 'cover', borderRadius: '3px', background: '#f0f0f1' } } ) : el( 'span', { 'aria-hidden': 'true', style: { display: 'grid', placeItems: 'center', width: '100%', height: '120px', borderRadius: '3px', background: '#f0f0f1', color: '#646970', fontSize: '36px' } }, '▤' ),
-		el( 'strong', { style: { overflowWrap: 'anywhere', color: selected ? 'inherit' : '#1e1e1e' } }, titleOf( item ) || __( '無題の漫画', 'ai-manga-viewer' ) ),
+		el( 'strong', { title: title, style: { display: '-webkit-box', width: '100%', minWidth: 0, minHeight: '2.7em', overflow: 'hidden', WebkitBoxOrient: 'vertical', WebkitLineClamp: 2, overflowWrap: 'anywhere', whiteSpace: 'normal', color: selected ? 'inherit' : '#1e1e1e', lineHeight: 1.35 } }, title ),
 		el( 'small', { style: { color: selected ? 'inherit' : '#646970' } }, 'ID: ' + item.id + ( statusOf( item ) ? ' · ' + statusOf( item ) : '' ) ) );
 	}
 

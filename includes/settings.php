@@ -85,6 +85,43 @@ function ai_manga_viewer_settings_badge( $available, $available_label = '', $una
 	return '<span class="amv-settings__status ' . esc_attr( $class ) . '">' . esc_html( $label ) . '</span>';
 }
 
+/** Resolve one user-facing feature state from Feature and Capability APIs. */
+function ai_manga_viewer_settings_feature_state( $feature_id, $features, $capabilities ) {
+	$unavailable = array( 'class' => 'is-unavailable', 'label' => __( '利用不可', 'ai-manga-viewer' ) );
+	if ( empty( $features[ $feature_id ] ) || empty( $capabilities[ $feature_id ] ) || ! is_array( $capabilities[ $feature_id ] ) ) {
+		return $unavailable;
+	}
+
+	$allowed = $capabilities[ $feature_id ];
+	if ( in_array( $feature_id, array( 'panel_reader', 'cta' ), true ) ) {
+		if ( ! empty( $allowed['runtime'] ) && ! empty( $allowed['editor'] ) ) {
+			return array( 'class' => 'is-available', 'label' => __( '利用可能', 'ai-manga-viewer' ) );
+		}
+		if ( ! empty( $allowed['runtime'] ) ) {
+			return array( 'class' => 'is-limited', 'label' => __( '表示継続・編集不可', 'ai-manga-viewer' ) );
+		}
+	} elseif ( 'analytics' === $feature_id ) {
+		if ( ! empty( $allowed['collection'] ) && ! empty( $allowed['report'] ) ) {
+			return array( 'class' => 'is-available', 'label' => __( '利用可能', 'ai-manga-viewer' ) );
+		}
+		if ( ! empty( $allowed['collection'] ) ) {
+			return array( 'class' => 'is-limited', 'label' => __( '収集継続・レポート利用不可', 'ai-manga-viewer' ) );
+		}
+	} elseif ( 'ai_consultation' === $feature_id && ! empty( $allowed['admin'] ) ) {
+		return array( 'class' => 'is-available', 'label' => __( '利用可能', 'ai-manga-viewer' ) );
+	}
+
+	return $unavailable;
+}
+
+/** Render one validated feature-state badge. */
+function ai_manga_viewer_settings_feature_badge( $state ) {
+	$classes = array( 'is-available', 'is-limited', 'is-unavailable' );
+	$class   = is_array( $state ) && in_array( $state['class'] ?? '', $classes, true ) ? $state['class'] : 'is-unavailable';
+	$label   = is_array( $state ) && isset( $state['label'] ) ? $state['label'] : __( '利用不可', 'ai-manga-viewer' );
+	return '<span class="amv-settings__status ' . esc_attr( $class ) . '">' . esc_html( $label ) . '</span>';
+}
+
 /** Render the Core-owned status and navigation hub. */
 function ai_manga_viewer_render_settings_page() {
 	if ( ! current_user_can( 'manage_options' ) ) {
@@ -92,6 +129,7 @@ function ai_manga_viewer_render_settings_page() {
 	}
 
 	$features      = ai_manga_viewer_get_feature_map();
+	$capabilities  = function_exists( 'ai_manga_viewer_get_capability_map' ) ? ai_manga_viewer_get_capability_map() : array();
 	$pro           = ai_manga_viewer_get_pro_status();
 	$retention     = function_exists( 'ai_manga_viewer_sanitize_retention_days' ) ? ai_manga_viewer_sanitize_retention_days( get_option( 'ai_manga_viewer_analytics_retention_days', '90' ) ) : 90;
 	$library_url   = admin_url( 'edit.php?post_type=amv_viewer' );
@@ -104,6 +142,12 @@ function ai_manga_viewer_render_settings_page() {
 		admin_url( 'edit.php' )
 	);
 	$pro_label = $pro['active'] ? __( '有効', 'ai-manga-viewer' ) : ( $pro['installed'] ? __( '利用不可', 'ai-manga-viewer' ) : __( '未導入または無効', 'ai-manga-viewer' ) );
+	$feature_states = array();
+	foreach ( array( 'panel_reader', 'cta', 'analytics', 'ai_consultation' ) as $feature_id ) {
+		$feature_states[ $feature_id ] = ai_manga_viewer_settings_feature_state( $feature_id, $features, $capabilities );
+	}
+	/* translators: %d: analytics data retention period in days. */
+	$retention_label = sprintf( __( '%d日', 'ai-manga-viewer' ), (int) $retention );
 	?>
 	<div class="wrap amv-settings">
 		<h1><?php echo esc_html__( 'AI Manga Viewer 設定', 'ai-manga-viewer' ); ?></h1>
@@ -128,8 +172,8 @@ function ai_manga_viewer_render_settings_page() {
 			<section class="amv-settings__card" aria-labelledby="amv-settings-data">
 				<h2 id="amv-settings-data"><?php echo esc_html__( '解析・データ', 'ai-manga-viewer' ); ?></h2>
 				<dl class="amv-settings__definition">
-					<div><dt><?php echo esc_html__( '詳細データの保存期間', 'ai-manga-viewer' ); ?></dt><dd><?php echo esc_html( sprintf( __( '%d日', 'ai-manga-viewer' ), (int) $retention ) ); ?></dd></div>
-					<div><dt><?php echo esc_html__( '漫画解析', 'ai-manga-viewer' ); ?> <span class="amv-settings__pro">Pro</span></dt><dd><?php echo ai_manga_viewer_settings_badge( ! empty( $features['analytics'] ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></dd></div>
+					<div><dt><?php echo esc_html__( '詳細データの保存期間', 'ai-manga-viewer' ); ?></dt><dd><?php echo esc_html( $retention_label ); ?></dd></div>
+					<div><dt><?php echo esc_html__( '漫画解析', 'ai-manga-viewer' ); ?> <span class="amv-settings__pro">Pro</span></dt><dd><?php echo ai_manga_viewer_settings_feature_badge( $feature_states['analytics'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></dd></div>
 				</dl>
 				<p><?php echo esc_html__( '収集のON/OFF、保存期間、全削除は解析専用の設定画面で管理します。', 'ai-manga-viewer' ); ?></p>
 				<p class="amv-settings__actions"><a class="button" href="<?php echo esc_url( $analytics_url ); ?>"><?php echo esc_html__( '解析設定を開く', 'ai-manga-viewer' ); ?></a> <a href="<?php echo esc_url( $analytics_url . '#amv-analytics-delete' ); ?>"><?php echo esc_html__( '解析データの削除について確認', 'ai-manga-viewer' ); ?></a></p>
@@ -148,7 +192,7 @@ function ai_manga_viewer_render_settings_page() {
 					);
 					foreach ( $feature_labels as $feature_id => $label ) :
 						?>
-						<li><span><strong><?php echo esc_html( $label ); ?></strong> <span class="amv-settings__pro">Pro</span></span><?php echo ai_manga_viewer_settings_badge( ! empty( $features[ $feature_id ] ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></li>
+						<li><span><strong><?php echo esc_html( $label ); ?></strong> <span class="amv-settings__pro">Pro</span></span><?php echo ai_manga_viewer_settings_feature_badge( $feature_states[ $feature_id ] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></li>
 					<?php endforeach; ?>
 				</ul>
 			</section>

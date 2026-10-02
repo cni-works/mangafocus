@@ -56,5 +56,5 @@
 - 同じ漫画を複数箇所で使う：[漫画を作成・配置する4つの方法](placement-methods.md)
 - 見開きや縦読みを調整する：[読み方と表示設定](reading-settings.md)
 - コマ読みを使う【Pro】：Pro Add-onを有効にし、ブロック設定の「コマ読み」を有効化
-- CTAを置く：対象ページを選び「CTA」を設定
-- 漫画解析を使う：漫画をManga Libraryへ登録し、「登録済みViewer」またはショートコードで配置
+- CTAを置く【Pro】：Pro Add-onを有効にし、対象ページを選び「CTA」を設定
+- 漫画解析を使う【Pro】：Pro Add-onを有効にし、漫画をManga Libraryへ登録して「登録済みViewer」またはショートコードで配置

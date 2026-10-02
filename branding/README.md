@@ -6,7 +6,9 @@ excluded from the installable plugin ZIP.
 
 ## Directories
 
-- `source/`: received source files, preserved without renaming or conversion.
+- `source/`: received source files, preserved without conversion.
+- `source/screenshots/`: finalized WordPress.org screenshots, stored with their
+  lowercase public filenames.
 - `../.wordpress-org/`: WordPress.org plugin-directory asset candidates.
 
 The current design candidate uses monochrome manga artwork with blue accents.
