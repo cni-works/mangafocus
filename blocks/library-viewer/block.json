@@ -6,7 +6,7 @@
   "icon": "book-alt",
   "description": "漫画ライブラリから登録済みのViewerを1冊選んで表示します。",
   "keywords": [ "漫画", "ライブラリ", "登録済み", "Viewer" ],
-  "textdomain": "ai-manga-viewer",
+  "textdomain": "mangafocus",
   "attributes": {
     "viewerId": { "type": "integer", "default": 0 },
     "instanceKey": { "type": "string", "default": "" }

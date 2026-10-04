@@ -1,12 +1,12 @@
 {
   "apiVersion": 3,
   "name": "ai-manga-viewer/viewer",
-  "title": "AI Manga Viewer",
+  "title": "MangaFocus",
   "category": "ai-manga-viewer",
   "icon": "book-alt",
-  "description": "漫画画像をページ送り、見開き、全画面で読みやすく表示します。",
+  "description": "漫画画像をページ送り、見開き、全画面、コマ読みで表示します。",
   "keywords": [ "漫画", "コミック", "ビューアー", "ページめくり", "冊子" ],
-  "textdomain": "ai-manga-viewer",
+  "textdomain": "mangafocus",
   "attributes": {
     "pages": { "type": "array", "default": [] },
     "viewerKey": { "type": "string", "default": "" },

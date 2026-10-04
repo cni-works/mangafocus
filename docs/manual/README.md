@@ -1,8 +1,8 @@
-# AI Manga Viewer ユーザーマニュアル
+# MangaFocus ユーザーマニュアル
 
 対象Version：`0.3.0`
 
-AI Manga Viewerは、画像で作成した漫画をWordPressへ掲載するプラグインです。ページ送り、見開き、全画面、縦スクロール、ズームのほか、コマ読み、CTA、漫画解析、AI相談資料に対応しています。
+MangaFocusは、画像で作成した漫画をWordPressへ掲載するプラグインです。ページ送り、見開き、全画面、縦スクロール、ズーム、コマ読みをFree版で利用でき、ProアドオンではCTA、漫画解析、AI相談資料などを追加できます。
 
 漫画の公開・閲覧機能はCore、コマ読み・CTA・Analytics・AI相談は互換性のあるPro Add-onを有効化した環境で利用します。外部ライセンス認証と販売基盤はまだ実装していません。
 
@@ -15,7 +15,7 @@ AI Manga Viewerは、画像で作成した漫画をWordPressへ掲載するプ�
 
 ## 用語
 
-- **Direct Viewer**：投稿や固定ページの中で直接作成する「AI Manga Viewer」ブロック。
+- **Direct Viewer**：投稿や固定ページの中で直接作成する「MangaFocus」ブロック。
 - **Manga Library**：漫画を独立した作品として登録し、複数箇所で再利用する管理画面。WordPressでは「漫画ライブラリ」と表示されます。
 - **登録済みViewer**：Manga Libraryの作品をGutenbergで選んで表示するブロック。
 - **ショートコード**：Manga Libraryの作品をClassic Editorやショートコード対応画面へ表示する記述。

@@ -1,6 +1,6 @@
 <?php
 /**
- * AI Manga Viewer Analytics internal module.
+ * MangaFocus Analytics internal module.
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

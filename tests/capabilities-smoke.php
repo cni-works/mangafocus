@@ -2,7 +2,7 @@
 /** Isolated Capability API test; this is not a WordPress integration test. */
 define( 'ABSPATH', __DIR__ );
 
-$GLOBALS['amv_feature_map'] = array( 'panel_reader' => false, 'cta' => false, 'analytics' => false, 'ai_consultation' => false );
+$GLOBALS['amv_feature_map'] = array( 'panel_reader' => true, 'cta' => false, 'analytics' => false, 'ai_consultation' => false, 'manga_creation' => false );
 $GLOBALS['amv_map_filters'] = array();
 $GLOBALS['amv_has_filters'] = array();
 function ai_manga_viewer_has_feature( $id ) { return is_string( $id ) && ! empty( $GLOBALS['amv_feature_map'][ $id ] ); }
@@ -18,13 +18,14 @@ function amv_cap_expect( $condition, $message ) { if ( ! $condition ) throw new 
 require dirname( __DIR__ ) . '/includes/capabilities.php';
 
 $expected = array(
-	'panel_reader' => array( 'runtime' => false, 'editor' => false ),
+	'panel_reader' => array( 'runtime' => true, 'editor' => true ),
 	'cta' => array( 'runtime' => false, 'editor' => false ),
 	'analytics' => array( 'collection' => false, 'report' => false ),
 	'ai_consultation' => array( 'admin' => false ),
+	'manga_creation' => array( 'admin' => false ),
 );
 amv_cap_expect( $expected === ai_manga_viewer_get_capability_registry(), 'Capability registry changed.' );
-amv_cap_expect( $expected === ai_manga_viewer_get_capability_map(), 'Core defaults must all be false.' );
+amv_cap_expect( $expected === ai_manga_viewer_get_capability_map(), 'Core defaults must expose only panel reader capabilities.' );
 foreach ( array( array( '', 'runtime' ), array( 'cta', '' ), array( 'unknown', 'runtime' ), array( 'cta', 'unknown' ), array( null, 'runtime' ), array( 'cta', 1 ) ) as $invalid ) amv_cap_expect( false === ai_manga_viewer_has_capability( $invalid[0], $invalid[1] ), 'Invalid capability must fail closed.' );
 
 $GLOBALS['amv_map_filters'][10][] = function( $map ) { foreach ( $map as $feature => $caps ) foreach ( $caps as $capability => $value ) $map[ $feature ][ $capability ] = true; return $map; };

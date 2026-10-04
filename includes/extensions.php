@@ -1,6 +1,6 @@
 <?php
 /**
- * Public extension contract for AI Manga Viewer add-ons.
+ * Public extension contract for MangaFocus add-ons.
  *
  * Only the constant, getter and documented filters in this file are public.
  * Core implementation functions and DOM class names remain private details.

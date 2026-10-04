@@ -6,7 +6,7 @@ const { chromium } = require('playwright');
 const root = path.resolve(__dirname, '..');
 const proRoot = path.resolve(root, '..', 'AI Manga Viewer Pro');
 const viewerRoot = path.join(root, 'blocks/viewer');
-const html = execFileSync('php', [path.join(__dirname, 'render-smoke.php'), '--spread-fixture', '--pro-cta-fixture', '--pro-panel-fixture'], { encoding: 'utf8' });
+const html = execFileSync('php', [path.join(__dirname, 'render-smoke.php'), '--spread-fixture', '--pro-cta-fixture'], { encoding: 'utf8' });
 
 (async () => {
   const browser = await chromium.launch({ channel: 'msedge', headless: true });
@@ -32,12 +32,12 @@ const html = execFileSync('php', [path.join(__dirname, 'render-smoke.php'), '--s
     });
     await page.addStyleTag({ path: path.join(viewerRoot, 'style.css') });
     await page.addStyleTag({ path: path.join(proRoot, 'assets', 'cta', 'style.css') });
-    await page.addStyleTag({ path: path.join(proRoot, 'assets', 'panel-reader', 'style.css') });
+    await page.addStyleTag({ path: path.join(root, 'assets', 'panel-reader', 'style.css') });
     await page.addScriptTag({ path: path.join(viewerRoot, 'layout.js') });
     await page.addScriptTag({ path: path.join(proRoot, 'assets', 'analytics', 'frontend.js') });
     await page.addScriptTag({ path: path.join(viewerRoot, 'view.js') });
     await page.addScriptTag({ path: path.join(proRoot, 'assets', 'cta', 'frontend.js') });
-    await page.addScriptTag({ path: path.join(proRoot, 'assets', 'panel-reader', 'frontend.js') });
+    await page.addScriptTag({ path: path.join(root, 'assets', 'panel-reader', 'frontend.js') });
 
     const cover = page.locator('#cover-fixture .amv-reader');
     const coverLauncher = cover.locator('.amv-reader__cover-launcher-button');

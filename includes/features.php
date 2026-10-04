@@ -14,10 +14,11 @@ if ( ! function_exists( 'ai_manga_viewer_get_feature_registry' ) ) {
 	/** Return the allowlisted feature registry. */
 	function ai_manga_viewer_get_feature_registry() {
 		return array(
-			'panel_reader'   => array( 'available' => false ),
+			'panel_reader'   => array( 'available' => true ),
 			'cta'            => array( 'available' => false ),
 			'analytics'       => array( 'available' => false ),
 			'ai_consultation' => array( 'available' => false ),
+			'manga_creation'  => array( 'available' => false ),
 		);
 	}
 }

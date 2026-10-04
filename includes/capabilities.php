@@ -14,10 +14,11 @@ if ( ! function_exists( 'ai_manga_viewer_get_capability_registry' ) ) {
 	/** Return the fixed feature/capability allowlist with Core defaults. */
 	function ai_manga_viewer_get_capability_registry() {
 		return array(
-			'panel_reader'   => array( 'runtime' => false, 'editor' => false ),
+			'panel_reader'   => array( 'runtime' => true, 'editor' => true ),
 			'cta'            => array( 'runtime' => false, 'editor' => false ),
 			'analytics'      => array( 'collection' => false, 'report' => false ),
 			'ai_consultation' => array( 'admin' => false ),
+			'manga_creation'  => array( 'admin' => false ),
 		);
 	}
 }

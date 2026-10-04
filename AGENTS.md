@@ -1,4 +1,4 @@
-# AI Manga Viewer 作業ルール
+# MangaFocus 作業ルール
 
 ## 対象と品質
 
@@ -10,8 +10,8 @@
 
 ## Git運用
 
-- 対象Repository: `cni-works/ai-manga-viewer`
-- origin URL: `https://github.com/cni-works/ai-manga-viewer`
+- 対象Repository: `cni-works/mangafocus`
+- origin URL: `https://github.com/cni-works/mangafocus`
 - 基準ブランチ: `main`
 - 初回のみ、利用者の2026-09-25の明示指示により、現在の0.1.0-alphaを`main`へ初回コミットし、既存の安全な認証が利用可能なら`origin/main`へ初回pushする。
 - 今後の通常開発はPhase・機能単位の`feature/...`ブランチで行う。実際に使用するブランチ名を作業開始時に明示する。検査と確認を経てmainへ統合する。

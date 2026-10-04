@@ -9,10 +9,11 @@ if (Get-Variable -Name PSNativeCommandUseErrorActionPreference -ErrorAction Sile
 }
 $projectRoot = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 $runtimeFiles = @(
-    'ai-manga-viewer.php', 'readme.txt', 'includes/features.php', 'includes/capabilities.php', 'includes/extensions.php', 'includes/settings.php', 'includes/analytics.php', 'includes/analytics/lifecycle.php', 'includes/analytics/storage.php', 'includes/analytics/settings.php', 'assets/admin-library.css', 'assets/admin-library.js', 'assets/admin-settings.css',
+    'mangafocus.php', 'readme.txt', 'includes/features.php', 'includes/capabilities.php', 'includes/extensions.php', 'includes/settings.php', 'includes/panel-reader.php', 'includes/panel-reader/renderer.php', 'includes/analytics.php', 'includes/analytics/lifecycle.php', 'includes/analytics/storage.php', 'includes/analytics/settings.php', 'assets/admin-library.css', 'assets/admin-library.js', 'assets/admin-settings.css', 'assets/panel-reader/editor.js', 'assets/panel-reader/frontend.js', 'assets/panel-reader/style.css',
     'blocks/library-viewer/block.json', 'blocks/library-viewer/index.js',
 	'blocks/viewer/block.json', 'blocks/viewer/layout.js', 'blocks/viewer/index.js',
-    'blocks/viewer/render.php', 'blocks/viewer/style.css', 'blocks/viewer/view.js'
+    'blocks/viewer/render.php', 'blocks/viewer/style.css', 'blocks/viewer/view.js',
+    'scripts/build-release.ps1'
 )
 
 function Assert-RegularPath([string]$Path) {
@@ -39,7 +40,7 @@ foreach ($relative in $runtimeFiles) {
     Assert-RegularPath $source
     $snapshots[$relative] = [IO.File]::ReadAllBytes($source)
 }
-$header = [Text.Encoding]::UTF8.GetString($snapshots['ai-manga-viewer.php'])
+$header = [Text.Encoding]::UTF8.GetString($snapshots['mangafocus.php'])
 $versionMatch = [regex]::Match($header, '(?m)^\s*\*\s*Version:\s*([^\r\n]+)')
 if (-not $versionMatch.Success) { throw 'Plugin Version header missing.' }
 $version = $versionMatch.Groups[1].Value.Trim()
@@ -56,17 +57,17 @@ if (-not $stableMatch.Success -or $stableMatch.Groups[1].Value.Trim() -cne $vers
     throw 'readme Stable tag does not match the plugin Version.'
 }
 $metadata = [Text.Encoding]::UTF8.GetString($snapshots['blocks/viewer/block.json']) | ConvertFrom-Json
-if ($metadata.name -cne 'ai-manga-viewer/viewer' -or $metadata.textdomain -cne 'ai-manga-viewer') {
+if ($metadata.name -cne 'ai-manga-viewer/viewer' -or $metadata.textdomain -cne 'mangafocus') {
     throw 'Unexpected block namespace or text domain.'
 }
 $libraryMetadata = [Text.Encoding]::UTF8.GetString($snapshots['blocks/library-viewer/block.json']) | ConvertFrom-Json
-if ($libraryMetadata.name -cne 'ai-manga-viewer/library-viewer' -or $libraryMetadata.textdomain -cne 'ai-manga-viewer') {
+if ($libraryMetadata.name -cne 'ai-manga-viewer/library-viewer' -or $libraryMetadata.textdomain -cne 'mangafocus') {
     throw 'Unexpected Library block namespace or text domain.'
 }
 
 $releaseDir = Join-Path $projectRoot 'release'
 if (Test-Path -LiteralPath $releaseDir) { Assert-RegularPath $releaseDir }
-$destination = Join-Path $releaseDir "ai-manga-viewer-$version.zip"
+$destination = Join-Path $releaseDir "mangafocus-$version.zip"
 if (Test-Path -LiteralPath $destination) {
     Assert-RegularPath $destination
     if (-not $Force) { throw "ZIP already exists. Use -Force to replace it after validation: $destination" }
@@ -108,7 +109,7 @@ try {
     $archive = [IO.Compression.ZipFile]::Open($candidate, [IO.Compression.ZipArchiveMode]::Create)
     try {
         foreach ($relative in $runtimeFiles) {
-            $entry = $archive.CreateEntry('ai-manga-viewer/' + $relative, [IO.Compression.CompressionLevel]::Optimal)
+            $entry = $archive.CreateEntry('mangafocus/' + $relative, [IO.Compression.CompressionLevel]::Optimal)
             # Keep archives byte-for-byte reproducible instead of inheriting the build time.
             $entry.LastWriteTime = [DateTimeOffset]::new(1980, 1, 1, 0, 0, 0, [TimeSpan]::Zero)
             $stream = $entry.Open()
@@ -121,7 +122,7 @@ try {
     try {
         if ($archive.Entries.Count -ne $runtimeFiles.Count) { throw 'Unexpected ZIP entry count.' }
         foreach ($relative in $runtimeFiles) {
-            $entry = $archive.GetEntry('ai-manga-viewer/' + $relative)
+            $entry = $archive.GetEntry('mangafocus/' + $relative)
             if ($null -eq $entry) { throw "ZIP entry missing: $relative" }
             $stream = $entry.Open()
             $buffer = [IO.MemoryStream]::new()

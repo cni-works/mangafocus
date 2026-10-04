@@ -16,21 +16,23 @@ PowerShellと、PATHから利用できるPHP CLI・Node.jsが必要。プロジ�
 .\scripts\build-release.ps1 -Force
 ```
 
-出力先は `release/ai-manga-viewer-{Version}.zip`。Versionは本体ヘッダーから取得し、readme.txtのStable tagとの一致も検査する。検査に失敗した場合、既存の完成ZIPは保持される。生成候補は一意な一時ZIPに書き、検証後に配置するため、一時ディレクトリの再帰削除は行わない。
+出力先は `release/mangafocus-{Version}.zip`。Versionは本体ヘッダーから取得し、readme.txtのStable tagとの一致も検査する。検査に失敗した場合、既存の完成ZIPは保持される。生成候補は一意な一時ZIPに書き、検証後に配置するため、一時ディレクトリの再帰削除は行わない。
 
 ## 梱包と検査
 
-現時点では本体、readme、Feature API、Extension API、2つのブロック、解析・AI相談用PHP、管理画面CSS/JSを含む実行時ファイル20件だけを明示的に梱包する。全エントリーは `ai-manga-viewer/` の下に置く。必要な実行ファイルを追加したときは、スクリプトのruntimeFilesも更新する。
+本体、readme、Feature/Capability/Extension API、2つのブロック、コマ読み、解析データ管理、管理画面CSS/JSなど、Freeの実行に必要なファイルだけを明示的に梱包する。全エントリーは `mangafocus/` の下に置く。必要な実行ファイルを追加したときは、スクリプトのruntimeFilesも更新する。
 
-docs、tests、scripts、release、Git管理情報、node_modules、desktop.ini、関連プロジェクトは梱包しない。現在のindex.jsは実行用ソースなので必ず含める。
+docs、tests、release、Git管理情報、node_modules、desktop.ini、関連プロジェクトは梱包しない。現在のPHP、JavaScript、CSSは未圧縮の実行用ソースとして含め、再現用の`scripts/build-release.ps1`も同梱する。
 
 必須ファイル・バージョン・ブロック名とtextdomain・PHP/JS構文を確認し、ZIP内の全実行時ファイルの内容を元ファイルとSHA-256で照合する。PHPかNodeが使えなければ停止する。生成ZIP全体のSHA-256も表示する。構文検査は実行に使ったPHPのバージョンでの検査であり、PHP 7.4互換の実証やWordPress実機検査の代わりにはならない。
 
-## WordPressでの受け入れ確認（未実施）
+## WordPressでの受け入れ確認
+
+2026-10-04に利用者環境で、旧プラグインからMangaFocusへの入れ替え、管理画面表示、Pro無効時のコマ読みを確認し、問題なしとの報告を受けた。WordPress、PHP、ブラウザーの詳細なバージョンは未記録。
 
 本番ではなく検証用サイトで、作成したZIP自体をインストールして確認する。
 
-1. AI Manga Viewer単独で有効化し、同名カテゴリのブロックを挿入する。
+1. MangaFocus単独で有効化し、同名カテゴリのブロックを挿入する。
 2. 画像を3枚以上選択し、並び替え・削除・保存・編集画面再読込を行う。
 3. PC/スマホのコマを別に設定して保存し、再読込後も座標・順番・倍率が復元されることを確認する。
 4. 公開画面でページ送り・コマ読み・左右綴じ・実端末スワイプ・モーダル開閉を確認する。方向仕様の既知課題はphase-1-report.mdを参照。

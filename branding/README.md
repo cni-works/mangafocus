@@ -1,4 +1,4 @@
-# AI Manga Viewer branding assets
+# MangaFocus branding assets
 
 This directory stores source branding files used to prepare distribution and
 listing artwork. These files are development assets and are intentionally

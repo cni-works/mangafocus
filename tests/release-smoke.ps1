@@ -3,7 +3,7 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 $root = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 $fixture = Join-Path $PSScriptRoot ('.release-test-' + [guid]::NewGuid().ToString('N'))
-$files = @('ai-manga-viewer.php', 'readme.txt', 'includes/features.php', 'includes/capabilities.php', 'includes/extensions.php', 'includes/settings.php', 'includes/analytics.php', 'includes/analytics/lifecycle.php', 'includes/analytics/storage.php', 'includes/analytics/settings.php', 'assets/admin-library.css', 'assets/admin-library.js', 'assets/admin-settings.css', 'blocks/library-viewer/block.json',
+$files = @('mangafocus.php', 'readme.txt', 'includes/features.php', 'includes/capabilities.php', 'includes/extensions.php', 'includes/settings.php', 'includes/panel-reader.php', 'includes/panel-reader/renderer.php', 'includes/analytics.php', 'includes/analytics/lifecycle.php', 'includes/analytics/storage.php', 'includes/analytics/settings.php', 'assets/admin-library.css', 'assets/admin-library.js', 'assets/admin-settings.css', 'assets/panel-reader/editor.js', 'assets/panel-reader/frontend.js', 'assets/panel-reader/style.css', 'blocks/library-viewer/block.json',
     'blocks/library-viewer/index.js', 'blocks/viewer/block.json',
     'blocks/viewer/layout.js', 'blocks/viewer/index.js', 'blocks/viewer/view.js', 'blocks/viewer/render.php',
     'blocks/viewer/style.css', 'scripts/build-release.ps1')
@@ -58,7 +58,7 @@ try {
     }
     $archive = [IO.Compression.ZipFile]::OpenRead($zip)
     try {
-        $expected = @($files | Where-Object { $_ -notlike 'scripts/*' } | ForEach-Object { 'ai-manga-viewer/' + $_ })
+        $expected = @($files | ForEach-Object { 'mangafocus/' + $_ })
         $entryNames = @($archive.Entries | ForEach-Object { $_.FullName })
         $diff = @(Compare-Object $expected $entryNames)
         if ($diff.Count -ne 0) { throw 'Unexpected archive file list.' }
@@ -68,6 +68,9 @@ try {
 		if (@($entryNames | Where-Object { $_ -match '(?i)(consultation|admin-analytics|analytics/(?:queries|rest|admin))' }).Count -ne 0) {
 			throw 'Pro-owned Analytics or AI Consultation runtime leaked into the Free Core ZIP.'
 		}
+		if ($entryNames -notcontains 'mangafocus/scripts/build-release.ps1') {
+			throw 'Public release build tool is missing from the Free Core ZIP.'
+		}
 		$editorSource = [IO.File]::ReadAllText((Join-Path $fixture 'blocks/viewer/index.js'))
 		$rendererSource = [IO.File]::ReadAllText((Join-Path $fixture 'blocks/viewer/render.php'))
 		$viewSource = [IO.File]::ReadAllText((Join-Path $fixture 'blocks/viewer/view.js'))
@@ -75,10 +78,14 @@ try {
 		if ($editorSource -match 'function ctaOf|CTA画像を選択|このページにCTAを表示' -or $rendererSource -match 'function ai_manga_viewer_page_cta' -or $viewSource -match 'notifyCtaClick|\.amv-reader__cta' -or $styleSource -match '\.amv-reader__cta') {
 			throw 'Pro-owned CTA runtime or editor implementation leaked into the Free Core ZIP.'
 		}
-		if ($editorSource -match 'コマ読みを有効化|スマホ用にコマを追加|amv-reader__focus-area' -or $rendererSource -match 'amv-reader__focus-open|amv-modal__stage|data-amv-panel-reader' -or $viewSource -match 'parseAreas|focusFit|amv-modal__image' -or $styleSource -match '\.amv-modal|\.amv-reader__focus-open|\.amv-reader__focus-area') {
-			throw 'Pro-owned panel reader runtime or editor implementation leaked into the Free Core ZIP.'
+		$panelEditorSource = [IO.File]::ReadAllText((Join-Path $fixture 'assets/panel-reader/editor.js'))
+		$panelRendererSource = [IO.File]::ReadAllText((Join-Path $fixture 'includes/panel-reader/renderer.php'))
+		$panelViewSource = [IO.File]::ReadAllText((Join-Path $fixture 'assets/panel-reader/frontend.js'))
+		$panelStyleSource = [IO.File]::ReadAllText((Join-Path $fixture 'assets/panel-reader/style.css'))
+		if ($panelEditorSource -notmatch 'コマ読みを有効化' -or $panelEditorSource -notmatch 'mobileFocusAreas' -or $panelRendererSource -notmatch 'data-amv-panel-reader' -or $panelViewSource -notmatch 'setExtensionMode' -or $panelStyleSource -notmatch '\.amv-modal') {
+			throw 'Core-owned panel reader runtime or editor implementation is missing from the Free ZIP.'
 		}
-		if ($editorSource -notmatch 'previous\.cta' -or -not $rendererSource.Contains("'cta' => `$cta") -or [IO.File]::ReadAllText((Join-Path $fixture 'ai-manga-viewer.php')) -notmatch 'ai_manga_viewer_sanitize_library_cta') {
+		if ($editorSource -notmatch 'previous\.cta' -or -not $rendererSource.Contains("'cta' => `$cta") -or [IO.File]::ReadAllText((Join-Path $fixture 'mangafocus.php')) -notmatch 'ai_manga_viewer_sanitize_library_cta') {
 			throw 'Core CTA compatibility preservation is missing from the Free Core ZIP.'
 		}
 		$blockMetadata = [IO.File]::ReadAllText((Join-Path $fixture 'blocks/viewer/block.json'))

@@ -23,12 +23,12 @@ function amv_expect( $condition, $message ) {
 	}
 }
 
-$expected_ids = array( 'panel_reader', 'cta', 'analytics', 'ai_consultation' );
+$expected_ids = array( 'panel_reader', 'cta', 'analytics', 'ai_consultation', 'manga_creation' );
 $registry = ai_manga_viewer_get_feature_registry();
 amv_expect( $expected_ids === array_keys( $registry ), 'Feature registry IDs or order changed.' );
 
 foreach ( $expected_ids as $feature_id ) {
-	$expected = false;
+	$expected = 'panel_reader' === $feature_id;
 	amv_expect( $expected === ai_manga_viewer_has_feature( $feature_id ), $feature_id . ' Core availability is incorrect.' );
 	amv_expect( array( 'available' => $expected ) === $registry[ $feature_id ], $feature_id . ' registry entry is incorrect.' );
 }
@@ -39,7 +39,7 @@ foreach ( array( 'unknown_feature', '', 'PANEL_READER', ' panel_reader ', null, 
 
 $map = ai_manga_viewer_get_feature_map();
 amv_expect( $expected_ids === array_keys( $map ), 'Feature map must follow the PHP registry.' );
-amv_expect( array( 'panel_reader' => false, 'cta' => false, 'analytics' => false, 'ai_consultation' => false ) === $map, 'Core feature map must disable every Pro-owned feature.' );
+amv_expect( array( 'panel_reader' => true, 'cta' => false, 'analytics' => false, 'ai_consultation' => false, 'manga_creation' => false ) === $map, 'Core feature map must expose only the Free panel reader.' );
 
 $prefix = 'window.aiMangaViewerFeatures=';
 $script = ai_manga_viewer_feature_bootstrap_script();
@@ -50,7 +50,7 @@ amv_expect( $map === $decoded, 'JavaScript feature map must match the PHP featur
 $GLOBALS['test_feature_filter'] = function( $available, $feature_id ) {
 	return in_array( $feature_id, array( 'panel_reader', 'cta' ), true ) ? true : $available;
 };
-amv_expect( true === ai_manga_viewer_has_feature( 'panel_reader' ), 'Pro filter must expose panel_reader.' );
+amv_expect( true === ai_manga_viewer_has_feature( 'panel_reader' ), 'Core panel_reader must remain available.' );
 amv_expect( true === ai_manga_viewer_has_feature( 'cta' ), 'Pro filter must be able to expose a registered feature.' );
 amv_expect( false === ai_manga_viewer_has_feature( 'analytics' ), 'Core Analytics must remain unavailable without Pro.' );
 amv_expect( true === ai_manga_viewer_get_feature_map()['cta'], 'Filtered availability must reach the JavaScript map source.' );

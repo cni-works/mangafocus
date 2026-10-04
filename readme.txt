@@ -1,4 +1,4 @@
-=== AI Manga Viewer ===
+=== MangaFocus – Panel-by-Panel Manga Reader ===
 Contributors: cniworks
 Tags: manga, comic, viewer, reader, gutenberg
 Requires at least: 6.3
@@ -8,19 +8,21 @@ Stable tag: 0.3.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Display image-based comics in WordPress with page turns, spreads, fullscreen reading, vertical scrolling, zoom, and reusable Manga Library entries.
+Display image-based comics in WordPress with panel-by-panel reading, page turns, spreads, fullscreen, vertical scrolling, zoom, and reusable Manga Library entries.
 
 == Description ==
 
-= About AI Manga Viewer =
+= About MangaFocus =
 
-AI Manga Viewer is a WordPress plugin for publishing comics made from image files. It provides page-by-page reading, two-page spreads, fullscreen viewing, vertical scrolling, zoom and pan controls, and reusable Manga Library entries.
+MangaFocus is a WordPress plugin for publishing comics made from image files. Its panel-by-panel reader lets authors define regions on each page so readers can move through the comic one panel at a time. It also provides page-by-page reading, two-page spreads, fullscreen viewing, vertical scrolling, zoom and pan controls, and reusable Manga Library entries.
 
 The plugin does not generate images and does not send content to an AI API. It can display AI-assisted artwork, conventionally created comics, company introductions, brochures, and other image-based publications.
 
 = Free features =
 
-* A direct AI Manga Viewer block for posts and pages
+* A MangaFocus block for posts and pages
+* Panel-by-panel reading with author-defined panel regions
+* Separate optional panel regions for mobile screens
 * Single-page, two-page spread, and responsive automatic layouts
 * Optional standalone cover pages and standalone handling for landscape images
 * Right-to-left and left-to-right binding
@@ -30,11 +32,11 @@ The plugin does not generate images and does not send content to an AI API. It c
 * A cover launcher that shows only the cover and a reading button in the page
 * Reuse through Manga Library, the Registered Viewer block, and shortcodes
 
-The one-page-at-a-time spread mode focuses on each complete page in reading order. It is separate from the panel reader planned for the Pro add-on, which uses author-defined panel regions.
+The one-page-at-a-time spread mode focuses on each complete page in reading order. Panel-by-panel reading instead follows the author-defined regions within each page.
 
 = Creating and reusing comics =
 
-Direct Viewer places an AI Manga Viewer block directly in a post or page and stores the comic configuration with that block.
+Direct Viewer places a MangaFocus block directly in a post or page and stores the comic configuration with that block.
 
 Manga Library stores a comic as a reusable entry. Select it with the Registered Viewer block or display it with a shortcode:
 
@@ -50,7 +52,7 @@ Fullscreen reading supports normal page navigation or continuous vertical scroll
 
 = Pro add-on =
 
-The Core plugin can be extended by a compatible Pro add-on. Planned Pro features include an author-defined panel reader, calls to action, analytics reports, and AI consultation material. These features are not included in the Free/Core plugin.
+The Core plugin can be extended by a compatible Pro add-on. Pro features include calls to action, analytics reports, AI consultation material, and AI manga production support. Panel-by-panel reading is included in Free/Core.
 
 When the Pro add-on is inactive, published content falls back to the regular Free Viewer. Saved Pro settings remain stored so that a compatible add-on can use them again later.
 
@@ -66,17 +68,17 @@ If a site owner uses an image URL hosted on another site, the reader's browser c
 
 == Installation ==
 
-1. AI Manga Viewerをインストールし、有効化します。
-2. 投稿または固定ページで「AI Manga Viewer」ブロックを追加します。
+1. MangaFocusをインストールし、有効化します。
+2. 投稿または固定ページで「MangaFocus」ブロックを追加します。
 3. 「ページ画像を選択」から漫画画像を読む順に登録します。
-4. 1ページ、見開き、自動、綴じ方向、全画面、縦スクロール、ズームなどを設定します。
+4. 1ページ、見開き、自動、綴じ方向、全画面、縦スクロール、ズーム、コマ読みなどを設定します。
 5. プレビューでPCとスマートフォンの表示を確認して公開します。
 
 同じ漫画を複数の場所で利用する場合は、Direct Viewerの「漫画ライブラリに登録」からManga Libraryへコピーします。その後、投稿へ「登録済みViewer」ブロックを追加して作品を選ぶか、Manga Library一覧のショートコードを使用します。
 
 == Frequently Asked Questions ==
 
-= AI Manga ViewerはAIで漫画を生成しますか？ =
+= MangaFocusはAIで漫画を生成しますか？ =
 
 いいえ。漫画画像をWordPress上で読みやすく表示するViewerです。画像生成機能はありません。
 
@@ -94,11 +96,11 @@ Direct Viewerは投稿や固定ページ内で直接作成します。Manga Libr
 
 = 見開きと「1ページずつ大きく読む」の違いは何ですか？ =
 
-見開きは2ページを同時に表示します。「1ページずつ大きく読む」は、見開きの構造を維持しながら、全画面で片方のページ全体へ順番に注目する表示です。コマ枠を使うProのコマ読みとは異なります。
+見開きは2ページを同時に表示します。「1ページずつ大きく読む」は、見開きの構造を維持しながら、全画面で片方のページ全体へ順番に注目する表示です。コマ読みは、作者が登録したページ内のコマを順番に大きく表示します。
 
 = Free版だけで使えますか？ =
 
-はい。ページ送り、見開き、自動切替、全画面、縦スクロール、ズーム、Manga Library、登録済みViewer、ショートコードなどをFree/Core単体で利用できます。
+はい。コマ読み、ページ送り、見開き、自動切替、全画面、縦スクロール、ズーム、Manga Library、登録済みViewer、ショートコードなどをFree/Core単体で利用できます。
 
 = Pro Add-onを無効化すると漫画が表示されなくなりますか？ =
 
@@ -121,10 +123,20 @@ Manga Library投稿と投稿メタデータは自動削除しません。Analyti
 5. 全画面で縦スクロール
 6. Manga Library
 
+== Development ==
+
+The distributed plugin contains its human-readable PHP, JavaScript, and CSS source. It does not use minified, bundled, or transpiled runtime files.
+
+The maintained development repository is available at https://github.com/cni-works/mangafocus.
+
+The release build tool is included at `scripts/build-release.ps1`. Run `powershell -File scripts/build-release.ps1` from the plugin directory. The script uses an explicit allowlist and runs PHP and JavaScript syntax checks before creating the archive.
+
 == Changelog ==
 
 = 0.3.0 =
 
+* プラグイン名をMangaFocusへ変更し、配布スラッグとText Domainを`mangafocus`へ統一。
+* 作者指定のコマ範囲を順番に表示するコマ読みをFree/Coreへ追加。
 * Manga Library、登録済みViewerブロック、ショートコードを追加。
 * 1ページ、見開き、自動切替、先頭ページ単独表示、横長ページ単独表示を追加。
 * 全画面の「1ページずつ大きく読む」表示、縦スクロール、ズーム、表紙から全画面で読む表示を追加。
@@ -141,4 +153,4 @@ Manga Library投稿と投稿メタデータは自動削除しません。Analyti
 
 = 0.1.0-alpha =
 
-* AI Manga Viewerを独立したWordPressプラグインとして初期化。
+* 旧名称AI Manga Viewerで独立したWordPressプラグインとして初期化。

@@ -1,5 +1,5 @@
 <?php
-/** Server-side rendering for AI Manga Viewer. */
+/** Server-side rendering for MangaFocus. */
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -130,7 +130,7 @@ function ai_manga_viewer_page_dimensions( $page ) {
 
 function ai_manga_viewer_zoom_controls( $modifier = '' ) {
 	$class = 'amv-reader__zoom-controls' . ( $modifier ? ' ' . $modifier : '' );
-	return '<div class="' . esc_attr( $class ) . '" role="group" aria-label="' . esc_attr__( '画像の拡大と移動', 'ai-manga-viewer' ) . '"><button type="button" class="amv-reader__zoom-out" aria-label="' . esc_attr__( '縮小', 'ai-manga-viewer' ) . '">−</button><output class="amv-reader__zoom-level" aria-live="polite">100%</output><button type="button" class="amv-reader__zoom-in" aria-label="' . esc_attr__( '拡大', 'ai-manga-viewer' ) . '">＋</button><button type="button" class="amv-reader__zoom-reset">' . esc_html__( '全体', 'ai-manga-viewer' ) . '</button></div>';
+	return '<div class="' . esc_attr( $class ) . '" role="group" aria-label="' . esc_attr__( '画像の拡大と移動', 'mangafocus' ) . '"><button type="button" class="amv-reader__zoom-out" aria-label="' . esc_attr__( '縮小', 'mangafocus' ) . '">−</button><output class="amv-reader__zoom-level" aria-live="polite">100%</output><button type="button" class="amv-reader__zoom-in" aria-label="' . esc_attr__( '拡大', 'mangafocus' ) . '">＋</button><button type="button" class="amv-reader__zoom-reset">' . esc_html__( '全体', 'mangafocus' ) . '</button></div>';
 }
 
 function ai_manga_viewer_render_viewer( $attributes ) {
@@ -216,42 +216,42 @@ function ai_manga_viewer_render_viewer( $attributes ) {
 		$cover_alt   = '' !== $viewer_title ? $viewer_title : $pages[0]['alt'];
 		if ( '' !== $viewer_title ) {
 			/* translators: %s: manga title. */
-			$button_label = sprintf( __( '%sを全画面で読む', 'ai-manga-viewer' ), $viewer_title );
+			$button_label = sprintf( __( '%sを全画面で読む', 'mangafocus' ), $viewer_title );
 		} else {
-			$button_label = __( '漫画を全画面で読む', 'ai-manga-viewer' );
+			$button_label = __( '漫画を全画面で読む', 'mangafocus' );
 		}
 		$output .= '<div class="amv-reader__cover-launcher">';
 		if ( $cover_url ) {
 			$output .= '<img class="amv-reader__cover-image" src="' . esc_url( $cover_url ) . '" alt="' . esc_attr( $cover_alt ) . '" loading="eager" decoding="async" fetchpriority="high" />';
 		} else {
-			$output .= '<div class="amv-reader__cover-placeholder">' . esc_html__( '表紙未設定', 'ai-manga-viewer' ) . '</div>';
+			$output .= '<div class="amv-reader__cover-placeholder">' . esc_html__( '表紙未設定', 'mangafocus' ) . '</div>';
 		}
-		$output .= '<div class="amv-reader__cover-actions"><button type="button" class="amv-reader__cover-launcher-button" aria-label="' . esc_attr( $button_label ) . '">' . esc_html__( '漫画を読む', 'ai-manga-viewer' ) . '</button>';
+		$output .= '<div class="amv-reader__cover-actions"><button type="button" class="amv-reader__cover-launcher-button" aria-label="' . esc_attr( $button_label ) . '">' . esc_html__( '漫画を読む', 'mangafocus' ) . '</button>';
 		$output .= '</div></div>';
 	}
-	$output .= '<div id="' . esc_attr( $stage_id ) . '" class="amv-reader__stage" tabindex="0" role="group" aria-roledescription="' . esc_attr__( 'ページビューアー', 'ai-manga-viewer' ) . '" aria-label="' . esc_attr__( 'ページを左右キーまたはスワイプで送れます', 'ai-manga-viewer' ) . '">';
-	$output .= '<button type="button" class="amv-reader__edge amv-reader__edge--previous" aria-label="' . esc_attr__( '前のページ', 'ai-manga-viewer' ) . '"></button>';
+	$output .= '<div id="' . esc_attr( $stage_id ) . '" class="amv-reader__stage" tabindex="0" role="group" aria-roledescription="' . esc_attr__( 'ページビューアー', 'mangafocus' ) . '" aria-label="' . esc_attr__( 'ページを左右キーまたはスワイプで送れます', 'mangafocus' ) . '">';
+	$output .= '<button type="button" class="amv-reader__edge amv-reader__edge--previous" aria-label="' . esc_attr__( '前のページ', 'mangafocus' ) . '"></button>';
 	$output .= '<div class="amv-reader__pages">';
 	$output .= '<div class="amv-reader__focus-layer">';
 	$output .= '<div class="amv-reader__surface">';
 	foreach ( $pages as $index => $page ) {
 		list( $image_width, $image_height ) = ai_manga_viewer_page_dimensions( $page );
 		/* translators: %d: one-based page number. */
-		$page_label = sprintf( __( '%dページ目', 'ai-manga-viewer' ), $index + 1 );
+		$page_label = sprintf( __( '%dページ目', 'mangafocus' ), $index + 1 );
 		$output .= '<figure class="amv-reader__page' . ( 0 === $index ? ' is-active' : '' ) . '" data-page-index="' . esc_attr( (string) $index ) . '"' . ( '' !== $page['pageKey'] ? ' data-page-key="' . esc_attr( $page['pageKey'] ) . '"' : '' ) . ( $image_width && $image_height ? ' data-image-width="' . esc_attr( (string) $image_width ) . '" data-image-height="' . esc_attr( (string) $image_height ) . '"' : '' ) . ' data-viewer-src="' . esc_url( ai_manga_viewer_viewer_image_url( $page ) ) . '" role="group" aria-label="' . esc_attr( $page_label ) . '"><div class="amv-reader__canvas">' . ai_manga_viewer_image( $page, $index ) . ai_manga_viewer_extension_page_overlay( $page, $index, $extension_context ) . '</div></figure>';
 	}
 	$output .= '</div>';
 	$output .= '</div>';
 	$output .= '</div>';
-	$output .= '<button type="button" class="amv-reader__edge amv-reader__edge--next" aria-label="' . esc_attr__( '次のページ', 'ai-manga-viewer' ) . '"></button>';
+	$output .= '<button type="button" class="amv-reader__edge amv-reader__edge--next" aria-label="' . esc_attr__( '次のページ', 'mangafocus' ) . '"></button>';
 	if ( $zoom && 'bottom' !== $zoom_position ) {
 		$output .= ai_manga_viewer_zoom_controls( 'amv-reader__zoom-controls--side' );
 	}
 	$output .= '</div>';
 	$output .= '<div class="amv-reader__controls">';
-	$output .= '<button type="button" class="amv-reader__button amv-reader__button--previous" aria-controls="' . esc_attr( $stage_id ) . '">' . esc_html__( '前のページ', 'ai-manga-viewer' ) . '</button>';
+	$output .= '<button type="button" class="amv-reader__button amv-reader__button--previous" aria-controls="' . esc_attr( $stage_id ) . '">' . esc_html__( '前のページ', 'mangafocus' ) . '</button>';
 	if ( $zoom ) {
-		$output .= '<button type="button" class="amv-reader__zoom-page amv-reader__zoom-page--previous" aria-controls="' . esc_attr( $stage_id ) . '" aria-label="' . esc_attr__( 'ズームを解除して前のページ', 'ai-manga-viewer' ) . '"></button>';
+		$output .= '<button type="button" class="amv-reader__zoom-page amv-reader__zoom-page--previous" aria-controls="' . esc_attr( $stage_id ) . '" aria-label="' . esc_attr__( 'ズームを解除して前のページ', 'mangafocus' ) . '"></button>';
 		$output .= '<div class="amv-reader__controls-main">';
 	}
 	if ( $show_numbers ) {
@@ -262,17 +262,17 @@ function ai_manga_viewer_render_viewer( $attributes ) {
 	}
 	if ( $zoom ) {
 		$output .= '</div>';
-		$output .= '<button type="button" class="amv-reader__zoom-page amv-reader__zoom-page--next" aria-controls="' . esc_attr( $stage_id ) . '" aria-label="' . esc_attr__( 'ズームを解除して次のページ', 'ai-manga-viewer' ) . '"></button>';
+		$output .= '<button type="button" class="amv-reader__zoom-page amv-reader__zoom-page--next" aria-controls="' . esc_attr( $stage_id ) . '" aria-label="' . esc_attr__( 'ズームを解除して次のページ', 'mangafocus' ) . '"></button>';
 	}
-	$output .= '<button type="button" class="amv-reader__button amv-reader__button--next" aria-controls="' . esc_attr( $stage_id ) . '">' . esc_html__( '次のページ', 'ai-manga-viewer' ) . '</button>';
+	$output .= '<button type="button" class="amv-reader__button amv-reader__button--next" aria-controls="' . esc_attr( $stage_id ) . '">' . esc_html__( '次のページ', 'mangafocus' ) . '</button>';
 	$output .= '</div>';
 	if ( $fullscreen ) {
 		$output .= '<div class="amv-reader__mode-controls">';
 		if ( $fullscreen ) {
-			$output .= '<button type="button" class="amv-reader__fullscreen" aria-controls="' . esc_attr( $stage_id ) . '" aria-pressed="false">' . esc_html__( '全画面で読む', 'ai-manga-viewer' ) . '</button>';
+			$output .= '<button type="button" class="amv-reader__fullscreen" aria-controls="' . esc_attr( $stage_id ) . '" aria-pressed="false">' . esc_html__( '全画面で読む', 'mangafocus' ) . '</button>';
 		}
 		if ( $fullscreen && 'paged' === $fullscreen_reading_mode && 'pageFocus' === $spread_reading_mode && 'single' !== $page_layout ) {
-			$output .= '<button type="button" class="amv-reader__spread-overview" aria-pressed="false" hidden>' . esc_html__( '見開き全体を見る', 'ai-manga-viewer' ) . '</button>';
+			$output .= '<button type="button" class="amv-reader__spread-overview" aria-pressed="false" hidden>' . esc_html__( '見開き全体を見る', 'mangafocus' ) . '</button>';
 		}
 		$output .= '</div>';
 	}

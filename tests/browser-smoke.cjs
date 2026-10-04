@@ -13,7 +13,7 @@ const libraryCurrent = path.join(root, 'blocks/library-viewer');
 const librarySource = fs.readFileSync(path.join(libraryCurrent, 'index.js'), 'utf8');
 const viewerSource = fs.readFileSync(path.join(current, 'index.js'), 'utf8');
 const ctaEditorSource = fs.readFileSync(path.join(proRoot, 'assets', 'cta', 'editor.js'), 'utf8');
-const panelEditorSource = fs.readFileSync(path.join(proRoot, 'assets', 'panel-reader', 'editor.js'), 'utf8');
+const panelEditorSource = fs.readFileSync(path.join(root, 'assets', 'panel-reader', 'editor.js'), 'utf8');
 const layoutWindow = {};
 vm.runInNewContext(fs.readFileSync(path.join(current, 'layout.js'), 'utf8'), { window: layoutWindow });
 const viewerLayout = layoutWindow.aiMangaViewerLayout;
@@ -49,23 +49,25 @@ assert.match(panelEditorSource, /mobileFocusAreas/);
 assert.match(viewerSource, /見開き（利用できません）/);
 assert.match(viewerSource, /現在のページ構成には、見開きとして組み合わせ可能なページがありません/);
 assert.match(viewerSource, /画像情報を確認中です/);
-const html = execFileSync('php', [path.join(__dirname, 'render-smoke.php'), '--fixture', '--pro-cta-fixture', '--pro-panel-fixture'], { encoding: 'utf8' });
-const sideHtml = execFileSync('php', [path.join(__dirname, 'render-smoke.php'), '--side-fixture', '--pro-cta-fixture', '--pro-panel-fixture'], { encoding: 'utf8' });
-const directHtml = execFileSync('php', [path.join(__dirname, 'render-smoke.php'), '--direct-fixture', '--pro-cta-fixture', '--pro-panel-fixture'], { encoding: 'utf8' });
+const html = execFileSync('php', [path.join(__dirname, 'render-smoke.php'), '--fixture', '--pro-cta-fixture'], { encoding: 'utf8' });
+const sideHtml = execFileSync('php', [path.join(__dirname, 'render-smoke.php'), '--side-fixture', '--pro-cta-fixture'], { encoding: 'utf8' });
+const directHtml = execFileSync('php', [path.join(__dirname, 'render-smoke.php'), '--direct-fixture', '--pro-cta-fixture'], { encoding: 'utf8' });
 const analyticsFixture = path.join(proRoot, 'tests', 'analytics-module-smoke.php');
 function runAnalyticsFixture(flag) {
 	const tempFixture = path.join(os.tmpdir(), `amv-analytics-module-${process.pid}-${flag.replace(/[^a-z]/g, '')}.php`);
 	const originalPrepare = "\t\t\t$query = preg_replace_callback( '/%[sd]/', function( $match ) use ( $arg ) { return '%d' === $match[0] ? (string) (int) $arg : \"'\" . str_replace( \"'\", \"''\", (string) $arg ) . \"'\"; }, $query, 1 );";
 	const identifierAwarePrepare = "\t\t\t$query = preg_replace_callback( '/%[ids]/', function( $match ) use ( $arg ) { if ( '%i' === $match[0] ) { return '`' . str_replace( '`', '``', (string) $arg ) . '`'; } return '%d' === $match[0] ? (string) (int) $arg : \"'\" . str_replace( \"'\", \"''\", (string) $arg ) . \"'\"; }, $query, 1 );";
 	let fixtureSource = fs.readFileSync(analyticsFixture, 'utf8');
-	assert.match(fixtureSource, /preg_replace_callback\( '\/%\[sd\]\/'/);
-	fixtureSource = fixtureSource.replace(originalPrepare, identifierAwarePrepare);
-	fixtureSource = fixtureSource.replace("'INSERT IGNORE INTO wp_amv_reader_events'", "'INSERT IGNORE INTO `wp_amv_reader_events`'");
-	for (const table of ['wp_amv_reader_events', 'wp_amv_page_reaches', 'wp_amv_reader_sessions']) {
-		fixtureSource = fixtureSource.replaceAll(`DELETE FROM ${table} WHERE`, `DELETE FROM \`${table}\` WHERE`);
-		fixtureSource = fixtureSource.replaceAll(`DELETE FROM ${table}'`, `DELETE FROM \`${table}\`'`);
+	assert.match(fixtureSource, /preg_replace_callback\( '\/%\[(?:sd|sdi)\]\/'/);
+	if (fixtureSource.includes(originalPrepare)) {
+		fixtureSource = fixtureSource.replace(originalPrepare, identifierAwarePrepare);
+		fixtureSource = fixtureSource.replace("'INSERT IGNORE INTO wp_amv_reader_events'", "'INSERT IGNORE INTO `wp_amv_reader_events`'");
+		for (const table of ['wp_amv_reader_events', 'wp_amv_page_reaches', 'wp_amv_reader_sessions']) {
+			fixtureSource = fixtureSource.replaceAll(`DELETE FROM ${table} WHERE`, `DELETE FROM \`${table}\` WHERE`);
+			fixtureSource = fixtureSource.replaceAll(`DELETE FROM ${table}'`, `DELETE FROM \`${table}\`'`);
+		}
+		fixtureSource = fixtureSource.replace("'DROP TABLE IF EXISTS wp_amv_'", "'DROP TABLE IF EXISTS `wp_amv_'");
 	}
-	fixtureSource = fixtureSource.replace("'DROP TABLE IF EXISTS wp_amv_'", "'DROP TABLE IF EXISTS `wp_amv_'");
 	fixtureSource = fixtureSource.replace("$core_root = dirname( __DIR__, 2 ) . '/AI Manga Viewer';", `$core_root = '${root.replace(/\\/g, '/')}';`);
 	fixtureSource = fixtureSource.replaceAll('dirname( __DIR__ )', `'${proRoot.replace(/\\/g, '/')}'`);
 	fs.writeFileSync(tempFixture, fixtureSource, 'utf8');
@@ -137,12 +139,12 @@ assert.equal(registered['ai-manga-viewer/library-viewer'].save(), null);
         await page.addStyleTag({ path: path.join(dir, 'style.css') });
         if (dir === current) {
           await page.addStyleTag({ path: path.join(proRoot, 'assets', 'cta', 'style.css') });
-          await page.addStyleTag({ path: path.join(proRoot, 'assets', 'panel-reader', 'style.css') });
+          await page.addStyleTag({ path: path.join(root, 'assets', 'panel-reader', 'style.css') });
           await page.addScriptTag({ path: path.join(current, 'layout.js') });
           await page.addScriptTag({ path: path.join(proRoot, 'assets', 'analytics', 'frontend.js') });
         }
         await page.addScriptTag({ path: path.join(dir, 'view.js') });
-        if (dir === current) { await page.addScriptTag({ path: path.join(proRoot, 'assets', 'cta', 'frontend.js') }); await page.addScriptTag({ path: path.join(proRoot, 'assets', 'panel-reader', 'frontend.js') }); }
+        if (dir === current) { await page.addScriptTag({ path: path.join(proRoot, 'assets', 'cta', 'frontend.js') }); await page.addScriptTag({ path: path.join(root, 'assets', 'panel-reader', 'frontend.js') }); }
       }
       await page.evaluate(() => {
         window.__amvReaderEvents = [];
@@ -520,11 +522,11 @@ assert.equal(registered['ai-manga-viewer/library-viewer'].save(), null);
     await solo.locator('.wp-block-cni-blocks-page-flip').evaluate(node => node.remove());
     await solo.locator('.wp-block-ai-manga-viewer-viewer').evaluate((node, value) => { node.dataset.binding = value; node.dataset.animation = 'off'; }, binding);
     await solo.addStyleTag({ path: path.join(current, 'style.css') });
-    await solo.addStyleTag({ path: path.join(proRoot, 'assets', 'panel-reader', 'style.css') });
+    await solo.addStyleTag({ path: path.join(root, 'assets', 'panel-reader', 'style.css') });
     await solo.addScriptTag({ path: path.join(current, 'layout.js') });
     await solo.addScriptTag({ path: path.join(proRoot, 'assets', 'analytics', 'frontend.js') });
     await solo.addScriptTag({ path: path.join(current, 'view.js') });
-    await solo.addScriptTag({ path: path.join(proRoot, 'assets', 'panel-reader', 'frontend.js') });
+    await solo.addScriptTag({ path: path.join(root, 'assets', 'panel-reader', 'frontend.js') });
     const stage = solo.locator('.amv-reader__stage');
     async function swipe(target, dx, dy = 0, mode = 'single') {
       await target.evaluate((element, args) => {
@@ -828,11 +830,11 @@ assert.equal(registered['ai-manga-viewer/library-viewer'].save(), null);
         ]);
       });
       await wideFocus.addStyleTag({ path: path.join(current, 'style.css') });
-      await wideFocus.addStyleTag({ path: path.join(proRoot, 'assets', 'panel-reader', 'style.css') });
+      await wideFocus.addStyleTag({ path: path.join(root, 'assets', 'panel-reader', 'style.css') });
       await wideFocus.addScriptTag({ path: path.join(current, 'layout.js') });
       await wideFocus.addScriptTag({ path: path.join(proRoot, 'assets', 'analytics', 'frontend.js') });
       await wideFocus.addScriptTag({ path: path.join(current, 'view.js') });
-      await wideFocus.addScriptTag({ path: path.join(proRoot, 'assets', 'panel-reader', 'frontend.js') });
+      await wideFocus.addScriptTag({ path: path.join(root, 'assets', 'panel-reader', 'frontend.js') });
       await wideFocus.locator('.amv-reader__focus-open').click();
       const wideModal = wideFocus.locator('.amv-modal:not([hidden])');
       const wideImage = wideModal.locator('.amv-modal__image');

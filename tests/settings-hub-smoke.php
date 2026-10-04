@@ -2,12 +2,12 @@
 /** Isolated smoke test for the Core-owned general settings hub. */
 define( 'ABSPATH', __DIR__ );
 define( 'AI_MANGA_VIEWER_VERSION', '0.3.0' );
-define( 'AI_MANGA_VIEWER_PLUGIN_FILE', dirname( __DIR__ ) . '/ai-manga-viewer.php' );
+define( 'AI_MANGA_VIEWER_PLUGIN_FILE', dirname( __DIR__ ) . '/mangafocus.php' );
 
 $GLOBALS['amv_settings_hooks'] = array();
 $GLOBALS['amv_settings_pro'] = null;
-$GLOBALS['amv_settings_features'] = array( 'panel_reader' => false, 'cta' => false, 'analytics' => false, 'ai_consultation' => false );
-$GLOBALS['amv_settings_capabilities'] = array( 'panel_reader' => array( 'runtime' => false, 'editor' => false ), 'cta' => array( 'runtime' => false, 'editor' => false ), 'analytics' => array( 'collection' => false, 'report' => false ), 'ai_consultation' => array( 'admin' => false ) );
+$GLOBALS['amv_settings_features'] = array( 'panel_reader' => true, 'cta' => false, 'analytics' => false, 'ai_consultation' => false, 'manga_creation' => false );
+$GLOBALS['amv_settings_capabilities'] = array( 'panel_reader' => array( 'runtime' => true, 'editor' => true ), 'cta' => array( 'runtime' => false, 'editor' => false ), 'analytics' => array( 'collection' => false, 'report' => false ), 'ai_consultation' => array( 'admin' => false ), 'manga_creation' => array( 'admin' => false ) );
 $GLOBALS['amv_settings_styles'] = array();
 $GLOBALS['amv_settings_can_manage'] = true;
 
@@ -20,10 +20,11 @@ function esc_html__( $text ) { return $text; }
 function esc_html( $text ) { return htmlspecialchars( (string) $text, ENT_QUOTES, 'UTF-8' ); }
 function esc_attr( $text ) { return htmlspecialchars( (string) $text, ENT_QUOTES, 'UTF-8' ); }
 function esc_url( $url ) { return $url; }
+function wp_kses_post( $html ) { return $html; }
 function sanitize_text_field( $text ) { return trim( strip_tags( (string) $text ) ); }
 function admin_url( $path = '' ) { return 'https://example.test/wp-admin/' . ltrim( $path, '/' ); }
 function add_query_arg( $args, $url ) { return $url . '?' . http_build_query( $args ); }
-function plugin_basename() { return 'ai-manga-viewer/ai-manga-viewer.php'; }
+function plugin_basename() { return 'mangafocus/mangafocus.php'; }
 function plugin_dir_path( $file ) { return rtrim( dirname( $file ), '/\\' ) . DIRECTORY_SEPARATOR; }
 function plugins_url( $path ) { return 'https://example.test/plugins/ai-manga-viewer/' . ltrim( $path, '/' ); }
 function wp_enqueue_style( ...$args ) { $GLOBALS['amv_settings_styles'][] = $args; }
@@ -45,27 +46,27 @@ amv_expect( false !== strpos( ai_manga_viewer_settings_url(), 'page=ai-manga-vie
 amv_expect( false !== strpos( ai_manga_viewer_plugin_action_links( array( '<a>Deactivate</a>' ) )[0], '>設定<' ), 'Core settings action link missing.' );
 
 ob_start(); ai_manga_viewer_render_settings_page(); $core_html = ob_get_clean();
-foreach ( array( '0.3.0', '未導入または無効', '漫画ライブラリを開く', '新しい漫画を登録', '解析設定を開く', 'Free Viewer', 'コマ読み', 'CTA', '漫画解析', 'AI相談' ) as $needle ) {
+foreach ( array( '0.3.0', '未導入または無効', '漫画ライブラリを開く', '新しい漫画を登録', '解析設定を開く', 'Free Viewer', 'コマ読み', 'CTA', '漫画解析', 'AI相談', 'AI漫画制作サポート' ) as $needle ) {
 	amv_expect( false !== strpos( $core_html, $needle ), 'Core-only settings output missing: ' . $needle );
 }
 amv_expect( false === strpos( $core_html, '0.1.0-alpha' ), 'Core-only screen leaked a Pro version.' );
-amv_expect( 5 === substr_count( $core_html, 'is-unavailable">利用不可' ), 'Core-only Pro feature statuses are invalid.' );
+amv_expect( false !== strpos( $core_html, 'Panel-by-Panel' ) && 5 === substr_count( $core_html, 'is-unavailable">利用不可' ), 'Core-only feature statuses are invalid.' );
 
 $GLOBALS['amv_settings_pro'] = array( 'installed' => true, 'active' => true, 'version' => '0.1.0-alpha' );
-$GLOBALS['amv_settings_features'] = array( 'panel_reader' => true, 'cta' => true, 'analytics' => true, 'ai_consultation' => true );
-$GLOBALS['amv_settings_capabilities'] = array( 'panel_reader' => array( 'runtime' => true, 'editor' => true ), 'cta' => array( 'runtime' => true, 'editor' => true ), 'analytics' => array( 'collection' => true, 'report' => true ), 'ai_consultation' => array( 'admin' => true ) );
+$GLOBALS['amv_settings_features'] = array( 'panel_reader' => true, 'cta' => true, 'analytics' => true, 'ai_consultation' => true, 'manga_creation' => true );
+$GLOBALS['amv_settings_capabilities'] = array( 'panel_reader' => array( 'runtime' => true, 'editor' => true ), 'cta' => array( 'runtime' => true, 'editor' => true ), 'analytics' => array( 'collection' => true, 'report' => true ), 'ai_consultation' => array( 'admin' => true ), 'manga_creation' => array( 'admin' => true ) );
 ob_start(); ai_manga_viewer_render_settings_page(); $pro_html = ob_get_clean();
 amv_expect( false !== strpos( $pro_html, '0.1.0-alpha' ) && false !== strpos( $pro_html, '>有効<' ), 'Core + Pro status output is invalid.' );
 amv_expect( 0 === substr_count( $pro_html, '利用不可' ), 'Available Pro features were shown as unavailable.' );
 
-$GLOBALS['amv_settings_capabilities'] = array( 'panel_reader' => array( 'runtime' => true, 'editor' => false ), 'cta' => array( 'runtime' => true, 'editor' => false ), 'analytics' => array( 'collection' => true, 'report' => false ), 'ai_consultation' => array( 'admin' => false ) );
+$GLOBALS['amv_settings_capabilities'] = array( 'panel_reader' => array( 'runtime' => true, 'editor' => true ), 'cta' => array( 'runtime' => true, 'editor' => false ), 'analytics' => array( 'collection' => true, 'report' => false ), 'ai_consultation' => array( 'admin' => false ), 'manga_creation' => array( 'admin' => false ) );
 ob_start(); ai_manga_viewer_render_settings_page(); $expired_html = ob_get_clean();
-amv_expect( 2 === substr_count( $expired_html, '表示継続・編集不可' ), 'Expired panel/CTA status output is invalid.' );
+amv_expect( 1 === substr_count( $expired_html, '表示継続・編集不可' ), 'Expired CTA status output is invalid.' );
 amv_expect( 2 === substr_count( $expired_html, '収集継続・レポート利用不可' ), 'Expired Analytics status output is invalid.' );
 amv_expect( false !== strpos( $expired_html, '<strong>AI相談</strong>' ) && false !== strpos( $expired_html, 'is-unavailable">利用不可' ), 'Expired AI Consultation status output is invalid.' );
 amv_expect( false !== strpos( $expired_html, '<dt>Pro状態</dt><dd><span class="amv-settings__status is-available">有効</span>' ), 'Expired license changed the plugin status display.' );
 
-$GLOBALS['amv_settings_capabilities'] = array( 'panel_reader' => array( 'runtime' => false, 'editor' => false ), 'cta' => array( 'runtime' => false, 'editor' => false ), 'analytics' => array( 'collection' => false, 'report' => false ), 'ai_consultation' => array( 'admin' => false ) );
+$GLOBALS['amv_settings_capabilities'] = array( 'panel_reader' => array( 'runtime' => true, 'editor' => true ), 'cta' => array( 'runtime' => false, 'editor' => false ), 'analytics' => array( 'collection' => false, 'report' => false ), 'ai_consultation' => array( 'admin' => false ), 'manga_creation' => array( 'admin' => false ) );
 ob_start(); ai_manga_viewer_render_settings_page(); $unlicensed_html = ob_get_clean();
 amv_expect( false === strpos( $unlicensed_html, 'is-limited' ) && 0 === substr_count( $unlicensed_html, '表示継続・編集不可' ), 'Unlicensed Pro features were shown as partially available.' );
 amv_expect( 5 === substr_count( $unlicensed_html, 'is-unavailable">利用不可' ), 'Unlicensed Pro feature statuses are invalid.' );

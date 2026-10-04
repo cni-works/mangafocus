@@ -107,18 +107,13 @@ function wp_is_post_autosave( $post_id ) { return false; }
 function get_posts( $args = array() ) { return $GLOBALS['test_get_posts'] ?? array(); }
 function parse_blocks( $content ) { return $GLOBALS['test_parsed_blocks'][ $content ] ?? array(); }
 function render_block( $block ) { $GLOBALS['test_rendered_blocks'][] = $block; $previous_class = $GLOBALS['test_block_class']; $GLOBALS['test_block_class'] = 'wp-block-ai-manga-viewer-viewer'; $rendered = ai_manga_viewer_render_viewer( $block['attrs'] ?? array() ); $GLOBALS['test_block_class'] = $previous_class; return $rendered; }
-require dirname( __DIR__ ) . '/ai-manga-viewer.php';
+require dirname( __DIR__ ) . '/mangafocus.php';
 $with_pro_cta = in_array( '--pro-cta-fixture', $argv, true );
-$with_pro_panel = in_array( '--pro-panel-fixture', $argv, true );
+$with_pro_panel = true;
 if ( $with_pro_cta ) {
 	add_filter( 'ai_manga_viewer_has_feature', function( $available, $feature_id ) { return 'cta' === $feature_id ? true : $available; }, 30, 2 );
 	add_filter( 'ai_manga_viewer_capability_map', function( $map ) { $map['cta']['runtime'] = true; $map['cta']['editor'] = true; return $map; }, 10 );
 	require dirname( __DIR__, 2 ) . '/AI Manga Viewer Pro/includes/modules/cta/renderer.php';
-}
-if ( $with_pro_panel ) {
-	add_filter( 'ai_manga_viewer_has_feature', function( $available, $feature_id ) { return 'panel_reader' === $feature_id ? true : $available; }, 30, 2 );
-	add_filter( 'ai_manga_viewer_capability_map', function( $map ) { $map['panel_reader']['runtime'] = true; $map['panel_reader']['editor'] = true; return $map; }, 10 );
-	require dirname( __DIR__, 2 ) . '/AI Manga Viewer Pro/includes/modules/panel-reader/renderer.php';
 }
 foreach ( $GLOBALS['actions']['init'] as $callback ) { call_user_func( $callback ); }
 foreach ( $GLOBALS['actions']['rest_api_init'] as $callback ) { call_user_func( $callback ); }
@@ -153,8 +148,8 @@ $sanitized_route_attributes = call_user_func(
 );
 if ( 'page' !== ( $sanitized_route_attributes['pages'][0]['alt'] ?? '' ) ) { throw new Exception( 'Library registration attributes were not sanitized by the REST argument schema' ); }
 if ( 3 !== count( $GLOBALS['registered_settings'] ?? array() ) || 'manage_options' !== ( $GLOBALS['submenu_pages']['ai-manga-viewer-analytics']['capability'] ?? '' ) || isset( $GLOBALS['submenu_pages']['ai-manga-viewer-analytics-report'], $GLOBALS['submenu_pages']['ai-manga-viewer-consultation'] ) || 'edit.php?post_type=amv_viewer' !== ( $GLOBALS['submenu_pages']['ai-manga-viewer-analytics']['parent'] ?? '' ) || ( $GLOBALS['actions']['admin_post_ai_manga_viewer_delete_analytics'][0] ?? '' ) !== 'ai_manga_viewer_handle_delete_analytics' ) { throw new Exception( 'Core Analytics lifecycle settings boundary failed' ); }
-$feature_bootstrap = 'window.aiMangaViewerFeatures={"panel_reader":' . ( $with_pro_panel ? 'true' : 'false' ) . ',"cta":' . ( $with_pro_cta ? 'true' : 'false' ) . ',"analytics":false,"ai_consultation":false};';
-$capability_bootstrap = 'window.aiMangaViewerCapabilities={"panel_reader":{"runtime":' . ( $with_pro_panel ? 'true' : 'false' ) . ',"editor":' . ( $with_pro_panel ? 'true' : 'false' ) . '},"cta":{"runtime":' . ( $with_pro_cta ? 'true' : 'false' ) . ',"editor":' . ( $with_pro_cta ? 'true' : 'false' ) . '},"analytics":{"collection":false,"report":false},"ai_consultation":{"admin":false}};';
+$feature_bootstrap = 'window.aiMangaViewerFeatures={"panel_reader":true,"cta":' . ( $with_pro_cta ? 'true' : 'false' ) . ',"analytics":false,"ai_consultation":false,"manga_creation":false};';
+$capability_bootstrap = 'window.aiMangaViewerCapabilities={"panel_reader":{"runtime":true,"editor":true},"cta":{"runtime":' . ( $with_pro_cta ? 'true' : 'false' ) . ',"editor":' . ( $with_pro_cta ? 'true' : 'false' ) . '},"analytics":{"collection":false,"report":false},"ai_consultation":{"admin":false},"manga_creation":{"admin":false}};';
 $client_bootstrap = $feature_bootstrap . $capability_bootstrap;
 if ( 'before' !== ( $GLOBALS['inline_scripts']['ai-manga-viewer-editor']['position'] ?? '' ) || $client_bootstrap !== ( $GLOBALS['inline_scripts']['ai-manga-viewer-editor']['data'] ?? '' ) || 'before' !== ( $GLOBALS['inline_scripts']['ai-manga-viewer-library-editor']['position'] ?? '' ) || $client_bootstrap !== ( $GLOBALS['inline_scripts']['ai-manga-viewer-library-editor']['data'] ?? '' ) ) { throw new Exception( 'Editor feature/capability configuration failed' ); }
 if ( 'before' !== ( $GLOBALS['inline_scripts']['ai-manga-viewer-view']['position'] ?? '' ) || false === strpos( $GLOBALS['inline_scripts']['ai-manga-viewer-view']['data'] ?? '', $feature_bootstrap ) ) { throw new Exception( 'Frontend feature bootstrap failed' ); }
@@ -162,7 +157,7 @@ if ( isset( $GLOBALS['inline_scripts']['ai-manga-viewer-analytics-transport'] ) 
 $cover_callback = $GLOBALS['rest_fields']['amv_viewer']['amv_cover_url']['get_callback'];
 if ( 'https://example.test/cover.jpg' !== $cover_callback( array( 'id' => 123 ) ) || '' !== $cover_callback( array( 'id' => 0 ) ) ) { throw new Exception( 'Manga Library cover REST field failed' ); }
 if ( in_array( 'wp-server-side-render', $GLOBALS['scripts']['ai-manga-viewer-library-editor'] ?? array(), true ) ) { throw new Exception( 'Registered Viewer editor must not load the full server-side preview dependency' ); }
-if ( ! in_array( 'wp-data', $GLOBALS['scripts']['ai-manga-viewer-editor'] ?? array(), true ) || ! in_array( 'wp-api-fetch', $GLOBALS['scripts']['ai-manga-viewer-editor'] ?? array(), true ) || ! in_array( 'wp-hooks', $GLOBALS['scripts']['ai-manga-viewer-editor'] ?? array(), true ) || ! in_array( 'wp-data', $GLOBALS['scripts']['ai-manga-viewer-library-editor'] ?? array(), true ) || ! in_array( 'wp-i18n', $GLOBALS['scripts']['ai-manga-viewer-view'] ?? array(), true ) || 'ai-manga-viewer' !== ( $GLOBALS['script_translations']['ai-manga-viewer-view'] ?? '' ) ) { throw new Exception( 'Editor migration, hook, instance-key or frontend i18n dependency is missing' ); }
+if ( ! in_array( 'wp-data', $GLOBALS['scripts']['ai-manga-viewer-editor'] ?? array(), true ) || ! in_array( 'wp-api-fetch', $GLOBALS['scripts']['ai-manga-viewer-editor'] ?? array(), true ) || ! in_array( 'wp-hooks', $GLOBALS['scripts']['ai-manga-viewer-editor'] ?? array(), true ) || ! in_array( 'wp-data', $GLOBALS['scripts']['ai-manga-viewer-library-editor'] ?? array(), true ) || ! in_array( 'wp-i18n', $GLOBALS['scripts']['ai-manga-viewer-view'] ?? array(), true ) || 'mangafocus' !== ( $GLOBALS['script_translations']['ai-manga-viewer-view'] ?? '' ) ) { throw new Exception( 'Editor migration, hook, instance-key or frontend i18n dependency is missing' ); }
 if ( 1 !== AI_MANGA_VIEWER_EXTENSION_API_VERSION || 1 !== ai_manga_viewer_get_extension_api_version() ) { throw new Exception( 'Extension API version contract failed' ); }
 if ( function_exists( 'ai_manga_viewer_normalize_analytics_event' ) || function_exists( 'ai_manga_viewer_register_analytics_routes' ) || function_exists( 'ai_manga_viewer_render_analytics_report_page' ) ) { throw new Exception( 'Pro Analytics implementation leaked into Core.' ); }
 $library = $GLOBALS['post_types']['amv_viewer'] ?? null;
