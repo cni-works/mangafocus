@@ -1,6 +1,7 @@
 <?php
 /** Isolated WordPress API doubles; this is not a WordPress integration test. */
 define( 'ABSPATH', __DIR__ );
+define( 'WP_LANG_DIR', __DIR__ . '/languages' );
 define( 'MINUTE_IN_SECONDS', 60 );
 class WP_REST_Server { const CREATABLE = 'POST'; const READABLE = 'GET'; }
 class WP_REST_Request { private $params; public function __construct( $params = array() ) { $this->params = $params; } public function get_param( $key ) { return $this->params[ $key ] ?? null; } }
@@ -42,6 +43,8 @@ function get_block_wrapper_attributes( $attrs ) {
 }
 function plugin_dir_path( $file ) { return dirname( $file ) . '/'; }
 function plugin_dir_url( $file ) { return 'https://example.test/plugin/'; }
+function determine_locale() { return 'en_US'; }
+function trailingslashit( $value ) { return rtrim( $value, '/\\' ) . '/'; }
 function home_url( $path = '' ) { return 'https://example.test' . $path; }
 function admin_url( $path = '' ) { return 'https://example.test/wp-admin/' . ltrim( $path, '/' ); }
 function add_query_arg( $args, $url ) { return $url . ( false === strpos( $url, '?' ) ? '?' : '&' ) . http_build_query( $args ); }
@@ -53,7 +56,7 @@ function apply_filters( $hook, $value ) { $args = func_get_args(); array_shift( 
 function add_shortcode( $tag, $fn ) { $GLOBALS['shortcodes'][$tag] = $fn; }
 function register_activation_hook( $file, $fn ) { $GLOBALS['activation_hook'] = $fn; }
 function plugin_basename( $file ) { return 'mangafocus/' . basename( $file ); }
-function load_plugin_textdomain( $domain, $deprecated = false, $path = false ) { $GLOBALS['loaded_textdomain'] = array( $domain, $path ); return true; }
+function load_textdomain( $domain, $path ) { $GLOBALS['loaded_textdomain'] = array( $domain, $path ); return true; }
 function register_deactivation_hook( $file, $fn ) { $GLOBALS['deactivation_hook'] = $fn; }
 function register_uninstall_hook( $file, $fn ) { $GLOBALS['uninstall_hook'] = $fn; }
 function register_rest_route( $namespace, $route, $args ) { $GLOBALS['rest_routes'][ $namespace . $route ] = $args; }

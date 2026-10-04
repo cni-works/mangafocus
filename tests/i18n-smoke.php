@@ -26,7 +26,7 @@ foreach ( $runtime_files as $relative ) {
 }
 
 $main = file_get_contents( $root . '/mangafocus.php' );
-if ( false === strpos( $main, 'Domain Path: /languages' ) || false === strpos( $main, "load_plugin_textdomain( 'mangafocus'" ) || false === strpos( $main, "wp_set_script_translations( 'ai-manga-viewer-view', 'mangafocus', \$translations_path )" ) ) {
+if ( false === strpos( $main, 'Domain Path: /languages' ) || false === strpos( $main, "load_textdomain( 'mangafocus', \$bundled )" ) || false === strpos( $main, "wp_set_script_translations( 'ai-manga-viewer-view', 'mangafocus', \$translations_path )" ) ) {
 	throw new RuntimeException( 'Bundled translation loading is incomplete.' );
 }
 
