@@ -38,7 +38,7 @@ register_uninstall_hook( __FILE__, 'ai_manga_viewer_uninstall_analytics' );
 
 /** Load a WordPress.org language pack when present, with the bundled catalog as a fallback. */
 function ai_manga_viewer_load_textdomain() {
-	$locale        = apply_filters( 'plugin_locale', determine_locale(), 'mangafocus' );
+	$locale        = determine_locale();
 	$language_pack = trailingslashit( WP_LANG_DIR ) . 'plugins/mangafocus-' . $locale . '.mo';
 	$bundled       = plugin_dir_path( __FILE__ ) . 'languages/mangafocus-' . $locale . '.mo';
 
