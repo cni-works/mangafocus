@@ -1,0 +1,98 @@
+{
+    "translation-revision-date": "2026-10-04 00:00+0900",
+    "generator": "MangaFocus scripts/build-translations.php",
+    "source": [
+        "assets/panel-reader/editor.js"
+    ],
+    "domain": "messages",
+    "locale_data": {
+        "messages": {
+            "": {
+                "domain": "messages",
+                "lang": "ja",
+                "plural-forms": "nplurals=1; plural=0;"
+            },
+            "Panel-by-Panel": [
+                "コマ読み"
+            ],
+            "Enable Panel-by-Panel reading": [
+                "コマ読みを有効化"
+            ],
+            "Enlarge registered panels in sequence in a dedicated viewer.": [
+                "登録したコマを専用ビューアーで順に大きく表示します。"
+            ],
+            "Configure mobile panels separately": [
+                "スマホ用のコマ設定を個別指定"
+            ],
+            "When enabled, desktop panels are used as the initial values and you can adjust mobile regions and order separately.": [
+                "ONにすると、PCのコマを初期値にして、スマホ用の枠と順番を別に調整できます。"
+            ],
+            "Panel set to edit": [
+                "編集するコマ設定"
+            ],
+            "Mobile": [
+                "スマホ"
+            ],
+            "Drag over the image to create a region": [
+                "画像上をドラッグして枠を作成"
+            ],
+            "Add a mobile panel": [
+                "スマホ用にコマを追加"
+            ],
+            "Add a panel to the current page": [
+                "現在のページにコマを追加"
+            ],
+            "Panel": [
+                "コマ"
+            ],
+            "Previous": [
+                "前へ"
+            ],
+            "Next": [
+                "次へ"
+            ],
+            "Delete": [
+                "削除"
+            ],
+            "Select “Add panel,” then drag over the image.": [
+                "「コマを追加」を押して、画像上をドラッグしてください。"
+            ],
+            "Display method": [
+                "表示方法"
+            ],
+            "Automatic (fit to panel size)": [
+                "自動（コマの大きさに合わせる）"
+            ],
+            "Enlarge": [
+                "拡大して表示"
+            ],
+            "Show full page": [
+                "ページ全体を表示"
+            ],
+            "Zoom level (%)": [
+                "ズーム倍率（%）"
+            ],
+            "Lower this value if small panels are enlarged too much.": [
+                "小さなコマで寄りすぎる場合は下げてください。"
+            ],
+            "Width (%)": [
+                "幅（%）"
+            ],
+            "Height (%)": [
+                "高さ（%）"
+            ],
+            "Dedicated viewer start position": [
+                "専用ビューアーの開始位置"
+            ],
+            "Start from the current page": [
+                "現在のページから開始"
+            ],
+            "When disabled, the dedicated viewer starts from the beginning regardless of the page currently open.": [
+                "OFFの場合は、通常表示で開いているページに関係なく最初から開始します。"
+            ],
+            "Enlarge the panel region": [
+                "コマ範囲を拡大"
+            ]
+        }
+    }
+}

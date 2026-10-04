@@ -32,8 +32,9 @@ function ai_manga_viewer_register_panel_reader_assets() {
 		array( 'ai-manga-viewer-style' ),
 		filemtime( $base_path . 'style.css' )
 	);
-	wp_set_script_translations( 'ai-manga-viewer-panel-reader-editor', 'mangafocus' );
-	wp_set_script_translations( 'ai-manga-viewer-panel-reader-frontend', 'mangafocus' );
+	$translations_path = plugin_dir_path( AI_MANGA_VIEWER_PLUGIN_FILE ) . 'languages';
+	wp_set_script_translations( 'ai-manga-viewer-panel-reader-editor', 'mangafocus', $translations_path );
+	wp_set_script_translations( 'ai-manga-viewer-panel-reader-frontend', 'mangafocus', $translations_path );
 }
 add_action( 'init', 'ai_manga_viewer_register_panel_reader_assets', 30 );
 

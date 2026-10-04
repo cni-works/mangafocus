@@ -13,6 +13,10 @@ $runtimeFiles = @(
     'blocks/library-viewer/block.json', 'blocks/library-viewer/index.js',
 	'blocks/viewer/block.json', 'blocks/viewer/layout.js', 'blocks/viewer/index.js',
     'blocks/viewer/render.php', 'blocks/viewer/style.css', 'blocks/viewer/view.js',
+	'languages/mangafocus.pot', 'languages/mangafocus-ja.po', 'languages/mangafocus-ja.mo',
+	'languages/mangafocus-ja-ai-manga-viewer-editor.json', 'languages/mangafocus-ja-ai-manga-viewer-view.json',
+	'languages/mangafocus-ja-ai-manga-viewer-library-editor.json',
+	'languages/mangafocus-ja-ai-manga-viewer-panel-reader-editor.json', 'languages/mangafocus-ja-ai-manga-viewer-panel-reader-frontend.json',
     'scripts/build-release.ps1'
 )
 

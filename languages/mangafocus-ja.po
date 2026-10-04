@@ -1,0 +1,749 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: MangaFocus 0.3.0\n"
+"Report-Msgid-Bugs-To: https://github.com/cni-works/mangafocus/issues\n"
+"POT-Creation-Date: 2026-10-04 00:00+0900\n"
+"PO-Revision-Date: 2026-10-04 00:00+0900\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Domain: mangafocus\n"
+
+msgid "%d days"
+msgstr "%d日"
+
+msgid "AI consultation"
+msgstr "AI相談"
+
+msgid "AI manga production support"
+msgstr "AI漫画制作サポート"
+
+msgid "Active"
+msgstr "有効"
+
+msgid "Add New"
+msgstr "新規追加"
+
+msgid "Add a mobile panel"
+msgstr "スマホ用にコマを追加"
+
+msgid "Add a panel to the current page"
+msgstr "現在のページにコマを追加"
+
+msgid "Align the scroll position"
+msgstr "スクロール位置を整える"
+
+msgid "Alignment position"
+msgstr "合わせる位置"
+
+msgid "Alignment strength"
+msgstr "引っかかりの強さ"
+
+msgid "Allow readers to expand the regular page view to fill the browser."
+msgstr "読者が通常のページ表示をブラウザー全体へ広げられます。"
+
+msgid "Analytics & Data"
+msgstr "解析・データ"
+
+msgid "Analytics Settings"
+msgstr "解析設定"
+
+msgid "Analytics paused"
+msgstr "解析停止中"
+
+msgid "At least "
+msgstr "少なくとも"
+
+msgid "Automatic"
+msgstr "自動"
+
+msgid "Automatic (center when it fits)"
+msgstr "自動（収まるときは中央）"
+
+msgid "Automatic (fit to panel size)"
+msgstr "自動（コマの大きさに合わせる）"
+
+msgid "Automatic (unavailable)"
+msgstr "自動（利用できません）"
+
+msgid "Available"
+msgstr "利用可能"
+
+msgid "Back matter"
+msgstr "巻末"
+
+msgid "Binding direction"
+msgstr "綴じ方向"
+
+msgid "Booklet"
+msgstr "冊子"
+
+msgid "Bottom (horizontal)"
+msgstr "下（横並び）"
+
+msgid "Center of screen"
+msgstr "画面中央"
+
+msgid "Checking image information. Spread and automatic layouts remain available while checking."
+msgstr "画像情報を確認中です。確認中は見開き・自動を選択できます。"
+
+msgid "Choose again from Manga Library"
+msgstr "漫画ライブラリから選び直す"
+
+msgid "Clear selection"
+msgstr "選択を解除"
+
+msgid "Click to copy the shortcode"
+msgstr "クリックしてショートコードをコピー"
+
+msgid "Close viewer"
+msgstr "ビューアーを閉じる"
+
+msgid "Collection active; reports unavailable"
+msgstr "収集継続・レポート利用不可"
+
+msgid "Comic"
+msgstr "コミック"
+
+msgid "Comic editing preview"
+msgstr "漫画内容の編集プレビュー"
+
+msgid "Configure mobile panels separately"
+msgstr "スマホ用のコマ設定を個別指定"
+
+msgid "Copied"
+msgstr "コピーしました"
+
+msgid "Copy"
+msgstr "コピー"
+
+msgid "Copy shortcode"
+msgstr "ショートコードをコピー"
+
+msgid "Copy shortcode %s"
+msgstr "ショートコード %s をコピー"
+
+msgid "Copy the current pages and Viewer settings as an independent comic. Saved extension settings are retained and the original Viewer is not changed."
+msgstr "現在のページとViewer設定を独立した漫画としてコピーします。保存済みの追加設定も保持され、元のViewerは変更されません。"
+
+msgid "Core version"
+msgstr "Coreバージョン"
+
+msgid "Could not copy."
+msgstr "コピーできませんでした。"
+
+msgid "Could not load Manga Library."
+msgstr "漫画ライブラリを読み込めませんでした。"
+
+msgid "Could not register the comic in Manga Library."
+msgstr "漫画ライブラリへの登録に失敗しました。"
+
+msgid "Cover"
+msgstr "表紙"
+
+msgid "Cover image"
+msgstr "表紙画像"
+
+msgid "Create AI consultation material"
+msgstr "AI相談資料を作成"
+
+msgid "Dedicated viewer start position"
+msgstr "専用ビューアーの開始位置"
+
+msgid "Delete"
+msgstr "削除"
+
+msgid "Delete all Manga Analytics data?"
+msgstr "漫画解析データをすべて削除しますか？"
+
+msgid "Delete all analytics data"
+msgstr "解析データをすべて削除"
+
+msgid "Delete all analytics tables and settings"
+msgstr "解析テーブルと設定をすべて削除する"
+
+msgid "Delete all saved sessions, page progress, and events. This action cannot be undone. Settings and tables remain."
+msgstr "保存済みのセッション、ページ到達、イベントをすべて削除します。この操作は元に戻せません。設定とテーブルは残ります。"
+
+msgid "Detailed data retention"
+msgstr "詳細データの保存期間"
+
+msgid "Display active; editing unavailable"
+msgstr "表示継続・編集不可"
+
+msgid "Display manga images with paged, spread, fullscreen, and Panel-by-Panel reading."
+msgstr "漫画画像をページ送り、見開き、全画面、コマ読みで表示します。"
+
+msgid "Display method"
+msgstr "表示方法"
+
+msgid "Draft"
+msgstr "下書き"
+
+msgid "Drag over the image to create a region"
+msgstr "画像上をドラッグして枠を作成"
+
+msgid "Edit"
+msgstr "編集"
+
+msgid "Edit comic"
+msgstr "漫画を編集"
+
+msgid "Edit page images"
+msgstr "ページ画像を編集"
+
+msgid "Edit registered comic"
+msgstr "登録した漫画を編集"
+
+msgid "Edit this comic"
+msgstr "この漫画を編集"
+
+msgid "Enable Panel-by-Panel reading"
+msgstr "コマ読みを有効化"
+
+msgid "Enable analytics"
+msgstr "解析を有効にする"
+
+msgid "Enable free zoom and pan"
+msgstr "自由ズームと移動を有効化"
+
+msgid "Enable reader event collection"
+msgstr "読者イベントの収集を有効にする"
+
+msgid "Enlarge"
+msgstr "拡大して表示"
+
+msgid "Enlarge panels in sequence with Panel-by-Panel reading"
+msgstr "Panel-by-Panelでコマを順番に大きく表示"
+
+msgid "Enlarge registered panels in sequence in a dedicated viewer."
+msgstr "登録したコマを専用ビューアーで順に大きく表示します。"
+
+msgid "Enlarge the panel region"
+msgstr "コマ範囲を拡大"
+
+msgid "Enter a comic title."
+msgstr "漫画タイトルを入力してください。"
+
+msgid "Entire spread"
+msgstr "見開き全体"
+
+msgid "Events are collected only when Pro is available. Disabling this option does not delete existing analytics data."
+msgstr "Proが利用可能な場合だけ収集します。OFFにしても過去の解析データは削除されません。"
+
+msgid "Exit fullscreen"
+msgstr "全画面を終了"
+
+msgid "Features"
+msgstr "機能"
+
+msgid "Fit"
+msgstr "全体"
+
+msgid "Focus on one page at a time"
+msgstr "1ページずつ大きく読む"
+
+msgid "Full page"
+msgstr "ページ全体"
+
+msgid "Fullscreen reading mode"
+msgstr "全画面の読み方"
+
+msgid "Fullscreen spread display"
+msgstr "全画面の見開き表示"
+
+msgid "Gentle"
+msgstr "弱い"
+
+msgid "Height (%)"
+msgstr "高さ（%）"
+
+msgid "Image zoom and pan"
+msgstr "画像の拡大と移動"
+
+msgid "Inline display"
+msgstr "ページ内の表示"
+
+msgid "Keep current selection"
+msgstr "選択を変更しない"
+
+msgid "Left (vertical)"
+msgstr "左（縦並び）"
+
+msgid "Left binding"
+msgstr "左綴じ"
+
+msgid "Library"
+msgstr "ライブラリ"
+
+msgid "Lower this value if small panels are enlarged too much."
+msgstr "小さなコマで寄りすぎる場合は下げてください。"
+
+msgid "Manage analytics settings and data retention for comics in Manga Library. MangaFocus Pro is required for analytics collection and reports."
+msgstr "Manga Library登録済み漫画の解析設定と、保存済みデータの保持期間を管理します。Analytics収集とレポートにはMangaFocus Proが必要です。"
+
+msgid "Manage collection, retention, and deletion from the dedicated Analytics Settings screen."
+msgstr "収集のON/OFF、保存期間、全削除は解析専用の設定画面で管理します。"
+
+msgid "Manage reusable comics in Manga Library."
+msgstr "Manga Libraryで再利用する漫画を管理します。"
+
+msgid "Manga"
+msgstr "漫画"
+
+msgid "Manga Analytics"
+msgstr "漫画解析"
+
+msgid "Manga Analytics Settings"
+msgstr "漫画解析設定"
+
+msgid "Manga Analytics data deleted."
+msgstr "漫画解析データを削除しました。"
+
+msgid "Manga Analytics is currently unavailable"
+msgstr "漫画解析は現在利用できません"
+
+msgid "Manga Library"
+msgstr "漫画ライブラリ"
+
+msgid "Manga Library cover image URL"
+msgstr "漫画ライブラリの表紙画像URL"
+
+msgid "MangaFocus Settings"
+msgstr "MangaFocus 設定"
+
+msgid "Maximum comic width (px)"
+msgstr "漫画の最大幅（px）"
+
+msgid "Mobile"
+msgstr "スマホ"
+
+msgid "Move down"
+msgstr "下へ移動"
+
+msgid "Move up"
+msgstr "上へ移動"
+
+msgid "Navigate by clicking page edges"
+msgstr "ページ端クリックで送る"
+
+msgid "Near page %d. Scroll vertically to read."
+msgstr "%dページ目付近を表示中。上下にスクロールして読めます"
+
+msgid "New comic"
+msgstr "新しい漫画"
+
+msgid "Next"
+msgstr "次へ"
+
+msgid "Next page"
+msgstr "次のページ"
+
+msgid "Next panel"
+msgstr "次のコマ"
+
+msgid "No comics are available for selection."
+msgstr "選択できる漫画がありません。"
+
+msgid "No comics found in Trash."
+msgstr "ゴミ箱に漫画はありません。"
+
+msgid "No cover set"
+msgstr "表紙未設定"
+
+msgid "No registered comics found."
+msgstr "登録済みの漫画はありません。"
+
+msgid "Normal"
+msgstr "標準"
+
+msgid "Not installed or inactive"
+msgstr "未導入または無効"
+
+msgid "On the published page, show only the cover and a “Read manga” button, then open the reader in fullscreen. Use the editor preview below to edit the comic as usual."
+msgstr "公開画面では表紙と「漫画を読む」ボタンだけを表示し、全画面で読み始めます。下の編集プレビューでは従来どおり漫画内容を編集できます。"
+
+msgid "On uninstall"
+msgstr "アンインストール時"
+
+msgid "Only the cover is shown in the editor. The complete Viewer appears on the published page."
+msgstr "編集画面では表紙のみ表示します。公開側ではViewer全体が表示されます。"
+
+msgid "Open Analytics Settings"
+msgstr "解析設定を開く"
+
+msgid "Open Manga Library"
+msgstr "漫画ライブラリを開く"
+
+msgid "Open fullscreen from the cover"
+msgstr "表紙から全画面で読む"
+
+msgid "Page"
+msgstr "ページ"
+
+msgid "Page %d"
+msgstr "%dページ目"
+
+msgid "Page %d is enlarged. Use the left and right arrow keys or swipe to navigate."
+msgstr "%dページ目を拡大表示中。左右キーまたはスワイプで送れます"
+
+msgid "Page images"
+msgstr "ページ画像"
+
+msgid "Page layout"
+msgstr "ページレイアウト"
+
+msgid "Page transition animation"
+msgstr "ページめくり演出"
+
+msgid "Page turn"
+msgstr "ページめくり"
+
+msgid "Page viewer"
+msgstr "ページビューアー"
+
+msgid "Paged reading"
+msgstr "ページ送り"
+
+msgid "Paged reading, spreads, page focus, fullscreen, vertical reading, zoom, Panel-by-Panel, Manga Library"
+msgstr "ページ送り、見開き、pageFocus、全画面、縦読み、ズーム、コマ読み、Manga Library"
+
+msgid "Panel"
+msgstr "コマ"
+
+msgid "Panel set to edit"
+msgstr "編集するコマ設定"
+
+msgid "Panel-by-Panel"
+msgstr "コマ読み"
+
+msgid "Panel-by-Panel viewer"
+msgstr "コマ読みビューアー"
+
+msgid "Pending"
+msgstr "承認待ち"
+
+msgid "Previous"
+msgstr "前へ"
+
+msgid "Previous page"
+msgstr "前のページ"
+
+msgid "Previous panel"
+msgstr "前のコマ"
+
+msgid "Private"
+msgstr "非公開"
+
+msgid "Pro status"
+msgstr "Pro状態"
+
+msgid "Pro version"
+msgstr "Proバージョン"
+
+msgid "Published"
+msgstr "公開済み"
+
+msgid "Published display preview"
+msgstr "公開画面の表示プレビュー"
+
+msgid "Read %s in fullscreen"
+msgstr "%sを全画面で読む"
+
+msgid "Read all pages by scrolling from top to bottom."
+msgstr "全ページを上から下へスクロールして読みます。"
+
+msgid "Read by panel"
+msgstr "専用ビューアーで読む"
+
+msgid "Read directly on the page"
+msgstr "ページ内でそのまま読む"
+
+msgid "Read in fullscreen"
+msgstr "全画面で読む"
+
+msgid "Read manga"
+msgstr "漫画を読む"
+
+msgid "Read manga in fullscreen"
+msgstr "漫画を全画面で読む"
+
+msgid "Readers can zoom with the plus and minus controls or pinch gestures, then drag the enlarged image."
+msgstr "読者が＋／－、ピンチ操作で拡大し、拡大中は画像をドラッグして移動できます。"
+
+msgid "Register New Comic"
+msgstr "漫画を新規登録"
+
+msgid "Register a new comic"
+msgstr "新しい漫画を登録"
+
+msgid "Register and edit reusable manga Viewers."
+msgstr "再利用する漫画Viewerを登録・編集します。"
+
+msgid "Register in Manga Library"
+msgstr "漫画ライブラリに登録"
+
+msgid "Registered"
+msgstr "登録済み"
+
+msgid "Registered Comics"
+msgstr "登録済み漫画"
+
+msgid "Registered Viewer"
+msgstr "登録済みViewer"
+
+msgid "Registered in Manga Library. The original Viewer was not changed."
+msgstr "漫画ライブラリへ登録しました。元のViewerは変更されていません。"
+
+msgid "Registering…"
+msgstr "登録中…"
+
+msgid "Remove cover image"
+msgstr "表紙画像を削除"
+
+msgid "Replace this block with a Registered Viewer"
+msgstr "このブロックを登録済みViewerへ切り替える"
+
+msgid "Reset zoom and exit fullscreen"
+msgstr "ズームを解除して全画面を終了"
+
+msgid "Reset zoom and go to the next page"
+msgstr "ズームを解除して次のページ"
+
+msgid "Reset zoom and go to the previous page"
+msgstr "ズームを解除して前のページ"
+
+msgid "Return to full view"
+msgstr "全体表示に戻る"
+
+msgid "Return to page view"
+msgstr "ページ表示に戻る"
+
+msgid "Return to panel"
+msgstr "コマへ戻る"
+
+msgid "Review analytics data deletion"
+msgstr "解析データの削除について確認"
+
+msgid "Review product status and open comic management or analytics settings."
+msgstr "製品の状態を確認し、漫画の管理や解析データの設定へ移動できます。"
+
+msgid "Right (vertical)"
+msgstr "右（縦並び）"
+
+msgid "Right binding (manga)"
+msgstr "右綴じ（漫画向け）"
+
+msgid "Scheduled"
+msgstr "予約済み"
+
+msgid "Search by title or Viewer ID"
+msgstr "タイトルまたはViewer IDで検索"
+
+msgid "Search comics"
+msgstr "漫画を検索"
+
+msgid "Select and display one registered Viewer from Manga Library."
+msgstr "漫画ライブラリから登録済みのViewerを1冊選んで表示します。"
+
+msgid "Select one or more comic pages."
+msgstr "漫画ページを複数選択してください。"
+
+msgid "Select page images"
+msgstr "ページ画像を選択"
+
+msgid "Select “Add panel,” then drag over the image."
+msgstr "「コマを追加」を押して、画像上をドラッグしてください。"
+
+msgid "Selected Viewer"
+msgstr "選択済みのViewer"
+
+msgid "Set cover image"
+msgstr "表紙画像を設定"
+
+msgid "Settings"
+msgstr "設定"
+
+msgid "Shortcode copied."
+msgstr "ショートコードをコピーしました。"
+
+msgid "Show full page"
+msgstr "ページ全体を表示"
+
+msgid "Show fullscreen button"
+msgstr "全画面ボタンを表示"
+
+msgid "Show navigation arrows on every page"
+msgstr "案内矢印をすべてのページで表示"
+
+msgid "Show page numbers"
+msgstr "ページ番号を表示"
+
+msgid "Show the entire spread in the normal view and use the selected mode only in fullscreen."
+msgstr "通常表示では見開き全体を表示し、全画面のときだけ選択した読み方を使用します。"
+
+msgid "Show the first page separately (cover)"
+msgstr "先頭ページを単独表示（表紙向け）"
+
+msgid "Showing page %d. Use the left and right arrow keys or swipe to navigate."
+msgstr "%dページ目を表示中。左右キーまたはスワイプで送れます"
+
+msgid "Showing pages %1$d and %2$d. Use the left and right arrow keys or swipe to navigate."
+msgstr "%1$dページ目と%2$dページ目を表示中。左右キーまたはスワイプで送れます"
+
+msgid "Single page"
+msgstr "1ページ"
+
+msgid "Spread"
+msgstr "見開き"
+
+msgid "Spread (unavailable)"
+msgstr "見開き（利用できません）"
+
+msgid "Start from the current page"
+msgstr "現在のページから開始"
+
+msgid "Start fullscreen from the current page"
+msgstr "現在のページから全画面を開始"
+
+msgid "Strong"
+msgstr "強い"
+
+msgid "Swipe left or right to navigate panels"
+msgstr "左右にスワイプしてコマを送れます"
+
+msgid "The current page set has no pages that can be paired as a spread. Landscape pages and other unmatched pages are shown separately."
+msgstr "現在のページ構成には、見開きとして組み合わせ可能なページがありません。横長ページなどは単独表示されます。"
+
+msgid "The default is 90 days. Expired data is deleted daily regardless of Pro status."
+msgstr "既定は90日です。Proの状態に関係なく、期限を過ぎたデータを日次で削除します。"
+
+msgid "The first image is the cover and the last is the back matter. Drag images or use the arrows to reorder them."
+msgstr "先頭は表紙、末尾は巻末です。ドラッグまたは矢印で順番を変更できます。"
+
+msgid "The selected Viewer could not be found. It may have been deleted or its permissions may have changed."
+msgstr "選択済みのViewerを確認できません。削除または権限変更の可能性があります。"
+
+msgid "There are no comic pages to register."
+msgstr "登録できる漫画ページがありません。"
+
+msgid "This block is already registered in Manga Library."
+msgstr "このブロックはすでに漫画ライブラリへ登録されています。"
+
+msgid "This comic is registered as a draft. Publish it before replacing this block with a Registered Viewer."
+msgstr "下書きとして登録されています。登録した漫画を公開すると、登録済みViewerへ切り替えられます。"
+
+msgid "Title"
+msgstr "タイトル"
+
+msgid "To use Manga Analytics and AI consultation, register the comic in Manga Library and display it as a Registered Viewer."
+msgstr "漫画解析・AI相談を利用するには、漫画ライブラリへの登録後、登録済みViewerとして表示してください。"
+
+msgid "Top of screen"
+msgstr "画面上部"
+
+msgid "Unavailable"
+msgstr "利用不可"
+
+msgid "Unknown"
+msgstr "不明"
+
+msgid "Untitled comic"
+msgstr "無題の漫画"
+
+msgid "Updated"
+msgstr "更新日"
+
+msgid "Updated:"
+msgstr "更新:"
+
+msgid "Use as cover image"
+msgstr "表紙画像として使用"
+
+msgid "Use the current page navigation mode in fullscreen."
+msgstr "現在のページ送り方式を全画面で使用します。"
+
+msgid "Use the first page as the cover"
+msgstr "先頭ページを表紙として使用"
+
+msgid "Use the left and right arrow keys or swipe to navigate pages"
+msgstr "ページを左右キーまたはスワイプで送れます"
+
+msgid "Used when Spread or Automatic is selected."
+msgstr "見開きまたは自動を選んだ場合に使用します。"
+
+msgid "Vertical scrolling"
+msgstr "縦スクロール"
+
+msgid "View analytics"
+msgstr "解析を見る"
+
+msgid "View comic"
+msgstr "漫画を確認"
+
+msgid "View entire spread"
+msgstr "見開き全体を見る"
+
+msgid "Viewer"
+msgstr "ビューアー"
+
+msgid "Viewer details"
+msgstr "Viewer情報"
+
+msgid "When disabled, fullscreen starts from the first page. The cover launcher always starts from the first page."
+msgstr "OFFでは先頭ページから開始します。表紙から全画面で読む場合は常に先頭から開始します。"
+
+msgid "When disabled, the dedicated viewer starts from the beginning regardless of the page currently open."
+msgstr "OFFの場合は、通常表示で開いているページに関係なく最初から開始します。"
+
+msgid "When enabled, desktop panels are used as the initial values and you can adjust mobile regions and order separately."
+msgstr "ONにすると、PCのコマを初期値にして、スマホ用の枠と順番を別に調整できます。"
+
+msgid "When enabled, edge arrows remain visible after moving to the next page."
+msgstr "ONの場合、次ページへ進んだ後もページ端の矢印を表示します。"
+
+msgid "When scrolling stops, the comic is gently aligned to a comfortable reading position."
+msgstr "スクロールを止めたとき、漫画が読みやすい位置へ少し寄せられます。"
+
+msgid "Width (%)"
+msgstr "幅（%）"
+
+msgid "You do not have permission to change this setting."
+msgstr "この設定を変更する権限がありません。"
+
+msgid "You do not have permission to perform this action."
+msgstr "この操作を行う権限がありません。"
+
+msgid "You do not have permission to register a comic from this post."
+msgstr "この投稿から漫画を登録する権限がありません。"
+
+msgid "You do not have permission to view this screen."
+msgstr "この画面を表示する権限がありません。"
+
+msgid "Zoom control position"
+msgstr "ズームボタンの位置"
+
+msgid "Zoom control position preview"
+msgstr "ズームボタンの配置プレビュー"
+
+msgid "Zoom in"
+msgstr "拡大"
+
+msgid "Zoom level (%)"
+msgstr "ズーム倍率（%）"
+
+msgid "Zoom out"
+msgstr "縮小"
+
+msgid "days"
+msgstr "日"
+
+msgid "spread pair(s) will be created. Landscape and unmatched pages are shown separately."
+msgstr "組の見開きが作成されます。横長ページや組み合わせできないページは単独表示されます。"
+
+msgid "%s page"
+msgid_plural "%s pages"
+msgstr[0] "%sページ"
+

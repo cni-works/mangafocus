@@ -9,6 +9,7 @@
  * License: GPLv2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: mangafocus
+ * Domain Path: /languages
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -35,6 +36,12 @@ register_activation_hook( __FILE__, 'ai_manga_viewer_install_analytics_tables' )
 register_deactivation_hook( __FILE__, 'ai_manga_viewer_deactivate_analytics' );
 register_uninstall_hook( __FILE__, 'ai_manga_viewer_uninstall_analytics' );
 
+/** Load bundled translations for installations outside WordPress.org language packs. */
+function ai_manga_viewer_load_textdomain() {
+	load_plugin_textdomain( 'mangafocus', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+}
+add_action( 'init', 'ai_manga_viewer_load_textdomain', 0 );
+
 /** Register the standalone reader and its WordPress dependencies. */
 function ai_manga_viewer_register_blocks() {
 	$path = plugin_dir_path( __FILE__ ) . 'blocks/viewer/';
@@ -53,8 +60,9 @@ function ai_manga_viewer_register_blocks() {
 	wp_add_inline_script( 'ai-manga-viewer-editor', $bootstrap_script, 'before' );
 	wp_add_inline_script( 'ai-manga-viewer-view', $bootstrap_script, 'before' );
 	wp_register_style( 'ai-manga-viewer-style', $url . 'style.css', array(), filemtime( $path . 'style.css' ) );
-	wp_set_script_translations( 'ai-manga-viewer-editor', 'mangafocus' );
-	wp_set_script_translations( 'ai-manga-viewer-view', 'mangafocus' );
+	$translations_path = plugin_dir_path( __FILE__ ) . 'languages';
+	wp_set_script_translations( 'ai-manga-viewer-editor', 'mangafocus', $translations_path );
+	wp_set_script_translations( 'ai-manga-viewer-view', 'mangafocus', $translations_path );
 	register_block_type(
 		$path,
 		array(
@@ -72,7 +80,7 @@ function ai_manga_viewer_register_blocks() {
 		filemtime( $library_path . 'index.js' )
 	);
 	wp_add_inline_script( 'ai-manga-viewer-library-editor', $bootstrap_script, 'before' );
-	wp_set_script_translations( 'ai-manga-viewer-library-editor', 'mangafocus' );
+	wp_set_script_translations( 'ai-manga-viewer-library-editor', 'mangafocus', $translations_path );
 	register_block_type(
 		$library_path,
 		array(
@@ -87,29 +95,29 @@ add_action( 'init', 'ai_manga_viewer_register_blocks' );
 /** Register the reusable Manga Library managed in the block editor. */
 function ai_manga_viewer_register_library() {
 	$labels = array(
-		'name'                  => __( '漫画ライブラリ', 'mangafocus' ),
-		'singular_name'         => __( '登録済みViewer', 'mangafocus' ),
-		'menu_name'             => __( '漫画ライブラリ', 'mangafocus' ),
-		'name_admin_bar'        => __( '登録済みViewer', 'mangafocus' ),
-		'add_new'               => __( '新規追加', 'mangafocus' ),
-		'add_new_item'          => __( '漫画を新規登録', 'mangafocus' ),
-		'new_item'              => __( '新しい漫画', 'mangafocus' ),
-		'edit_item'             => __( '漫画を編集', 'mangafocus' ),
-		'view_item'             => __( '漫画を確認', 'mangafocus' ),
-		'all_items'             => __( '登録済み漫画', 'mangafocus' ),
-		'search_items'          => __( '漫画を検索', 'mangafocus' ),
-		'not_found'             => __( '登録済みの漫画はありません。', 'mangafocus' ),
-		'not_found_in_trash'    => __( 'ゴミ箱に漫画はありません。', 'mangafocus' ),
-		'featured_image'        => __( '表紙画像', 'mangafocus' ),
-		'set_featured_image'    => __( '表紙画像を設定', 'mangafocus' ),
-		'remove_featured_image' => __( '表紙画像を削除', 'mangafocus' ),
-		'use_featured_image'    => __( '表紙画像として使用', 'mangafocus' ),
+		'name'                  => __( 'Manga Library', 'mangafocus' ),
+		'singular_name'         => __( 'Registered Viewer', 'mangafocus' ),
+		'menu_name'             => __( 'Manga Library', 'mangafocus' ),
+		'name_admin_bar'        => __( 'Registered Viewer', 'mangafocus' ),
+		'add_new'               => __( 'Add New', 'mangafocus' ),
+		'add_new_item'          => __( 'Register New Comic', 'mangafocus' ),
+		'new_item'              => __( 'New comic', 'mangafocus' ),
+		'edit_item'             => __( 'Edit comic', 'mangafocus' ),
+		'view_item'             => __( 'View comic', 'mangafocus' ),
+		'all_items'             => __( 'Registered Comics', 'mangafocus' ),
+		'search_items'          => __( 'Search comics', 'mangafocus' ),
+		'not_found'             => __( 'No registered comics found.', 'mangafocus' ),
+		'not_found_in_trash'    => __( 'No comics found in Trash.', 'mangafocus' ),
+		'featured_image'        => __( 'Cover image', 'mangafocus' ),
+		'set_featured_image'    => __( 'Set cover image', 'mangafocus' ),
+		'remove_featured_image' => __( 'Remove cover image', 'mangafocus' ),
+		'use_featured_image'    => __( 'Use as cover image', 'mangafocus' ),
 	);
 	register_post_type(
 		'amv_viewer',
 		array(
 			'labels'              => $labels,
-			'description'         => __( '再利用する漫画Viewerを登録・編集します。', 'mangafocus' ),
+			'description'         => __( 'Register and edit reusable manga Viewers.', 'mangafocus' ),
 			'public'              => false,
 			'publicly_queryable'  => false,
 			'exclude_from_search' => true,
@@ -147,7 +155,7 @@ function ai_manga_viewer_register_library_rest_fields() {
 				$url     = $post_id ? ai_manga_viewer_library_cover_url( $post_id, 'medium' ) : false;
 				return $url ? esc_url_raw( $url ) : '';
 			},
-			'schema' => array( 'description' => __( '漫画ライブラリの表紙画像URL', 'mangafocus' ), 'type' => 'string', 'format' => 'uri', 'context' => array( 'view', 'edit' ), 'readonly' => true ),
+			'schema' => array( 'description' => __( 'Manga Library cover image URL', 'mangafocus' ), 'type' => 'string', 'format' => 'uri', 'context' => array( 'view', 'edit' ), 'readonly' => true ),
 		)
 	);
 }
@@ -246,15 +254,15 @@ function ai_manga_viewer_library_columns( $columns ) {
 	$library_columns = array();
 	foreach ( $columns as $key => $label ) {
 		if ( 'date' === $key ) {
-			$library_columns['amv_modified'] = __( '更新日', 'mangafocus' );
+			$library_columns['amv_modified'] = __( 'Updated', 'mangafocus' );
 			continue;
 		}
 		$library_columns[ $key ] = $label;
 		if ( 'cb' === $key ) {
-			$library_columns['amv_cover'] = __( '表紙', 'mangafocus' );
+			$library_columns['amv_cover'] = __( 'Cover', 'mangafocus' );
 		}
 		if ( 'title' === $key ) {
-			$library_columns['amv_details'] = __( 'Viewer情報', 'mangafocus' );
+			$library_columns['amv_details'] = __( 'Viewer details', 'mangafocus' );
 		}
 	}
 	return $library_columns;
@@ -300,34 +308,34 @@ function ai_manga_viewer_library_column( $column, $post_id ) {
 			admin_url( 'edit.php' )
 		);
 		/* translators: %s: number of pages in the manga. */
-		$page_count_label = sprintf( _n( '%sページ', '%sページ', $page_count, 'mangafocus' ), number_format_i18n( $page_count ) );
-		echo '<div class="amv-library-meta"><span class="amv-library-badge amv-library-badge--status is-' . esc_attr( sanitize_html_class( $status_name ) ) . '">' . esc_html( $status ? $status->label : $status_name ) . '</span><span class="amv-library-badge">' . esc_html( $page_count_label ) . '</span><span class="amv-library-meta__id">' . esc_html__( 'Viewer ID:', 'mangafocus' ) . ' ' . esc_html( (string) absint( $post_id ) ) . '</span><span class="amv-library-meta__modified">' . esc_html__( '更新:', 'mangafocus' ) . ' ' . ( $modified ? esc_html( $modified ) : '<span aria-hidden="true">—</span>' ) . '</span></div>';
+		$page_count_label = sprintf( _n( '%s page', '%s pages', $page_count, 'mangafocus' ), number_format_i18n( $page_count ) );
+		echo '<div class="amv-library-meta"><span class="amv-library-badge amv-library-badge--status is-' . esc_attr( sanitize_html_class( $status_name ) ) . '">' . esc_html( $status ? $status->label : $status_name ) . '</span><span class="amv-library-badge">' . esc_html( $page_count_label ) . '</span><span class="amv-library-meta__id">' . esc_html__( 'Viewer ID:', 'mangafocus' ) . ' ' . esc_html( (string) absint( $post_id ) ) . '</span><span class="amv-library-meta__modified">' . esc_html__( 'Updated:', 'mangafocus' ) . ' ' . ( $modified ? esc_html( $modified ) : '<span aria-hidden="true">—</span>' ) . '</span></div>';
 		echo '<div class="amv-library-primary-actions">';
 		if ( $edit_url ) {
-			echo '<a class="button button-small" href="' . esc_url( $edit_url ) . '">' . esc_html__( '編集', 'mangafocus' ) . '</a>';
+			echo '<a class="button button-small" href="' . esc_url( $edit_url ) . '">' . esc_html__( 'Edit', 'mangafocus' ) . '</a>';
 		}
 		if ( $analytics_enabled ) {
-			echo '<a class="button button-small amv-library-analytics" href="' . esc_url( $analytics_url ) . '">' . esc_html__( '解析を見る', 'mangafocus' ) . '</a>';
+			echo '<a class="button button-small amv-library-analytics" href="' . esc_url( $analytics_url ) . '">' . esc_html__( 'View analytics', 'mangafocus' ) . '</a>';
 			if ( $consultation_enabled && current_user_can( 'manage_options' ) ) {
-				echo '<a class="button button-small amv-library-consultation" href="' . esc_url( $consultation_url ) . '">' . esc_html__( 'AI相談資料を作成', 'mangafocus' ) . '</a>';
+				echo '<a class="button button-small amv-library-consultation" href="' . esc_url( $consultation_url ) . '">' . esc_html__( 'Create AI consultation material', 'mangafocus' ) . '</a>';
 			}
 		} elseif ( $analytics_available ) {
-			echo '<span class="amv-library-analytics-state">' . esc_html__( '解析停止中', 'mangafocus' ) . '</span>';
+			echo '<span class="amv-library-analytics-state">' . esc_html__( 'Analytics paused', 'mangafocus' ) . '</span>';
 			if ( current_user_can( 'manage_options' ) ) {
-				echo '<a class="button button-small amv-library-analytics-settings" href="' . esc_url( $analytics_settings_url ) . '">' . esc_html__( '解析を有効にする', 'mangafocus' ) . '</a>';
+				echo '<a class="button button-small amv-library-analytics-settings" href="' . esc_url( $analytics_settings_url ) . '">' . esc_html__( 'Enable analytics', 'mangafocus' ) . '</a>';
 			}
 		} else {
-			echo '<span class="amv-library-analytics-state">' . esc_html__( '漫画解析は現在利用できません', 'mangafocus' ) . '</span>';
+			echo '<span class="amv-library-analytics-state">' . esc_html__( 'Manga Analytics is currently unavailable', 'mangafocus' ) . '</span>';
 		}
 		/* translators: %s: shortcode copied by the button. */
-		$shortcode_aria_label = sprintf( __( 'ショートコード %s をコピー', 'mangafocus' ), $shortcode );
-		echo '<span class="amv-library-shortcode"><button type="button" class="amv-library-shortcode__copy" data-shortcode="' . esc_attr( $shortcode ) . '" data-default-label="' . esc_attr__( 'コピー', 'mangafocus' ) . '" data-copied-label="' . esc_attr__( 'コピーしました', 'mangafocus' ) . '" data-success-message="' . esc_attr__( 'ショートコードをコピーしました。', 'mangafocus' ) . '" data-error-message="' . esc_attr__( 'コピーできませんでした。', 'mangafocus' ) . '" aria-label="' . esc_attr( $shortcode_aria_label ) . '" title="' . esc_attr__( 'クリックしてショートコードをコピー', 'mangafocus' ) . '"><code class="amv-library-shortcode__code">' . esc_html( $shortcode ) . '</code><span class="amv-library-shortcode__feedback" aria-hidden="true">' . esc_html__( 'コピー', 'mangafocus' ) . '</span></button><span class="screen-reader-text amv-library-shortcode__status" aria-live="polite"></span></span></div>';
+		$shortcode_aria_label = sprintf( __( 'Copy shortcode %s', 'mangafocus' ), $shortcode );
+		echo '<span class="amv-library-shortcode"><button type="button" class="amv-library-shortcode__copy" data-shortcode="' . esc_attr( $shortcode ) . '" data-default-label="' . esc_attr__( 'Copy', 'mangafocus' ) . '" data-copied-label="' . esc_attr__( 'Copied', 'mangafocus' ) . '" data-success-message="' . esc_attr__( 'Shortcode copied.', 'mangafocus' ) . '" data-error-message="' . esc_attr__( 'Could not copy.', 'mangafocus' ) . '" aria-label="' . esc_attr( $shortcode_aria_label ) . '" title="' . esc_attr__( 'Click to copy the shortcode', 'mangafocus' ) . '"><code class="amv-library-shortcode__code">' . esc_html( $shortcode ) . '</code><span class="amv-library-shortcode__feedback" aria-hidden="true">' . esc_html__( 'Copy', 'mangafocus' ) . '</span></button><span class="screen-reader-text amv-library-shortcode__status" aria-live="polite"></span></span></div>';
 		return;
 	}
 	if ( 'amv_modified' === $column ) {
 		$format   = get_option( 'date_format' ) . ' ' . get_option( 'time_format' );
 		$modified = get_post_modified_time( $format, false, $post_id, true );
-		echo '<span class="screen-reader-text">' . esc_html__( '更新:', 'mangafocus' ) . ' ' . ( $modified ? esc_html( $modified ) : esc_html__( '不明', 'mangafocus' ) ) . '</span>';
+		echo '<span class="screen-reader-text">' . esc_html__( 'Updated:', 'mangafocus' ) . ' ' . ( $modified ? esc_html( $modified ) : esc_html__( 'Unknown', 'mangafocus' ) ) . '</span>';
 		return;
 	}
 	if ( 'amv_cover' !== $column ) {
@@ -339,9 +347,9 @@ function ai_manga_viewer_library_column( $column, $post_id ) {
 		$cover     = $cover_url ? '<img class="amv-library-cover-image" src="' . esc_url( $cover_url ) . '" alt="" />' : '';
 	}
 	$edit_url = get_edit_post_link( $post_id, 'raw' );
-	$content  = $cover ? wp_kses_post( $cover ) : '<span class="amv-library-cover-placeholder">' . esc_html__( '表紙未設定', 'mangafocus' ) . '</span>';
+	$content  = $cover ? wp_kses_post( $cover ) : '<span class="amv-library-cover-placeholder">' . esc_html__( 'No cover set', 'mangafocus' ) . '</span>';
 	if ( $edit_url ) {
-		echo '<a class="amv-library-cover-link" href="' . esc_url( $edit_url ) . '" aria-label="' . esc_attr__( 'この漫画を編集', 'mangafocus' ) . '">' . wp_kses_post( $content ) . '</a>';
+		echo '<a class="amv-library-cover-link" href="' . esc_url( $edit_url ) . '" aria-label="' . esc_attr__( 'Edit this comic', 'mangafocus' ) . '">' . wp_kses_post( $content ) . '</a>';
 		return;
 	}
 	echo wp_kses_post( $content );
@@ -478,10 +486,10 @@ function ai_manga_viewer_register_direct_viewer( WP_REST_Request $request ) {
 	$source_key     = sanitize_key( (string) $request->get_param( 'sourceInstanceKey' ) );
 	$existing_id    = absint( $request->get_param( 'existingViewerId' ) );
 	if ( '' === $title ) {
-		return new WP_Error( 'amv_title_required', __( '漫画タイトルを入力してください。', 'mangafocus' ), array( 'status' => 400 ) );
+		return new WP_Error( 'amv_title_required', __( 'Enter a comic title.', 'mangafocus' ), array( 'status' => 400 ) );
 	}
 	if ( $source_post_id && ! current_user_can( 'edit_post', $source_post_id ) ) {
-		return new WP_Error( 'amv_source_forbidden', __( 'この投稿から漫画を登録する権限がありません。', 'mangafocus' ), array( 'status' => 403 ) );
+		return new WP_Error( 'amv_source_forbidden', __( 'You do not have permission to register a comic from this post.', 'mangafocus' ), array( 'status' => 403 ) );
 	}
 	if ( $existing_id && 'amv_viewer' === get_post_type( $existing_id ) && current_user_can( 'edit_post', $existing_id ) ) {
 		return ai_manga_viewer_library_registration_response( $existing_id, true );
@@ -494,12 +502,12 @@ function ai_manga_viewer_register_direct_viewer( WP_REST_Request $request ) {
 	}
 	$attributes = ai_manga_viewer_sanitize_library_attributes( $request->get_param( 'attributes' ) );
 	if ( empty( $attributes['pages'] ) ) {
-		return new WP_Error( 'amv_pages_required', __( '登録できる漫画ページがありません。', 'mangafocus' ), array( 'status' => 400 ) );
+		return new WP_Error( 'amv_pages_required', __( 'There are no comic pages to register.', 'mangafocus' ), array( 'status' => 400 ) );
 	}
 	$post_status = current_user_can( 'publish_posts' ) ? 'publish' : 'draft';
 	$viewer_id = wp_insert_post( array( 'post_type' => 'amv_viewer', 'post_status' => $post_status, 'post_title' => $title, 'post_content' => '' ), true );
 	if ( is_wp_error( $viewer_id ) ) {
-		return new WP_Error( 'amv_library_create_failed', __( '漫画ライブラリへの登録に失敗しました。', 'mangafocus' ), array( 'status' => 500 ) );
+		return new WP_Error( 'amv_library_create_failed', __( 'Could not register the comic in Manga Library.', 'mangafocus' ), array( 'status' => 500 ) );
 	}
 	$attributes['viewerKey']       = 'library-viewer-' . $viewer_id;
 	$attributes['instanceKey']     = 'library-source-' . $viewer_id;
@@ -508,7 +516,7 @@ function ai_manga_viewer_register_direct_viewer( WP_REST_Request $request ) {
 	$updated = wp_update_post( array( 'ID' => $viewer_id, 'post_content' => $content ), true );
 	if ( is_wp_error( $updated ) || ! $updated ) {
 		wp_delete_post( $viewer_id, true );
-		return new WP_Error( 'amv_library_save_failed', __( '漫画ライブラリへの登録に失敗しました。', 'mangafocus' ), array( 'status' => 500 ) );
+		return new WP_Error( 'amv_library_save_failed', __( 'Could not register the comic in Manga Library.', 'mangafocus' ), array( 'status' => 500 ) );
 	}
 	if ( $source_post_id && $source_key ) {
 		update_post_meta( $viewer_id, '_amv_source_reference', $source_post_id . ':' . $source_key );

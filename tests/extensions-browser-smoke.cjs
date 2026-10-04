@@ -82,7 +82,7 @@ const html = execFileSync('php', [path.join(__dirname, 'render-smoke.php'), '--s
     await page.setContent(html);
     await page.evaluate(() => {
       window.wp = { i18n: {
-        __: text => ({ '次のページ': 'Translated next page', '全画面を終了': 'Translated exit fullscreen' }[text] || text),
+        __: text => ({ 'Next page': 'Translated next page', 'Exit fullscreen': 'Translated exit fullscreen' }[text] || text),
         sprintf: (format, ...values) => { let next = 0; return format.replace(/%(?:(\d+)\$)?d/g, (match, position) => String(values[position ? Number(position) - 1 : next++])); }
       } };
       window.__extensionEvents = [];

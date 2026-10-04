@@ -4,8 +4,8 @@
   "title": "MangaFocus",
   "category": "ai-manga-viewer",
   "icon": "book-alt",
-  "description": "漫画画像をページ送り、見開き、全画面、コマ読みで表示します。",
-  "keywords": [ "漫画", "コミック", "ビューアー", "ページめくり", "冊子" ],
+  "description": "Display manga images with paged, spread, fullscreen, and Panel-by-Panel reading.",
+  "keywords": [ "Manga", "Comic", "Viewer", "Page turn", "Booklet" ],
   "textdomain": "mangafocus",
   "attributes": {
     "pages": { "type": "array", "default": [] },

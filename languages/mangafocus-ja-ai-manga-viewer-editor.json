@@ -1,0 +1,293 @@
+{
+    "translation-revision-date": "2026-10-04 00:00+0900",
+    "generator": "MangaFocus scripts/build-translations.php",
+    "source": [
+        "blocks/viewer/index.js"
+    ],
+    "domain": "messages",
+    "locale_data": {
+        "messages": {
+            "": {
+                "domain": "messages",
+                "lang": "ja",
+                "plural-forms": "nplurals=1; plural=0;"
+            },
+            "Cover": [
+                "表紙"
+            ],
+            "Back matter": [
+                "巻末"
+            ],
+            "Page": [
+                "ページ"
+            ],
+            "Display manga images with paged, spread, fullscreen, and Panel-by-Panel reading.": [
+                "漫画画像をページ送り、見開き、全画面、コマ読みで表示します。"
+            ],
+            "Manga": [
+                "漫画"
+            ],
+            "Comic": [
+                "コミック"
+            ],
+            "Viewer": [
+                "ビューアー"
+            ],
+            "Panel-by-Panel": [
+                "コマ読み"
+            ],
+            "Untitled comic": [
+                "無題の漫画"
+            ],
+            "Edit page images": [
+                "ページ画像を編集"
+            ],
+            "Select page images": [
+                "ページ画像を選択"
+            ],
+            "Zoom control position preview": [
+                "ズームボタンの配置プレビュー"
+            ],
+            "Fit": [
+                "全体"
+            ],
+            "Could not register the comic in Manga Library.": [
+                "漫画ライブラリへの登録に失敗しました。"
+            ],
+            "This block is already registered in Manga Library.": [
+                "このブロックはすでに漫画ライブラリへ登録されています。"
+            ],
+            "Registered in Manga Library. The original Viewer was not changed.": [
+                "漫画ライブラリへ登録しました。元のViewerは変更されていません。"
+            ],
+            "This comic is registered as a draft. Publish it before replacing this block with a Registered Viewer.": [
+                "下書きとして登録されています。登録した漫画を公開すると、登録済みViewerへ切り替えられます。"
+            ],
+            "Edit registered comic": [
+                "登録した漫画を編集"
+            ],
+            "Copy shortcode": [
+                "ショートコードをコピー"
+            ],
+            "Replace this block with a Registered Viewer": [
+                "このブロックを登録済みViewerへ切り替える"
+            ],
+            "Copy the current pages and Viewer settings as an independent comic. Saved extension settings are retained and the original Viewer is not changed.": [
+                "現在のページとViewer設定を独立した漫画としてコピーします。保存済みの追加設定も保持され、元のViewerは変更されません。"
+            ],
+            "Title": [
+                "タイトル"
+            ],
+            "Use the first page as the cover": [
+                "先頭ページを表紙として使用"
+            ],
+            "Registering…": [
+                "登録中…"
+            ],
+            "Register in Manga Library": [
+                "漫画ライブラリに登録"
+            ],
+            "To use Manga Analytics and AI consultation, register the comic in Manga Library and display it as a Registered Viewer.": [
+                "漫画解析・AI相談を利用するには、漫画ライブラリへの登録後、登録済みViewerとして表示してください。"
+            ],
+            "Inline display": [
+                "ページ内の表示"
+            ],
+            "Display method": [
+                "表示方法"
+            ],
+            "Read directly on the page": [
+                "ページ内でそのまま読む"
+            ],
+            "Open fullscreen from the cover": [
+                "表紙から全画面で読む"
+            ],
+            "On the published page, show only the cover and a “Read manga” button, then open the reader in fullscreen. Use the editor preview below to edit the comic as usual.": [
+                "公開画面では表紙と「漫画を読む」ボタンだけを表示し、全画面で読み始めます。下の編集プレビューでは従来どおり漫画内容を編集できます。"
+            ],
+            "Page images": [
+                "ページ画像"
+            ],
+            "The first image is the cover and the last is the back matter. Drag images or use the arrows to reorder them.": [
+                "先頭は表紙、末尾は巻末です。ドラッグまたは矢印で順番を変更できます。"
+            ],
+            "Move up": [
+                "上へ移動"
+            ],
+            "Move down": [
+                "下へ移動"
+            ],
+            "Delete": [
+                "削除"
+            ],
+            "Paged reading": [
+                "ページ送り"
+            ],
+            "Page layout": [
+                "ページレイアウト"
+            ],
+            "Single page": [
+                "1ページ"
+            ],
+            "Spread (unavailable)": [
+                "見開き（利用できません）"
+            ],
+            "Spread": [
+                "見開き"
+            ],
+            "Automatic (unavailable)": [
+                "自動（利用できません）"
+            ],
+            "Automatic": [
+                "自動"
+            ],
+            "Show the first page separately (cover)": [
+                "先頭ページを単独表示（表紙向け）"
+            ],
+            "Used when Spread or Automatic is selected.": [
+                "見開きまたは自動を選んだ場合に使用します。"
+            ],
+            "Checking image information. Spread and automatic layouts remain available while checking.": [
+                "画像情報を確認中です。確認中は見開き・自動を選択できます。"
+            ],
+            "The current page set has no pages that can be paired as a spread. Landscape pages and other unmatched pages are shown separately.": [
+                "現在のページ構成には、見開きとして組み合わせ可能なページがありません。横長ページなどは単独表示されます。"
+            ],
+            "At least ": [
+                "少なくとも"
+            ],
+            "spread pair(s) will be created. Landscape and unmatched pages are shown separately.": [
+                "組の見開きが作成されます。横長ページや組み合わせできないページは単独表示されます。"
+            ],
+            "Binding direction": [
+                "綴じ方向"
+            ],
+            "Right binding (manga)": [
+                "右綴じ（漫画向け）"
+            ],
+            "Left binding": [
+                "左綴じ"
+            ],
+            "Maximum comic width (px)": [
+                "漫画の最大幅（px）"
+            ],
+            "Show page numbers": [
+                "ページ番号を表示"
+            ],
+            "Navigate by clicking page edges": [
+                "ページ端クリックで送る"
+            ],
+            "Show navigation arrows on every page": [
+                "案内矢印をすべてのページで表示"
+            ],
+            "When enabled, edge arrows remain visible after moving to the next page.": [
+                "ONの場合、次ページへ進んだ後もページ端の矢印を表示します。"
+            ],
+            "Page transition animation": [
+                "ページめくり演出"
+            ],
+            "Show fullscreen button": [
+                "全画面ボタンを表示"
+            ],
+            "Allow readers to expand the regular page view to fill the browser.": [
+                "読者が通常のページ表示をブラウザー全体へ広げられます。"
+            ],
+            "Start fullscreen from the current page": [
+                "現在のページから全画面を開始"
+            ],
+            "When disabled, fullscreen starts from the first page. The cover launcher always starts from the first page.": [
+                "OFFでは先頭ページから開始します。表紙から全画面で読む場合は常に先頭から開始します。"
+            ],
+            "Fullscreen reading mode": [
+                "全画面の読み方"
+            ],
+            "Read all pages by scrolling from top to bottom.": [
+                "全ページを上から下へスクロールして読みます。"
+            ],
+            "Use the current page navigation mode in fullscreen.": [
+                "現在のページ送り方式を全画面で使用します。"
+            ],
+            "Vertical scrolling": [
+                "縦スクロール"
+            ],
+            "Fullscreen spread display": [
+                "全画面の見開き表示"
+            ],
+            "Show the entire spread in the normal view and use the selected mode only in fullscreen.": [
+                "通常表示では見開き全体を表示し、全画面のときだけ選択した読み方を使用します。"
+            ],
+            "Entire spread": [
+                "見開き全体"
+            ],
+            "Focus on one page at a time": [
+                "1ページずつ大きく読む"
+            ],
+            "Enable free zoom and pan": [
+                "自由ズームと移動を有効化"
+            ],
+            "Readers can zoom with the plus and minus controls or pinch gestures, then drag the enlarged image.": [
+                "読者が＋／－、ピンチ操作で拡大し、拡大中は画像をドラッグして移動できます。"
+            ],
+            "Zoom control position": [
+                "ズームボタンの位置"
+            ],
+            "Bottom (horizontal)": [
+                "下（横並び）"
+            ],
+            "Right (vertical)": [
+                "右（縦並び）"
+            ],
+            "Left (vertical)": [
+                "左（縦並び）"
+            ],
+            "Align the scroll position": [
+                "スクロール位置を整える"
+            ],
+            "When scrolling stops, the comic is gently aligned to a comfortable reading position.": [
+                "スクロールを止めたとき、漫画が読みやすい位置へ少し寄せられます。"
+            ],
+            "Alignment position": [
+                "合わせる位置"
+            ],
+            "Automatic (center when it fits)": [
+                "自動（収まるときは中央）"
+            ],
+            "Top of screen": [
+                "画面上部"
+            ],
+            "Center of screen": [
+                "画面中央"
+            ],
+            "Alignment strength": [
+                "引っかかりの強さ"
+            ],
+            "Gentle": [
+                "弱い"
+            ],
+            "Normal": [
+                "標準"
+            ],
+            "Strong": [
+                "強い"
+            ],
+            "Select one or more comic pages.": [
+                "漫画ページを複数選択してください。"
+            ],
+            "Read manga": [
+                "漫画を読む"
+            ],
+            "Published display preview": [
+                "公開画面の表示プレビュー"
+            ],
+            "Comic editing preview": [
+                "漫画内容の編集プレビュー"
+            ],
+            "Next page": [
+                "次のページ"
+            ],
+            "Previous page": [
+                "前のページ"
+            ]
+        }
+    }
+}

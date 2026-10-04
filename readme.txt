@@ -68,59 +68,59 @@ If a site owner uses an image URL hosted on another site, the reader's browser c
 
 == Installation ==
 
-1. MangaFocusをインストールし、有効化します。
-2. 投稿または固定ページで「MangaFocus」ブロックを追加します。
-3. 「ページ画像を選択」から漫画画像を読む順に登録します。
-4. 1ページ、見開き、自動、綴じ方向、全画面、縦スクロール、ズーム、コマ読みなどを設定します。
-5. プレビューでPCとスマートフォンの表示を確認して公開します。
+1. Install and activate MangaFocus.
+2. Add the MangaFocus block to a post or page.
+3. Select the page images in reading order.
+4. Configure the page layout, binding direction, fullscreen mode, vertical scrolling, zoom, and Panel-by-Panel reading.
+5. Preview the desktop and mobile layouts, then publish the post.
 
-同じ漫画を複数の場所で利用する場合は、Direct Viewerの「漫画ライブラリに登録」からManga Libraryへコピーします。その後、投稿へ「登録済みViewer」ブロックを追加して作品を選ぶか、Manga Library一覧のショートコードを使用します。
+To reuse the same comic in multiple locations, copy a Direct Viewer into Manga Library with “Register in Manga Library.” Then add the Registered Viewer block to a post and select the comic, or use the shortcode shown in the Manga Library list.
 
 == Frequently Asked Questions ==
 
-= MangaFocusはAIで漫画を生成しますか？ =
+= Does MangaFocus generate manga with AI? =
 
-いいえ。漫画画像をWordPress上で読みやすく表示するViewerです。画像生成機能はありません。
+No. MangaFocus displays comic images in a reader on WordPress. It does not generate images.
 
-= 通常の漫画画像にも使えますか？ =
+= Can I use it with conventionally created comic images? =
 
-はい。AIで制作した画像に限らず、通常の漫画、企業紹介漫画、冊子などの画像にも利用できます。
+Yes. It works with conventionally created comics, AI-assisted artwork, company introductions, brochures, and other image-based publications.
 
-= Direct ViewerとManga Libraryの違いは何ですか？ =
+= What is the difference between Direct Viewer and Manga Library? =
 
-Direct Viewerは投稿や固定ページ内で直接作成します。Manga Libraryは漫画を独立した作品として管理し、登録済みViewerブロックやショートコードから複数箇所で再利用します。
+Direct Viewer stores a comic directly in a post or page. Manga Library manages a comic as a separate reusable entry that can be displayed with the Registered Viewer block or a shortcode.
 
-= Direct ViewerをManga Libraryへ登録した後も自動同期しますか？ =
+= Does a Direct Viewer stay synchronized after registration in Manga Library? =
 
-いいえ。登録時に独立したコピーを作成します。登録後はDirect ViewerとManga Library作品を別々に管理します。
+No. Registration creates an independent copy. The Direct Viewer and Manga Library entry are managed separately afterward.
 
-= 見開きと「1ページずつ大きく読む」の違いは何ですか？ =
+= What is the difference between a spread and focusing on one page at a time? =
 
-見開きは2ページを同時に表示します。「1ページずつ大きく読む」は、見開きの構造を維持しながら、全画面で片方のページ全体へ順番に注目する表示です。コマ読みは、作者が登録したページ内のコマを順番に大きく表示します。
+A spread shows two pages together. “Focus on one page at a time” keeps the spread structure while focusing on each complete page in fullscreen. Panel-by-Panel reading instead enlarges the author-defined regions within each page.
 
-= Free版だけで使えますか？ =
+= Can I use MangaFocus without the Pro add-on? =
 
-はい。コマ読み、ページ送り、見開き、自動切替、全画面、縦スクロール、ズーム、Manga Library、登録済みViewer、ショートコードなどをFree/Core単体で利用できます。
+Yes. Free/Core includes Panel-by-Panel reading, page navigation, spreads, automatic layouts, fullscreen viewing, vertical scrolling, zoom, Manga Library, Registered Viewer, and shortcodes.
 
-= Pro Add-onを無効化すると漫画が表示されなくなりますか？ =
+= What happens if I deactivate the Pro add-on? =
 
-通常のFree Viewerとして表示を継続します。保存済みのPro設定は削除されず、互換性のあるPro Add-onを再び有効化した場合に再利用できます。
+Published comics continue to display with the regular Free Viewer. Saved Pro settings remain stored and can be used again after a compatible Pro add-on is reactivated.
 
-= 解析データは外部サービスへ送信されますか？ =
+= Is analytics data sent to an external service? =
 
-Free/Coreは外部Analyticsサービスへ読者データを送信しません。Pro Analyticsを利用する場合も、データはWordPressサイトのローカルデータベースへ保存する設計です。解析は既定でOFFです。
+Free/Core does not send reader data to an external analytics service. When Pro Analytics is used, data is designed to remain in the WordPress site's local database. Analytics is disabled by default.
 
-= アンインストールすると漫画データは消えますか？ =
+= Does uninstalling MangaFocus delete comic data? =
 
-Manga Library投稿と投稿メタデータは自動削除しません。Analyticsテーブルと設定も既定では保持します。「アンインストール時に削除」を有効にした場合だけAnalyticsテーブルと設定を削除します。定期削除スケジュールはアンインストール時に解除されます。
+Manga Library posts and post metadata are not deleted automatically. Analytics tables and settings are also retained by default. They are deleted only when “Delete on uninstall” has been enabled. The scheduled retention cleanup is removed during uninstall.
 
 == Screenshots ==
 
-1. ブロックエディターで漫画ページを設定
-2. 通常の1ページ表示
-3. 見開き表示
-4. 全画面でページ送り
-5. 全画面で縦スクロール
+1. Configure comic pages in the block editor
+2. Standard single-page reading
+3. Two-page spread reading
+4. Fullscreen page navigation
+5. Fullscreen vertical scrolling
 6. Manga Library
 
 == Development ==
@@ -135,22 +135,22 @@ The release build tool is included at `scripts/build-release.ps1`. Run `powershe
 
 = 0.3.0 =
 
-* プラグイン名をMangaFocusへ変更し、配布スラッグとText Domainを`mangafocus`へ統一。
-* 作者指定のコマ範囲を順番に表示するコマ読みをFree/Coreへ追加。
-* Manga Library、登録済みViewerブロック、ショートコードを追加。
-* 1ページ、見開き、自動切替、先頭ページ単独表示、横長ページ単独表示を追加。
-* 全画面の「1ページずつ大きく読む」表示、縦スクロール、ズーム、表紙から全画面で読む表示を追加。
-* Manga Libraryの表紙管理、管理一覧、Direct Viewerからのコピー登録を追加。
-* Feature API、Capability API、Extension APIと、Pro設定を保持する互換schemaを追加。
-* Analyticsのローカル保存・retention・cleanup基盤を追加。Free/Core単体にはcollectorとreportを含めない構成へ分離。
-* WordPress.org申請に向けてfrontend i18n、REST引数定義、readme、再現可能なRelease buildを整備。
+* Renamed the plugin to MangaFocus and aligned the distribution slug and Text Domain with `mangafocus`.
+* Added author-defined Panel-by-Panel reading to Free/Core.
+* Added Manga Library, the Registered Viewer block, and shortcodes.
+* Added single-page, spread, automatic, standalone cover, and standalone landscape layouts.
+* Added fullscreen page focus, vertical scrolling, zoom, and the fullscreen cover launcher.
+* Added Manga Library cover management, the admin list, and copying from Direct Viewer.
+* Added Feature, Capability, and Extension APIs with a compatibility schema that preserves Pro settings.
+* Added local Analytics storage, retention, and cleanup infrastructure while keeping the collector and reports outside Free/Core.
+* Added bundled English and Japanese localization, REST argument definitions, documentation, and a reproducible WordPress.org release build.
 
 = 0.2.0-alpha =
 
-* ページ送り、右綴じ・左綴じ、スワイプ、キー操作を改善。
-* 全画面表示、自由ズーム、ピンチ、パンを追加。
-* Manga Libraryと登録済みViewerの初期基盤を追加。
+* Improved page navigation, right-to-left and left-to-right binding, swipe gestures, and keyboard controls.
+* Added fullscreen viewing, free zoom, pinch gestures, and panning.
+* Added the initial Manga Library and Registered Viewer infrastructure.
 
 = 0.1.0-alpha =
 
-* 旧名称AI Manga Viewerで独立したWordPressプラグインとして初期化。
+* Initialized the standalone WordPress plugin under its former AI Manga Viewer name.

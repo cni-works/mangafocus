@@ -43,38 +43,38 @@ ai_manga_viewer_add_settings_page();
 amv_expect( 'ai-manga-viewer-settings' === $GLOBALS['amv_settings_menu'][4], 'General settings menu slug changed.' );
 amv_expect( 'manage_options' === $GLOBALS['amv_settings_menu'][3], 'General settings capability changed.' );
 amv_expect( false !== strpos( ai_manga_viewer_settings_url(), 'page=ai-manga-viewer-settings' ), 'General settings URL is invalid.' );
-amv_expect( false !== strpos( ai_manga_viewer_plugin_action_links( array( '<a>Deactivate</a>' ) )[0], '>設定<' ), 'Core settings action link missing.' );
+amv_expect( false !== strpos( ai_manga_viewer_plugin_action_links( array( '<a>Deactivate</a>' ) )[0], '>Settings<' ), 'Core settings action link missing.' );
 
 ob_start(); ai_manga_viewer_render_settings_page(); $core_html = ob_get_clean();
-foreach ( array( '0.3.0', '未導入または無効', '漫画ライブラリを開く', '新しい漫画を登録', '解析設定を開く', 'Free Viewer', 'コマ読み', 'CTA', '漫画解析', 'AI相談', 'AI漫画制作サポート' ) as $needle ) {
+foreach ( array( '0.3.0', 'Not installed or inactive', 'Open Manga Library', 'Register a new comic', 'Open Analytics Settings', 'Free Viewer', 'Panel-by-Panel', 'CTA', 'Manga Analytics', 'AI consultation', 'AI manga production support' ) as $needle ) {
 	amv_expect( false !== strpos( $core_html, $needle ), 'Core-only settings output missing: ' . $needle );
 }
 amv_expect( false === strpos( $core_html, '0.1.0-alpha' ), 'Core-only screen leaked a Pro version.' );
-amv_expect( false !== strpos( $core_html, 'Panel-by-Panel' ) && 5 === substr_count( $core_html, 'is-unavailable">利用不可' ), 'Core-only feature statuses are invalid.' );
+amv_expect( false !== strpos( $core_html, 'Panel-by-Panel' ) && 5 === substr_count( $core_html, 'is-unavailable">Unavailable' ), 'Core-only feature statuses are invalid.' );
 
 $GLOBALS['amv_settings_pro'] = array( 'installed' => true, 'active' => true, 'version' => '0.1.0-alpha' );
 $GLOBALS['amv_settings_features'] = array( 'panel_reader' => true, 'cta' => true, 'analytics' => true, 'ai_consultation' => true, 'manga_creation' => true );
 $GLOBALS['amv_settings_capabilities'] = array( 'panel_reader' => array( 'runtime' => true, 'editor' => true ), 'cta' => array( 'runtime' => true, 'editor' => true ), 'analytics' => array( 'collection' => true, 'report' => true ), 'ai_consultation' => array( 'admin' => true ), 'manga_creation' => array( 'admin' => true ) );
 ob_start(); ai_manga_viewer_render_settings_page(); $pro_html = ob_get_clean();
-amv_expect( false !== strpos( $pro_html, '0.1.0-alpha' ) && false !== strpos( $pro_html, '>有効<' ), 'Core + Pro status output is invalid.' );
-amv_expect( 0 === substr_count( $pro_html, '利用不可' ), 'Available Pro features were shown as unavailable.' );
+amv_expect( false !== strpos( $pro_html, '0.1.0-alpha' ) && false !== strpos( $pro_html, '>Active<' ), 'Core + Pro status output is invalid.' );
+amv_expect( 0 === substr_count( $pro_html, 'Unavailable' ), 'Available Pro features were shown as unavailable.' );
 
 $GLOBALS['amv_settings_capabilities'] = array( 'panel_reader' => array( 'runtime' => true, 'editor' => true ), 'cta' => array( 'runtime' => true, 'editor' => false ), 'analytics' => array( 'collection' => true, 'report' => false ), 'ai_consultation' => array( 'admin' => false ), 'manga_creation' => array( 'admin' => false ) );
 ob_start(); ai_manga_viewer_render_settings_page(); $expired_html = ob_get_clean();
-amv_expect( 1 === substr_count( $expired_html, '表示継続・編集不可' ), 'Expired CTA status output is invalid.' );
-amv_expect( 2 === substr_count( $expired_html, '収集継続・レポート利用不可' ), 'Expired Analytics status output is invalid.' );
-amv_expect( false !== strpos( $expired_html, '<strong>AI相談</strong>' ) && false !== strpos( $expired_html, 'is-unavailable">利用不可' ), 'Expired AI Consultation status output is invalid.' );
-amv_expect( false !== strpos( $expired_html, '<dt>Pro状態</dt><dd><span class="amv-settings__status is-available">有効</span>' ), 'Expired license changed the plugin status display.' );
+amv_expect( 1 === substr_count( $expired_html, 'Display active; editing unavailable' ), 'Expired CTA status output is invalid.' );
+amv_expect( 2 === substr_count( $expired_html, 'Collection active; reports unavailable' ), 'Expired Analytics status output is invalid.' );
+amv_expect( false !== strpos( $expired_html, '<strong>AI consultation</strong>' ) && false !== strpos( $expired_html, 'is-unavailable">Unavailable' ), 'Expired AI Consultation status output is invalid.' );
+amv_expect( false !== strpos( $expired_html, '<dt>Pro status</dt><dd><span class="amv-settings__status is-available">Active</span>' ), 'Expired license changed the plugin status display.' );
 
 $GLOBALS['amv_settings_capabilities'] = array( 'panel_reader' => array( 'runtime' => true, 'editor' => true ), 'cta' => array( 'runtime' => false, 'editor' => false ), 'analytics' => array( 'collection' => false, 'report' => false ), 'ai_consultation' => array( 'admin' => false ), 'manga_creation' => array( 'admin' => false ) );
 ob_start(); ai_manga_viewer_render_settings_page(); $unlicensed_html = ob_get_clean();
-amv_expect( false === strpos( $unlicensed_html, 'is-limited' ) && 0 === substr_count( $unlicensed_html, '表示継続・編集不可' ), 'Unlicensed Pro features were shown as partially available.' );
-amv_expect( 5 === substr_count( $unlicensed_html, 'is-unavailable">利用不可' ), 'Unlicensed Pro feature statuses are invalid.' );
-amv_expect( false !== strpos( $unlicensed_html, '<dt>Pro状態</dt><dd><span class="amv-settings__status is-available">有効</span>' ), 'Unlicensed state changed the plugin status display.' );
+amv_expect( false === strpos( $unlicensed_html, 'is-limited' ) && 0 === substr_count( $unlicensed_html, 'Display active; editing unavailable' ), 'Unlicensed Pro features were shown as partially available.' );
+amv_expect( 5 === substr_count( $unlicensed_html, 'is-unavailable">Unavailable' ), 'Unlicensed Pro feature statuses are invalid.' );
+amv_expect( false !== strpos( $unlicensed_html, '<dt>Pro status</dt><dd><span class="amv-settings__status is-available">Active</span>' ), 'Unlicensed state changed the plugin status display.' );
 
 $GLOBALS['amv_settings_pro'] = array( 'installed' => true, 'active' => false, 'version' => '0.1.0-alpha' );
 ob_start(); ai_manga_viewer_render_settings_page(); $inactive_html = ob_get_clean();
-amv_expect( false !== strpos( $inactive_html, '>利用不可<' ), 'Installed but unavailable Pro status is invalid.' );
+amv_expect( false !== strpos( $inactive_html, '>Unavailable<' ), 'Installed but unavailable Pro status is invalid.' );
 
 $GLOBALS['amv_settings_can_manage'] = false;
 $denied = false;

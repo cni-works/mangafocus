@@ -1,0 +1,68 @@
+{
+    "translation-revision-date": "2026-10-04 00:00+0900",
+    "generator": "MangaFocus scripts/build-translations.php",
+    "source": [
+        "blocks/library-viewer/index.js"
+    ],
+    "domain": "messages",
+    "locale_data": {
+        "messages": {
+            "": {
+                "domain": "messages",
+                "lang": "ja",
+                "plural-forms": "nplurals=1; plural=0;"
+            },
+            "Published": [
+                "公開済み"
+            ],
+            "Draft": [
+                "下書き"
+            ],
+            "Pending": [
+                "承認待ち"
+            ],
+            "Private": [
+                "非公開"
+            ],
+            "Scheduled": [
+                "予約済み"
+            ],
+            "Untitled comic": [
+                "無題の漫画"
+            ],
+            "Only the cover is shown in the editor. The complete Viewer appears on the published page.": [
+                "編集画面では表紙のみ表示します。公開側ではViewer全体が表示されます。"
+            ],
+            "Registered Viewer": [
+                "登録済みViewer"
+            ],
+            "Select and display one registered Viewer from Manga Library.": [
+                "漫画ライブラリから登録済みのViewerを1冊選んで表示します。"
+            ],
+            "Could not load Manga Library.": [
+                "漫画ライブラリを読み込めませんでした。"
+            ],
+            "The selected Viewer could not be found. It may have been deleted or its permissions may have changed.": [
+                "選択済みのViewerを確認できません。削除または権限変更の可能性があります。"
+            ],
+            "Selected Viewer": [
+                "選択済みのViewer"
+            ],
+            "Choose again from Manga Library": [
+                "漫画ライブラリから選び直す"
+            ],
+            "Clear selection": [
+                "選択を解除"
+            ],
+            "Search by title or Viewer ID": [
+                "タイトルまたはViewer IDで検索"
+            ],
+            "No comics are available for selection.": [
+                "選択できる漫画がありません。"
+            ],
+            "Keep current selection": [
+                "選択を変更しない"
+            ]
+        }
+    }
+}

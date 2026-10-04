@@ -38,13 +38,13 @@ function ai_manga_viewer_panel_reader_markup( $markup, $context ) {
 	$markup = is_string( $markup ) ? $markup : '';
 	if ( ! ai_manga_viewer_panel_reader_context_enabled( $context ) ) { return $markup; }
 	$is_cover = 'coverLauncher' === ( $context['settings']['inline_display_mode'] ?? '' );
-	$output = '<div class="amv-panel-reader-controls"><button type="button" class="amv-reader__focus-open" aria-haspopup="dialog">' . esc_html__( '専用ビューアーで読む', 'mangafocus' ) . '</button>';
-	if ( $is_cover ) { $output .= '<button type="button" class="amv-reader__cover-focus-open" aria-haspopup="dialog">' . esc_html__( '専用ビューアーで読む', 'mangafocus' ) . '</button>'; }
+	$output = '<div class="amv-panel-reader-controls"><button type="button" class="amv-reader__focus-open" aria-haspopup="dialog">' . esc_html__( 'Read by panel', 'mangafocus' ) . '</button>';
+	if ( $is_cover ) { $output .= '<button type="button" class="amv-reader__cover-focus-open" aria-haspopup="dialog">' . esc_html__( 'Read by panel', 'mangafocus' ) . '</button>'; }
 	$output .= '</div>';
-	$output .= '<div class="amv-modal" hidden role="dialog" aria-modal="true" aria-label="' . esc_attr__( 'コマ読みビューアー', 'mangafocus' ) . '">';
-	$output .= '<div class="amv-modal__header"><button type="button" class="amv-modal__close">× <span>' . esc_html__( '全体表示に戻る', 'mangafocus' ) . '</span></button><output class="amv-modal__count" aria-live="polite"></output></div>';
-	$output .= '<div class="amv-modal__stage"><button type="button" class="amv-modal__edge amv-modal__edge--previous" aria-label="' . esc_attr__( '前のコマ', 'mangafocus' ) . '"></button><img class="amv-modal__image" alt="" /><div class="amv-modal__extension-layer" hidden></div><button type="button" class="amv-modal__edge amv-modal__edge--next" aria-label="' . esc_attr__( '次のコマ', 'mangafocus' ) . '"></button><p class="amv-modal__hint">' . esc_html__( '左右にスワイプしてコマを送れます', 'mangafocus' ) . '</p></div>';
-	$output .= '<div class="amv-modal__controls"><button type="button" class="amv-modal__next">' . esc_html__( '次のコマ', 'mangafocus' ) . '</button><button type="button" class="amv-modal__overview">' . esc_html__( 'ページ全体', 'mangafocus' ) . '</button><button type="button" class="amv-modal__previous">' . esc_html__( '前のコマ', 'mangafocus' ) . '</button></div></div>';
+	$output .= '<div class="amv-modal" hidden role="dialog" aria-modal="true" aria-label="' . esc_attr__( 'Panel-by-Panel viewer', 'mangafocus' ) . '">';
+	$output .= '<div class="amv-modal__header"><button type="button" class="amv-modal__close">× <span>' . esc_html__( 'Return to full view', 'mangafocus' ) . '</span></button><output class="amv-modal__count" aria-live="polite"></output></div>';
+	$output .= '<div class="amv-modal__stage"><button type="button" class="amv-modal__edge amv-modal__edge--previous" aria-label="' . esc_attr__( 'Previous panel', 'mangafocus' ) . '"></button><img class="amv-modal__image" alt="" /><div class="amv-modal__extension-layer" hidden></div><button type="button" class="amv-modal__edge amv-modal__edge--next" aria-label="' . esc_attr__( 'Next panel', 'mangafocus' ) . '"></button><p class="amv-modal__hint">' . esc_html__( 'Swipe left or right to navigate panels', 'mangafocus' ) . '</p></div>';
+	$output .= '<div class="amv-modal__controls"><button type="button" class="amv-modal__next">' . esc_html__( 'Next panel', 'mangafocus' ) . '</button><button type="button" class="amv-modal__overview">' . esc_html__( 'Full page', 'mangafocus' ) . '</button><button type="button" class="amv-modal__previous">' . esc_html__( 'Previous panel', 'mangafocus' ) . '</button></div></div>';
 	wp_enqueue_script( 'ai-manga-viewer-panel-reader-frontend' );
 	wp_enqueue_style( 'ai-manga-viewer-panel-reader' );
 	return $markup . $output;

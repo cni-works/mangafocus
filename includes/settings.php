@@ -25,8 +25,8 @@ function ai_manga_viewer_settings_url() {
 function ai_manga_viewer_add_settings_page() {
 	add_submenu_page(
 		'edit.php?post_type=amv_viewer',
-		__( 'MangaFocus 設定', 'mangafocus' ),
-		__( 'MangaFocus 設定', 'mangafocus' ),
+		__( 'MangaFocus Settings', 'mangafocus' ),
+		__( 'MangaFocus Settings', 'mangafocus' ),
 		'manage_options',
 		'ai-manga-viewer-settings',
 		'ai_manga_viewer_render_settings_page'
@@ -52,7 +52,7 @@ add_action( 'admin_enqueue_scripts', 'ai_manga_viewer_enqueue_settings_assets' )
 
 /** Add the common settings hub to the Core plugin row. */
 function ai_manga_viewer_plugin_action_links( $links ) {
-	$settings = '<a href="' . esc_url( ai_manga_viewer_settings_url() ) . '">' . esc_html__( '設定', 'mangafocus' ) . '</a>';
+	$settings = '<a href="' . esc_url( ai_manga_viewer_settings_url() ) . '">' . esc_html__( 'Settings', 'mangafocus' ) . '</a>';
 	array_unshift( $links, $settings );
 	return $links;
 }
@@ -80,14 +80,14 @@ function ai_manga_viewer_get_pro_status() {
 
 /** Render one plain-language availability badge. */
 function ai_manga_viewer_settings_badge( $available, $available_label = '', $unavailable_label = '' ) {
-	$label = $available ? ( $available_label ?: __( '利用可能', 'mangafocus' ) ) : ( $unavailable_label ?: __( '利用不可', 'mangafocus' ) );
+	$label = $available ? ( $available_label ?: __( 'Available', 'mangafocus' ) ) : ( $unavailable_label ?: __( 'Unavailable', 'mangafocus' ) );
 	$class = $available ? 'is-available' : 'is-unavailable';
 	return '<span class="amv-settings__status ' . esc_attr( $class ) . '">' . esc_html( $label ) . '</span>';
 }
 
 /** Resolve one user-facing feature state from Feature and Capability APIs. */
 function ai_manga_viewer_settings_feature_state( $feature_id, $features, $capabilities ) {
-	$unavailable = array( 'class' => 'is-unavailable', 'label' => __( '利用不可', 'mangafocus' ) );
+	$unavailable = array( 'class' => 'is-unavailable', 'label' => __( 'Unavailable', 'mangafocus' ) );
 	if ( empty( $features[ $feature_id ] ) || empty( $capabilities[ $feature_id ] ) || ! is_array( $capabilities[ $feature_id ] ) ) {
 		return $unavailable;
 	}
@@ -95,20 +95,20 @@ function ai_manga_viewer_settings_feature_state( $feature_id, $features, $capabi
 	$allowed = $capabilities[ $feature_id ];
 	if ( in_array( $feature_id, array( 'panel_reader', 'cta' ), true ) ) {
 		if ( ! empty( $allowed['runtime'] ) && ! empty( $allowed['editor'] ) ) {
-			return array( 'class' => 'is-available', 'label' => __( '利用可能', 'mangafocus' ) );
+			return array( 'class' => 'is-available', 'label' => __( 'Available', 'mangafocus' ) );
 		}
 		if ( ! empty( $allowed['runtime'] ) ) {
-			return array( 'class' => 'is-limited', 'label' => __( '表示継続・編集不可', 'mangafocus' ) );
+			return array( 'class' => 'is-limited', 'label' => __( 'Display active; editing unavailable', 'mangafocus' ) );
 		}
 	} elseif ( 'analytics' === $feature_id ) {
 		if ( ! empty( $allowed['collection'] ) && ! empty( $allowed['report'] ) ) {
-			return array( 'class' => 'is-available', 'label' => __( '利用可能', 'mangafocus' ) );
+			return array( 'class' => 'is-available', 'label' => __( 'Available', 'mangafocus' ) );
 		}
 		if ( ! empty( $allowed['collection'] ) ) {
-			return array( 'class' => 'is-limited', 'label' => __( '収集継続・レポート利用不可', 'mangafocus' ) );
+			return array( 'class' => 'is-limited', 'label' => __( 'Collection active; reports unavailable', 'mangafocus' ) );
 		}
 	} elseif ( in_array( $feature_id, array( 'ai_consultation', 'manga_creation' ), true ) && ! empty( $allowed['admin'] ) ) {
-		return array( 'class' => 'is-available', 'label' => __( '利用可能', 'mangafocus' ) );
+		return array( 'class' => 'is-available', 'label' => __( 'Available', 'mangafocus' ) );
 	}
 
 	return $unavailable;
@@ -118,14 +118,14 @@ function ai_manga_viewer_settings_feature_state( $feature_id, $features, $capabi
 function ai_manga_viewer_settings_feature_badge( $state ) {
 	$classes = array( 'is-available', 'is-limited', 'is-unavailable' );
 	$class   = is_array( $state ) && in_array( $state['class'] ?? '', $classes, true ) ? $state['class'] : 'is-unavailable';
-	$label   = is_array( $state ) && isset( $state['label'] ) ? $state['label'] : __( '利用不可', 'mangafocus' );
+	$label   = is_array( $state ) && isset( $state['label'] ) ? $state['label'] : __( 'Unavailable', 'mangafocus' );
 	return '<span class="amv-settings__status ' . esc_attr( $class ) . '">' . esc_html( $label ) . '</span>';
 }
 
 /** Render the Core-owned status and navigation hub. */
 function ai_manga_viewer_render_settings_page() {
 	if ( ! current_user_can( 'manage_options' ) ) {
-		wp_die( esc_html__( 'この画面を表示する権限がありません。', 'mangafocus' ) );
+		wp_die( esc_html__( 'You do not have permission to view this screen.', 'mangafocus' ) );
 	}
 
 	$features      = ai_manga_viewer_get_feature_map();
@@ -141,55 +141,55 @@ function ai_manga_viewer_render_settings_page() {
 		),
 		admin_url( 'edit.php' )
 	);
-	$pro_label = $pro['active'] ? __( '有効', 'mangafocus' ) : ( $pro['installed'] ? __( '利用不可', 'mangafocus' ) : __( '未導入または無効', 'mangafocus' ) );
+	$pro_label = $pro['active'] ? __( 'Active', 'mangafocus' ) : ( $pro['installed'] ? __( 'Unavailable', 'mangafocus' ) : __( 'Not installed or inactive', 'mangafocus' ) );
 	$feature_states = array();
 	foreach ( array( 'panel_reader', 'cta', 'analytics', 'ai_consultation', 'manga_creation' ) as $feature_id ) {
 		$feature_states[ $feature_id ] = ai_manga_viewer_settings_feature_state( $feature_id, $features, $capabilities );
 	}
 	/* translators: %d: analytics data retention period in days. */
-	$retention_label = sprintf( __( '%d日', 'mangafocus' ), (int) $retention );
+	$retention_label = sprintf( __( '%d days', 'mangafocus' ), (int) $retention );
 	?>
 	<div class="wrap amv-settings">
-		<h1><?php echo esc_html__( 'MangaFocus 設定', 'mangafocus' ); ?></h1>
-		<p class="amv-settings__lead"><?php echo esc_html__( '製品の状態を確認し、漫画の管理や解析データの設定へ移動できます。', 'mangafocus' ); ?></p>
+		<h1><?php echo esc_html__( 'MangaFocus Settings', 'mangafocus' ); ?></h1>
+		<p class="amv-settings__lead"><?php echo esc_html__( 'Review product status and open comic management or analytics settings.', 'mangafocus' ); ?></p>
 
 		<div class="amv-settings__grid">
 			<section class="amv-settings__card" aria-labelledby="amv-settings-product">
 				<h2 id="amv-settings-product"><?php echo esc_html__( 'MangaFocus', 'mangafocus' ); ?></h2>
 				<dl class="amv-settings__definition">
-					<div><dt><?php echo esc_html__( 'Coreバージョン', 'mangafocus' ); ?></dt><dd><?php echo esc_html( ai_manga_viewer_get_version() ); ?></dd></div>
-					<div><dt><?php echo esc_html__( 'Proバージョン', 'mangafocus' ); ?></dt><dd><?php echo '' !== $pro['version'] ? esc_html( $pro['version'] ) : esc_html__( '—', 'mangafocus' ); ?></dd></div>
-					<div><dt><?php echo esc_html__( 'Pro状態', 'mangafocus' ); ?></dt><dd><?php echo wp_kses_post( ai_manga_viewer_settings_badge( $pro['active'], __( '有効', 'mangafocus' ), $pro_label ) ); ?></dd></div>
+					<div><dt><?php echo esc_html__( 'Core version', 'mangafocus' ); ?></dt><dd><?php echo esc_html( ai_manga_viewer_get_version() ); ?></dd></div>
+					<div><dt><?php echo esc_html__( 'Pro version', 'mangafocus' ); ?></dt><dd><?php echo '' !== $pro['version'] ? esc_html( $pro['version'] ) : esc_html__( '—', 'mangafocus' ); ?></dd></div>
+					<div><dt><?php echo esc_html__( 'Pro status', 'mangafocus' ); ?></dt><dd><?php echo wp_kses_post( ai_manga_viewer_settings_badge( $pro['active'], __( 'Active', 'mangafocus' ), $pro_label ) ); ?></dd></div>
 				</dl>
 			</section>
 
 			<section class="amv-settings__card" aria-labelledby="amv-settings-library">
-				<h2 id="amv-settings-library"><?php echo esc_html__( '漫画', 'mangafocus' ); ?></h2>
-				<p><?php echo esc_html__( 'Manga Libraryで再利用する漫画を管理します。', 'mangafocus' ); ?></p>
-				<p class="amv-settings__actions"><a class="button button-primary" href="<?php echo esc_url( $library_url ); ?>"><?php echo esc_html__( '漫画ライブラリを開く', 'mangafocus' ); ?></a> <a class="button" href="<?php echo esc_url( $new_url ); ?>"><?php echo esc_html__( '新しい漫画を登録', 'mangafocus' ); ?></a></p>
+				<h2 id="amv-settings-library"><?php echo esc_html__( 'Manga', 'mangafocus' ); ?></h2>
+				<p><?php echo esc_html__( 'Manage reusable comics in Manga Library.', 'mangafocus' ); ?></p>
+				<p class="amv-settings__actions"><a class="button button-primary" href="<?php echo esc_url( $library_url ); ?>"><?php echo esc_html__( 'Open Manga Library', 'mangafocus' ); ?></a> <a class="button" href="<?php echo esc_url( $new_url ); ?>"><?php echo esc_html__( 'Register a new comic', 'mangafocus' ); ?></a></p>
 			</section>
 
 			<section class="amv-settings__card" aria-labelledby="amv-settings-data">
-				<h2 id="amv-settings-data"><?php echo esc_html__( '解析・データ', 'mangafocus' ); ?></h2>
+				<h2 id="amv-settings-data"><?php echo esc_html__( 'Analytics & Data', 'mangafocus' ); ?></h2>
 				<dl class="amv-settings__definition">
-					<div><dt><?php echo esc_html__( '詳細データの保存期間', 'mangafocus' ); ?></dt><dd><?php echo esc_html( $retention_label ); ?></dd></div>
-						<div><dt><?php echo esc_html__( '漫画解析', 'mangafocus' ); ?> <span class="amv-settings__pro">Pro</span></dt><dd><?php echo wp_kses_post( ai_manga_viewer_settings_feature_badge( $feature_states['analytics'] ) ); ?></dd></div>
+					<div><dt><?php echo esc_html__( 'Detailed data retention', 'mangafocus' ); ?></dt><dd><?php echo esc_html( $retention_label ); ?></dd></div>
+						<div><dt><?php echo esc_html__( 'Manga Analytics', 'mangafocus' ); ?> <span class="amv-settings__pro">Pro</span></dt><dd><?php echo wp_kses_post( ai_manga_viewer_settings_feature_badge( $feature_states['analytics'] ) ); ?></dd></div>
 				</dl>
-				<p><?php echo esc_html__( '収集のON/OFF、保存期間、全削除は解析専用の設定画面で管理します。', 'mangafocus' ); ?></p>
-				<p class="amv-settings__actions"><a class="button" href="<?php echo esc_url( $analytics_url ); ?>"><?php echo esc_html__( '解析設定を開く', 'mangafocus' ); ?></a> <a href="<?php echo esc_url( $analytics_url . '#amv-analytics-delete' ); ?>"><?php echo esc_html__( '解析データの削除について確認', 'mangafocus' ); ?></a></p>
+				<p><?php echo esc_html__( 'Manage collection, retention, and deletion from the dedicated Analytics Settings screen.', 'mangafocus' ); ?></p>
+				<p class="amv-settings__actions"><a class="button" href="<?php echo esc_url( $analytics_url ); ?>"><?php echo esc_html__( 'Open Analytics Settings', 'mangafocus' ); ?></a> <a href="<?php echo esc_url( $analytics_url . '#amv-analytics-delete' ); ?>"><?php echo esc_html__( 'Review analytics data deletion', 'mangafocus' ); ?></a></p>
 			</section>
 
 			<section class="amv-settings__card" aria-labelledby="amv-settings-features">
-				<h2 id="amv-settings-features"><?php echo esc_html__( '機能', 'mangafocus' ); ?></h2>
+				<h2 id="amv-settings-features"><?php echo esc_html__( 'Features', 'mangafocus' ); ?></h2>
 				<ul class="amv-settings__features">
-					<li><span><strong><?php echo esc_html__( 'Free Viewer', 'mangafocus' ); ?></strong><small><?php echo esc_html__( 'ページ送り、見開き、pageFocus、全画面、縦読み、ズーム、コマ読み、Manga Library', 'mangafocus' ); ?></small></span><?php echo wp_kses_post( ai_manga_viewer_settings_badge( true ) ); ?></li>
-					<li><span><strong><?php echo esc_html__( 'コマ読み', 'mangafocus' ); ?></strong><small><?php echo esc_html__( 'Panel-by-Panelでコマを順番に大きく表示', 'mangafocus' ); ?></small></span><?php echo wp_kses_post( ai_manga_viewer_settings_feature_badge( $feature_states['panel_reader'] ) ); ?></li>
+					<li><span><strong><?php echo esc_html__( 'Free Viewer', 'mangafocus' ); ?></strong><small><?php echo esc_html__( 'Paged reading, spreads, page focus, fullscreen, vertical reading, zoom, Panel-by-Panel, Manga Library', 'mangafocus' ); ?></small></span><?php echo wp_kses_post( ai_manga_viewer_settings_badge( true ) ); ?></li>
+					<li><span><strong><?php echo esc_html__( 'Panel-by-Panel', 'mangafocus' ); ?></strong><small><?php echo esc_html__( 'Enlarge panels in sequence with Panel-by-Panel reading', 'mangafocus' ); ?></small></span><?php echo wp_kses_post( ai_manga_viewer_settings_feature_badge( $feature_states['panel_reader'] ) ); ?></li>
 					<?php
 					$feature_labels = array(
 						'cta'            => __( 'CTA', 'mangafocus' ),
-						'analytics'      => __( '漫画解析', 'mangafocus' ),
-						'ai_consultation' => __( 'AI相談', 'mangafocus' ),
-						'manga_creation'  => __( 'AI漫画制作サポート', 'mangafocus' ),
+						'analytics'      => __( 'Manga Analytics', 'mangafocus' ),
+						'ai_consultation' => __( 'AI consultation', 'mangafocus' ),
+						'manga_creation'  => __( 'AI manga production support', 'mangafocus' ),
 					);
 					foreach ( $feature_labels as $feature_id => $label ) :
 						?>

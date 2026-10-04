@@ -1,0 +1,743 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: MangaFocus 0.3.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"X-Domain: mangafocus\n"
+
+msgid "%d days"
+msgstr ""
+
+msgid "AI consultation"
+msgstr ""
+
+msgid "AI manga production support"
+msgstr ""
+
+msgid "Active"
+msgstr ""
+
+msgid "Add New"
+msgstr ""
+
+msgid "Add a mobile panel"
+msgstr ""
+
+msgid "Add a panel to the current page"
+msgstr ""
+
+msgid "Align the scroll position"
+msgstr ""
+
+msgid "Alignment position"
+msgstr ""
+
+msgid "Alignment strength"
+msgstr ""
+
+msgid "Allow readers to expand the regular page view to fill the browser."
+msgstr ""
+
+msgid "Analytics & Data"
+msgstr ""
+
+msgid "Analytics Settings"
+msgstr ""
+
+msgid "Analytics paused"
+msgstr ""
+
+msgid "At least "
+msgstr ""
+
+msgid "Automatic"
+msgstr ""
+
+msgid "Automatic (center when it fits)"
+msgstr ""
+
+msgid "Automatic (fit to panel size)"
+msgstr ""
+
+msgid "Automatic (unavailable)"
+msgstr ""
+
+msgid "Available"
+msgstr ""
+
+msgid "Back matter"
+msgstr ""
+
+msgid "Binding direction"
+msgstr ""
+
+msgid "Booklet"
+msgstr ""
+
+msgid "Bottom (horizontal)"
+msgstr ""
+
+msgid "Center of screen"
+msgstr ""
+
+msgid "Checking image information. Spread and automatic layouts remain available while checking."
+msgstr ""
+
+msgid "Choose again from Manga Library"
+msgstr ""
+
+msgid "Clear selection"
+msgstr ""
+
+msgid "Click to copy the shortcode"
+msgstr ""
+
+msgid "Close viewer"
+msgstr ""
+
+msgid "Collection active; reports unavailable"
+msgstr ""
+
+msgid "Comic"
+msgstr ""
+
+msgid "Comic editing preview"
+msgstr ""
+
+msgid "Configure mobile panels separately"
+msgstr ""
+
+msgid "Copied"
+msgstr ""
+
+msgid "Copy"
+msgstr ""
+
+msgid "Copy shortcode"
+msgstr ""
+
+msgid "Copy shortcode %s"
+msgstr ""
+
+msgid "Copy the current pages and Viewer settings as an independent comic. Saved extension settings are retained and the original Viewer is not changed."
+msgstr ""
+
+msgid "Core version"
+msgstr ""
+
+msgid "Could not copy."
+msgstr ""
+
+msgid "Could not load Manga Library."
+msgstr ""
+
+msgid "Could not register the comic in Manga Library."
+msgstr ""
+
+msgid "Cover"
+msgstr ""
+
+msgid "Cover image"
+msgstr ""
+
+msgid "Create AI consultation material"
+msgstr ""
+
+msgid "Dedicated viewer start position"
+msgstr ""
+
+msgid "Delete"
+msgstr ""
+
+msgid "Delete all Manga Analytics data?"
+msgstr ""
+
+msgid "Delete all analytics data"
+msgstr ""
+
+msgid "Delete all analytics tables and settings"
+msgstr ""
+
+msgid "Delete all saved sessions, page progress, and events. This action cannot be undone. Settings and tables remain."
+msgstr ""
+
+msgid "Detailed data retention"
+msgstr ""
+
+msgid "Display active; editing unavailable"
+msgstr ""
+
+msgid "Display manga images with paged, spread, fullscreen, and Panel-by-Panel reading."
+msgstr ""
+
+msgid "Display method"
+msgstr ""
+
+msgid "Draft"
+msgstr ""
+
+msgid "Drag over the image to create a region"
+msgstr ""
+
+msgid "Edit"
+msgstr ""
+
+msgid "Edit comic"
+msgstr ""
+
+msgid "Edit page images"
+msgstr ""
+
+msgid "Edit registered comic"
+msgstr ""
+
+msgid "Edit this comic"
+msgstr ""
+
+msgid "Enable Panel-by-Panel reading"
+msgstr ""
+
+msgid "Enable analytics"
+msgstr ""
+
+msgid "Enable free zoom and pan"
+msgstr ""
+
+msgid "Enable reader event collection"
+msgstr ""
+
+msgid "Enlarge"
+msgstr ""
+
+msgid "Enlarge panels in sequence with Panel-by-Panel reading"
+msgstr ""
+
+msgid "Enlarge registered panels in sequence in a dedicated viewer."
+msgstr ""
+
+msgid "Enlarge the panel region"
+msgstr ""
+
+msgid "Enter a comic title."
+msgstr ""
+
+msgid "Entire spread"
+msgstr ""
+
+msgid "Events are collected only when Pro is available. Disabling this option does not delete existing analytics data."
+msgstr ""
+
+msgid "Exit fullscreen"
+msgstr ""
+
+msgid "Features"
+msgstr ""
+
+msgid "Fit"
+msgstr ""
+
+msgid "Focus on one page at a time"
+msgstr ""
+
+msgid "Full page"
+msgstr ""
+
+msgid "Fullscreen reading mode"
+msgstr ""
+
+msgid "Fullscreen spread display"
+msgstr ""
+
+msgid "Gentle"
+msgstr ""
+
+msgid "Height (%)"
+msgstr ""
+
+msgid "Image zoom and pan"
+msgstr ""
+
+msgid "Inline display"
+msgstr ""
+
+msgid "Keep current selection"
+msgstr ""
+
+msgid "Left (vertical)"
+msgstr ""
+
+msgid "Left binding"
+msgstr ""
+
+msgid "Library"
+msgstr ""
+
+msgid "Lower this value if small panels are enlarged too much."
+msgstr ""
+
+msgid "Manage analytics settings and data retention for comics in Manga Library. MangaFocus Pro is required for analytics collection and reports."
+msgstr ""
+
+msgid "Manage collection, retention, and deletion from the dedicated Analytics Settings screen."
+msgstr ""
+
+msgid "Manage reusable comics in Manga Library."
+msgstr ""
+
+msgid "Manga"
+msgstr ""
+
+msgid "Manga Analytics"
+msgstr ""
+
+msgid "Manga Analytics Settings"
+msgstr ""
+
+msgid "Manga Analytics data deleted."
+msgstr ""
+
+msgid "Manga Analytics is currently unavailable"
+msgstr ""
+
+msgid "Manga Library"
+msgstr ""
+
+msgid "Manga Library cover image URL"
+msgstr ""
+
+msgid "MangaFocus Settings"
+msgstr ""
+
+msgid "Maximum comic width (px)"
+msgstr ""
+
+msgid "Mobile"
+msgstr ""
+
+msgid "Move down"
+msgstr ""
+
+msgid "Move up"
+msgstr ""
+
+msgid "Navigate by clicking page edges"
+msgstr ""
+
+msgid "Near page %d. Scroll vertically to read."
+msgstr ""
+
+msgid "New comic"
+msgstr ""
+
+msgid "Next"
+msgstr ""
+
+msgid "Next page"
+msgstr ""
+
+msgid "Next panel"
+msgstr ""
+
+msgid "No comics are available for selection."
+msgstr ""
+
+msgid "No comics found in Trash."
+msgstr ""
+
+msgid "No cover set"
+msgstr ""
+
+msgid "No registered comics found."
+msgstr ""
+
+msgid "Normal"
+msgstr ""
+
+msgid "Not installed or inactive"
+msgstr ""
+
+msgid "On the published page, show only the cover and a “Read manga” button, then open the reader in fullscreen. Use the editor preview below to edit the comic as usual."
+msgstr ""
+
+msgid "On uninstall"
+msgstr ""
+
+msgid "Only the cover is shown in the editor. The complete Viewer appears on the published page."
+msgstr ""
+
+msgid "Open Analytics Settings"
+msgstr ""
+
+msgid "Open Manga Library"
+msgstr ""
+
+msgid "Open fullscreen from the cover"
+msgstr ""
+
+msgid "Page"
+msgstr ""
+
+msgid "Page %d"
+msgstr ""
+
+msgid "Page %d is enlarged. Use the left and right arrow keys or swipe to navigate."
+msgstr ""
+
+msgid "Page images"
+msgstr ""
+
+msgid "Page layout"
+msgstr ""
+
+msgid "Page transition animation"
+msgstr ""
+
+msgid "Page turn"
+msgstr ""
+
+msgid "Page viewer"
+msgstr ""
+
+msgid "Paged reading"
+msgstr ""
+
+msgid "Paged reading, spreads, page focus, fullscreen, vertical reading, zoom, Panel-by-Panel, Manga Library"
+msgstr ""
+
+msgid "Panel"
+msgstr ""
+
+msgid "Panel set to edit"
+msgstr ""
+
+msgid "Panel-by-Panel"
+msgstr ""
+
+msgid "Panel-by-Panel viewer"
+msgstr ""
+
+msgid "Pending"
+msgstr ""
+
+msgid "Previous"
+msgstr ""
+
+msgid "Previous page"
+msgstr ""
+
+msgid "Previous panel"
+msgstr ""
+
+msgid "Private"
+msgstr ""
+
+msgid "Pro status"
+msgstr ""
+
+msgid "Pro version"
+msgstr ""
+
+msgid "Published"
+msgstr ""
+
+msgid "Published display preview"
+msgstr ""
+
+msgid "Read %s in fullscreen"
+msgstr ""
+
+msgid "Read all pages by scrolling from top to bottom."
+msgstr ""
+
+msgid "Read by panel"
+msgstr ""
+
+msgid "Read directly on the page"
+msgstr ""
+
+msgid "Read in fullscreen"
+msgstr ""
+
+msgid "Read manga"
+msgstr ""
+
+msgid "Read manga in fullscreen"
+msgstr ""
+
+msgid "Readers can zoom with the plus and minus controls or pinch gestures, then drag the enlarged image."
+msgstr ""
+
+msgid "Register New Comic"
+msgstr ""
+
+msgid "Register a new comic"
+msgstr ""
+
+msgid "Register and edit reusable manga Viewers."
+msgstr ""
+
+msgid "Register in Manga Library"
+msgstr ""
+
+msgid "Registered"
+msgstr ""
+
+msgid "Registered Comics"
+msgstr ""
+
+msgid "Registered Viewer"
+msgstr ""
+
+msgid "Registered in Manga Library. The original Viewer was not changed."
+msgstr ""
+
+msgid "Registering…"
+msgstr ""
+
+msgid "Remove cover image"
+msgstr ""
+
+msgid "Replace this block with a Registered Viewer"
+msgstr ""
+
+msgid "Reset zoom and exit fullscreen"
+msgstr ""
+
+msgid "Reset zoom and go to the next page"
+msgstr ""
+
+msgid "Reset zoom and go to the previous page"
+msgstr ""
+
+msgid "Return to full view"
+msgstr ""
+
+msgid "Return to page view"
+msgstr ""
+
+msgid "Return to panel"
+msgstr ""
+
+msgid "Review analytics data deletion"
+msgstr ""
+
+msgid "Review product status and open comic management or analytics settings."
+msgstr ""
+
+msgid "Right (vertical)"
+msgstr ""
+
+msgid "Right binding (manga)"
+msgstr ""
+
+msgid "Scheduled"
+msgstr ""
+
+msgid "Search by title or Viewer ID"
+msgstr ""
+
+msgid "Search comics"
+msgstr ""
+
+msgid "Select and display one registered Viewer from Manga Library."
+msgstr ""
+
+msgid "Select one or more comic pages."
+msgstr ""
+
+msgid "Select page images"
+msgstr ""
+
+msgid "Select “Add panel,” then drag over the image."
+msgstr ""
+
+msgid "Selected Viewer"
+msgstr ""
+
+msgid "Set cover image"
+msgstr ""
+
+msgid "Settings"
+msgstr ""
+
+msgid "Shortcode copied."
+msgstr ""
+
+msgid "Show full page"
+msgstr ""
+
+msgid "Show fullscreen button"
+msgstr ""
+
+msgid "Show navigation arrows on every page"
+msgstr ""
+
+msgid "Show page numbers"
+msgstr ""
+
+msgid "Show the entire spread in the normal view and use the selected mode only in fullscreen."
+msgstr ""
+
+msgid "Show the first page separately (cover)"
+msgstr ""
+
+msgid "Showing page %d. Use the left and right arrow keys or swipe to navigate."
+msgstr ""
+
+msgid "Showing pages %1$d and %2$d. Use the left and right arrow keys or swipe to navigate."
+msgstr ""
+
+msgid "Single page"
+msgstr ""
+
+msgid "Spread"
+msgstr ""
+
+msgid "Spread (unavailable)"
+msgstr ""
+
+msgid "Start from the current page"
+msgstr ""
+
+msgid "Start fullscreen from the current page"
+msgstr ""
+
+msgid "Strong"
+msgstr ""
+
+msgid "Swipe left or right to navigate panels"
+msgstr ""
+
+msgid "The current page set has no pages that can be paired as a spread. Landscape pages and other unmatched pages are shown separately."
+msgstr ""
+
+msgid "The default is 90 days. Expired data is deleted daily regardless of Pro status."
+msgstr ""
+
+msgid "The first image is the cover and the last is the back matter. Drag images or use the arrows to reorder them."
+msgstr ""
+
+msgid "The selected Viewer could not be found. It may have been deleted or its permissions may have changed."
+msgstr ""
+
+msgid "There are no comic pages to register."
+msgstr ""
+
+msgid "This block is already registered in Manga Library."
+msgstr ""
+
+msgid "This comic is registered as a draft. Publish it before replacing this block with a Registered Viewer."
+msgstr ""
+
+msgid "Title"
+msgstr ""
+
+msgid "To use Manga Analytics and AI consultation, register the comic in Manga Library and display it as a Registered Viewer."
+msgstr ""
+
+msgid "Top of screen"
+msgstr ""
+
+msgid "Unavailable"
+msgstr ""
+
+msgid "Unknown"
+msgstr ""
+
+msgid "Untitled comic"
+msgstr ""
+
+msgid "Updated"
+msgstr ""
+
+msgid "Updated:"
+msgstr ""
+
+msgid "Use as cover image"
+msgstr ""
+
+msgid "Use the current page navigation mode in fullscreen."
+msgstr ""
+
+msgid "Use the first page as the cover"
+msgstr ""
+
+msgid "Use the left and right arrow keys or swipe to navigate pages"
+msgstr ""
+
+msgid "Used when Spread or Automatic is selected."
+msgstr ""
+
+msgid "Vertical scrolling"
+msgstr ""
+
+msgid "View analytics"
+msgstr ""
+
+msgid "View comic"
+msgstr ""
+
+msgid "View entire spread"
+msgstr ""
+
+msgid "Viewer"
+msgstr ""
+
+msgid "Viewer details"
+msgstr ""
+
+msgid "When disabled, fullscreen starts from the first page. The cover launcher always starts from the first page."
+msgstr ""
+
+msgid "When disabled, the dedicated viewer starts from the beginning regardless of the page currently open."
+msgstr ""
+
+msgid "When enabled, desktop panels are used as the initial values and you can adjust mobile regions and order separately."
+msgstr ""
+
+msgid "When enabled, edge arrows remain visible after moving to the next page."
+msgstr ""
+
+msgid "When scrolling stops, the comic is gently aligned to a comfortable reading position."
+msgstr ""
+
+msgid "Width (%)"
+msgstr ""
+
+msgid "You do not have permission to change this setting."
+msgstr ""
+
+msgid "You do not have permission to perform this action."
+msgstr ""
+
+msgid "You do not have permission to register a comic from this post."
+msgstr ""
+
+msgid "You do not have permission to view this screen."
+msgstr ""
+
+msgid "Zoom control position"
+msgstr ""
+
+msgid "Zoom control position preview"
+msgstr ""
+
+msgid "Zoom in"
+msgstr ""
+
+msgid "Zoom level (%)"
+msgstr ""
+
+msgid "Zoom out"
+msgstr ""
+
+msgid "days"
+msgstr ""
+
+msgid "spread pair(s) will be created. Landscape and unmatched pages are shown separately."
+msgstr ""
+
+msgid "%s page"
+msgid_plural "%s pages"
+msgstr[0] ""
+msgstr[1] ""
+

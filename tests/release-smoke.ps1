@@ -6,7 +6,12 @@ $fixture = Join-Path $PSScriptRoot ('.release-test-' + [guid]::NewGuid().ToStrin
 $files = @('mangafocus.php', 'readme.txt', 'includes/features.php', 'includes/capabilities.php', 'includes/extensions.php', 'includes/settings.php', 'includes/panel-reader.php', 'includes/panel-reader/renderer.php', 'includes/analytics.php', 'includes/analytics/lifecycle.php', 'includes/analytics/storage.php', 'includes/analytics/settings.php', 'assets/admin-library.css', 'assets/admin-library.js', 'assets/admin-settings.css', 'assets/panel-reader/editor.js', 'assets/panel-reader/frontend.js', 'assets/panel-reader/style.css', 'blocks/library-viewer/block.json',
     'blocks/library-viewer/index.js', 'blocks/viewer/block.json',
     'blocks/viewer/layout.js', 'blocks/viewer/index.js', 'blocks/viewer/view.js', 'blocks/viewer/render.php',
-    'blocks/viewer/style.css', 'scripts/build-release.ps1')
+    'blocks/viewer/style.css',
+    'languages/mangafocus.pot', 'languages/mangafocus-ja.po', 'languages/mangafocus-ja.mo',
+    'languages/mangafocus-ja-ai-manga-viewer-editor.json', 'languages/mangafocus-ja-ai-manga-viewer-view.json',
+    'languages/mangafocus-ja-ai-manga-viewer-library-editor.json',
+    'languages/mangafocus-ja-ai-manga-viewer-panel-reader-editor.json', 'languages/mangafocus-ja-ai-manga-viewer-panel-reader-frontend.json',
+    'scripts/build-release.ps1')
 $utf8 = [Text.UTF8Encoding]::new($false)
 function Expect-Failure([scriptblock]$Action, [string]$Message) {
     $failed = $false
@@ -82,7 +87,7 @@ try {
 		$panelRendererSource = [IO.File]::ReadAllText((Join-Path $fixture 'includes/panel-reader/renderer.php'))
 		$panelViewSource = [IO.File]::ReadAllText((Join-Path $fixture 'assets/panel-reader/frontend.js'))
 		$panelStyleSource = [IO.File]::ReadAllText((Join-Path $fixture 'assets/panel-reader/style.css'))
-		if ($panelEditorSource -notmatch 'コマ読みを有効化' -or $panelEditorSource -notmatch 'mobileFocusAreas' -or $panelRendererSource -notmatch 'data-amv-panel-reader' -or $panelViewSource -notmatch 'setExtensionMode' -or $panelStyleSource -notmatch '\.amv-modal') {
+		if ($panelEditorSource -notmatch 'Enable Panel-by-Panel reading' -or $panelEditorSource -notmatch 'mobileFocusAreas' -or $panelRendererSource -notmatch 'data-amv-panel-reader' -or $panelViewSource -notmatch 'setExtensionMode' -or $panelStyleSource -notmatch '\.amv-modal') {
 			throw 'Core-owned panel reader runtime or editor implementation is missing from the Free ZIP.'
 		}
 		if ($editorSource -notmatch 'previous\.cta' -or -not $rendererSource.Contains("'cta' => `$cta") -or [IO.File]::ReadAllText((Join-Path $fixture 'mangafocus.php')) -notmatch 'ai_manga_viewer_sanitize_library_cta') {
