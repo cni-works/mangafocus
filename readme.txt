@@ -8,7 +8,7 @@ Stable tag: 0.3.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Display image-based comics in WordPress with panel-by-panel reading, page turns, spreads, fullscreen, vertical scrolling, zoom, and reusable Manga Library entries.
+Publish image-based comics with panel-by-panel reading, page turns, spreads, fullscreen, vertical scrolling, zoom, and Manga Library.
 
 == Description ==
 
