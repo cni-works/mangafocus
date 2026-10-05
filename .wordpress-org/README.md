@@ -14,9 +14,8 @@ location, separate from the plugin runtime package:
 - `screenshot-5.jpg`: vertical reading view
 - `screenshot-6.jpg`: Manga Library list
 
-`banner-772x250.png` is a lossless PNG conversion of the supplied
-`branding/source/banner-772x250.jpg`. The other three public candidates retain
-the supplied PNG bytes.
+Both banner files retain the supplied MangaFocus PNG bytes. The icon files are
+unchanged because the icon artwork does not contain the former product name.
 
 The six screenshot files retain the supplied JPEG bytes. Their lowercase
 filenames match the WordPress.org screenshot numbering used by `readme.txt`.

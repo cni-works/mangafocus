@@ -11,6 +11,6 @@ excluded from the installable plugin ZIP.
   lowercase public filenames.
 - `../.wordpress-org/`: WordPress.org plugin-directory asset candidates.
 
-The current design candidate uses monochrome manga artwork with blue accents.
+The current MangaFocus design uses monochrome manga artwork with blue accents.
 When an asset is revised, keep the WordPress.org filename stable and preserve
-the supplied source file here when its format or compression differs.
+the supplied source file here.
