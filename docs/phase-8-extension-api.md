@@ -25,10 +25,10 @@ Extension API VersionはプラグインVersionと別管理とし、現在は整�
 | filter | 初期値 | 引数 | 契約 |
 |---|---|---|---|
 | `ai_manga_viewer_renderer_root_attributes` | `array()` | attributes, context | `data-amv-*`属性だけ追加可能。Coreが値をescapeする |
-| `ai_manga_viewer_renderer_page_overlay` | `''` | markup, page, page index, context | 各page canvasのCore content後へ挿入 |
-| `ai_manga_viewer_renderer_after_content` | `''` | markup, context | Reader root末尾へ挿入 |
+| `ai_manga_viewer_renderer_page_overlay` | `''` | markup, page, page index, context | 各page canvasのCore content後へ挿入。Coreが固定allowlistで最終sanitizeする |
+| `ai_manga_viewer_renderer_after_content` | `''` | markup, context | Reader root末尾へ挿入。Coreが固定allowlistで最終sanitizeする |
 
-page overlayとafter-contentの提供側は、自身のHTMLをsanitize・escapeする。コールバックがなければ空のwrapperを出力せず、従来DOMを維持する。
+page overlayとafter-contentの提供側は、自身の動的な値を用途に応じてescapeする。さらにCoreが出力境界で`wp_kses()`を適用し、コマ読みとCTAに必要な既知の要素・属性だけを許可する。`script`、イベント属性、未知の`data-*`属性などは出力されない。コールバックがなければ空のwrapperを出力せず、従来DOMを維持する。
 
 renderer contextは`api_version`、`viewer_key`、`instance_key`、`page_count`、`pages`と、表示設定の一部をまとめた`settings`を持つ。これは拡張描画用の読み取り値であり、保存schemaではない。
 

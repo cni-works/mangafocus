@@ -129,7 +129,7 @@ The distributed plugin contains its human-readable PHP, JavaScript, and CSS sour
 
 The maintained development repository is available at https://github.com/cni-works/mangafocus.
 
-The release build tool is included at `scripts/build-release.ps1`. Run `powershell -File scripts/build-release.ps1` from the plugin directory. The script uses an explicit allowlist and runs PHP and JavaScript syntax checks before creating the archive.
+The release build tool is available in the public development repository at https://github.com/cni-works/mangafocus/blob/3c13166c04880ebe4342dfcdb4f4bd9dbbcc70eb/scripts/build-release.ps1 and is not included in the distributed plugin. To run it, check out the corresponding repository revision and run `powershell -File scripts/build-release.ps1` from the repository root.
 
 == Changelog ==
 

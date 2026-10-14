@@ -16,8 +16,7 @@ $runtimeFiles = @(
 	'languages/mangafocus.pot', 'languages/mangafocus-ja.po', 'languages/mangafocus-ja.mo',
 	'languages/mangafocus-ja-ai-manga-viewer-editor.json', 'languages/mangafocus-ja-ai-manga-viewer-view.json',
 	'languages/mangafocus-ja-ai-manga-viewer-library-editor.json',
-	'languages/mangafocus-ja-ai-manga-viewer-panel-reader-editor.json', 'languages/mangafocus-ja-ai-manga-viewer-panel-reader-frontend.json',
-    'scripts/build-release.ps1'
+	'languages/mangafocus-ja-ai-manga-viewer-panel-reader-editor.json', 'languages/mangafocus-ja-ai-manga-viewer-panel-reader-frontend.json'
 )
 
 function Assert-RegularPath([string]$Path) {

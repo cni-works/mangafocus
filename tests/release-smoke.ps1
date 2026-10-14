@@ -63,7 +63,7 @@ try {
     }
     $archive = [IO.Compression.ZipFile]::OpenRead($zip)
     try {
-        $expected = @($files | ForEach-Object { 'mangafocus/' + $_ })
+		$expected = @($files | Where-Object { $_ -ne 'scripts/build-release.ps1' } | ForEach-Object { 'mangafocus/' + $_ })
         $entryNames = @($archive.Entries | ForEach-Object { $_.FullName })
         $diff = @(Compare-Object $expected $entryNames)
         if ($diff.Count -ne 0) { throw 'Unexpected archive file list.' }
@@ -73,8 +73,8 @@ try {
 		if (@($entryNames | Where-Object { $_ -match '(?i)(consultation|admin-analytics|analytics/(?:queries|rest|admin))' }).Count -ne 0) {
 			throw 'Pro-owned Analytics or AI Consultation runtime leaked into the Free Core ZIP.'
 		}
-		if ($entryNames -notcontains 'mangafocus/scripts/build-release.ps1') {
-			throw 'Public release build tool is missing from the Free Core ZIP.'
+		if ($entryNames -contains 'mangafocus/scripts/build-release.ps1') {
+			throw 'Development build tool leaked into the Free Core ZIP.'
 		}
 		$editorSource = [IO.File]::ReadAllText((Join-Path $fixture 'blocks/viewer/index.js'))
 		$rendererSource = [IO.File]::ReadAllText((Join-Path $fixture 'blocks/viewer/render.php'))
