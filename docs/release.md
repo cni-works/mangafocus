@@ -22,7 +22,7 @@ PowerShellと、PATHから利用できるPHP CLI・Node.jsが必要。プロジ�
 
 本体、readme、Feature/Capability/Extension API、2つのブロック、コマ読み、解析データ管理、管理画面CSS/JSなど、Freeの実行に必要なファイルだけを明示的に梱包する。全エントリーは `mangafocus/` の下に置く。必要な実行ファイルを追加したときは、スクリプトのruntimeFilesも更新する。
 
-docs、tests、release、Git管理情報、node_modules、desktop.ini、関連プロジェクトは梱包しない。現在のPHP、JavaScript、CSSは未圧縮の実行用ソースとして含め、再現用の`scripts/build-release.ps1`も同梱する。
+docs、tests、release、Git管理情報、node_modules、desktop.ini、関連プロジェクトは梱包しない。現在のPHP、JavaScript、CSSは未圧縮の実行用ソースとして含め、再現用の`scripts/build-release.ps1`は開発リポジトリで管理し、配布ZIPには同梱しない。
 
 必須ファイル・バージョン・ブロック名とtextdomain・PHP/JS構文を確認し、ZIP内の全実行時ファイルの内容を元ファイルとSHA-256で照合する。PHPかNodeが使えなければ停止する。生成ZIP全体のSHA-256も表示する。構文検査は実行に使ったPHPのバージョンでの検査であり、PHP 7.4互換の実証やWordPress実機検査の代わりにはならない。
 
