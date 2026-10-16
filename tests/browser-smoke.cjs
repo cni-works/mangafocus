@@ -98,7 +98,8 @@ assert.deepEqual(metadata.attributes.libraryViewerId, { type: 'integer', default
 assert.deepEqual(metadata.attributes.pageLayout, { type: 'string', default: 'single' });
 assert.deepEqual(metadata.attributes.singleFirstPage, { type: 'boolean', default: true });
 assert.deepEqual(metadata.attributes.spreadReadingMode, { type: 'string', default: 'overview' });
-assert.equal(Object.keys(metadata.attributes).length, Object.keys(legacyAttributes).length + 13);
+assert.deepEqual(metadata.attributes.enableInline, { type: 'boolean' });
+assert.equal(Object.keys(metadata.attributes).length, Object.keys(legacyAttributes).length + 14);
 const registered = {};
 const wp = { blocks: { registerBlockType: (name, settings) => registered[name] = settings }, element: {}, blockEditor: {}, components: {}, data: {}, i18n: { __: text => text }, apiFetch: () => Promise.resolve([]) };
 for (const dir of [oldRoot, current]) vm.runInNewContext(fs.readFileSync(path.join(dir, 'index.js'), 'utf8'), { window: { wp, aiMangaViewerLayout: viewerLayout } });
@@ -135,6 +136,8 @@ assert.equal(registered['ai-manga-viewer/library-viewer'].save(), null);
         document.exitFullscreen = () => { fullscreenElement = null; document.dispatchEvent(new Event('fullscreenchange')); return Promise.resolve(); };
         HTMLElement.prototype.requestFullscreen = function() { fullscreenElement = this; document.dispatchEvent(new Event('fullscreenchange')); return Promise.resolve(); };
       });
+      // Supply native fullscreen viewport geometry together with the Fullscreen API double.
+      await page.addStyleTag({content:'.amv-reader.is-fullscreen{position:fixed!important;inset:0!important;z-index:100000}'});
       for (const dir of [oldRoot, current]) {
         await page.addStyleTag({ path: path.join(dir, 'style.css') });
         if (dir === current) {
@@ -187,7 +190,15 @@ assert.equal(registered['ai-manga-viewer/library-viewer'].save(), null);
       const previousCue = await amv.locator('.amv-reader__edge--previous').evaluate(element => ({ display: getComputedStyle(element, '::after').display }));
       assert.notEqual(nextCue.display, 'none');
       assert.notEqual(nextCue.content, 'none');
-      assert.equal(previousCue.display, 'none');
+      if (await amv.evaluate(el=>el.classList.contains('has-compact-fullscreen-layout'))) {
+        // Compact guides are labelled real buttons, rather than overlaid SVG pseudo-elements.
+        assert.equal(await amv.locator('.amv-reader__edge--previous').isDisabled(),true,'First previous remains inoperable');
+        assert.equal(await amv.locator('.amv-reader__edge--previous').getAttribute('aria-label'),'Previous page');
+        const image=await amv.locator('.amv-reader__page.is-active .amv-reader__image').boundingBox();
+        for (const edge of await amv.locator('.amv-reader__edge').all()) {
+          const box=await edge.boundingBox();assert.ok(box.y>=image.y+image.height,'The full guide hit area stays below the image');
+        }
+      } else assert.equal(previousCue.display, 'none','Desktop retains its existing disabled overlay cue');
       const fullscreenImageBox = await amv.locator('.amv-reader__page.is-active .amv-reader__image').boundingBox();
       assert.ok(fullscreenImageBox.height <= 722, 'Fullscreen image must leave room for controls');
       const zoomIn = amv.locator('.amv-reader__zoom-in');
@@ -276,11 +287,19 @@ assert.equal(registered['ai-manga-viewer/library-viewer'].save(), null);
       await fullscreenModal.locator('.amv-modal__close').click();
       assert.equal(await amv.evaluate(element => element.classList.contains('is-fullscreen')), true);
       const fullscreenNext = amv.locator('.amv-reader__edge--next');
-      await fullscreenNext.click();
+      async function clickFullscreenNext() {
+        if(await fullscreenNext.isVisible()) {await fullscreenNext.click();return;}
+        assert.equal(await amv.evaluate(el=>el.classList.contains('has-compact-fullscreen-layout')),true);
+        assert.equal(await amv.getAttribute('data-guide-arrow'),'first','Only first-page guides disappear');
+        const b=await amv.locator('.amv-reader__pages').boundingBox();
+        await page.mouse.click(b.x+b.width*.04,b.y+b.height*.15); // RTL image-edge navigation is a separate setting.
+      }
+
+      await clickFullscreenNext();
       await page.waitForFunction(() => document.querySelector('.amv-reader__count').textContent === '2 / 2');
       assert.equal(await fullscreenNext.isDisabled(), false);
       assert.equal(await fullscreenNext.getAttribute('aria-label'), 'Exit fullscreen');
-      await fullscreenNext.click();
+      await clickFullscreenNext();
       await page.waitForFunction(() => !document.querySelector('.wp-block-ai-manga-viewer-viewer').classList.contains('is-fullscreen'));
       assert.equal(await fullscreenButton.getAttribute('aria-pressed'), 'false');
       assert.equal(await fullscreenButton.textContent(), 'Read in fullscreen');

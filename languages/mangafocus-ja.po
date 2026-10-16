@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: MangaFocus 0.3.0\n"
+"Project-Id-Version: MangaFocus 0.4.0\n"
 "Report-Msgid-Bugs-To: https://github.com/cni-works/mangafocus/issues\n"
 "POT-Creation-Date: 2026-10-04 00:00+0900\n"
 "PO-Revision-Date: 2026-10-04 00:00+0900\n"
@@ -13,6 +13,9 @@ msgstr ""
 
 msgid "%d days"
 msgstr "%d日"
+
+msgid "A manga reader for WordPress with page, spread, vertical, zoom, and panel-by-panel reading."
+msgstr "WordPressでページ送り・見開き・縦読み・ズーム・コマ読みを利用できる漫画ビューアーです。"
 
 msgid "AI consultation"
 msgstr "AI相談"
@@ -27,10 +30,22 @@ msgid "Add New"
 msgstr "新規追加"
 
 msgid "Add a mobile panel"
-msgstr "スマホ用にコマを追加"
+msgstr "スマートフォン用のコマを追加"
 
 msgid "Add a panel to the current page"
 msgstr "現在のページにコマを追加"
+
+msgid "Add at least one panel before using panel reading alone."
+msgstr "コマ読みのみを利用する場合は、先にコマを追加してください。"
+
+msgid "Adjust the comic position when scrolling stops."
+msgstr "スクロールが止まったとき、漫画が見やすい位置に収まるよう自動調整します。"
+
+msgid "Adjusts region fitting only. Full-page display does not use this value. Lower it if small panels are enlarged too much."
+msgstr "コマ範囲の表示にのみ適用します。ページ全体表示では使用しません。小さなコマが大きすぎる場合は値を下げてください。"
+
+msgid "After document scrolling stops, adjust the comic position in the viewport. This is not automatic alignment on page turns."
+msgstr "文書のスクロールが止まったとき、画面内の漫画の位置を調整します。ページ送り時の自動位置合わせではありません。"
 
 msgid "Align the scroll position"
 msgstr "スクロール位置を整える"
@@ -53,6 +68,9 @@ msgstr "解析設定"
 msgid "Analytics paused"
 msgstr "解析停止中"
 
+msgid "Arrows require page-edge navigation to be enabled."
+msgstr "案内矢印は「ページ端クリックによるページ送り」が有効な場合に表示されます。"
+
 msgid "At least "
 msgstr "少なくとも"
 
@@ -65,8 +83,17 @@ msgstr "自動（収まるときは中央）"
 msgid "Automatic (fit to panel size)"
 msgstr "自動（コマの大きさに合わせる）"
 
+msgid "Automatic (large regions show the full page)"
+msgstr "自動（大きな範囲はページ全体を表示）"
+
 msgid "Automatic (unavailable)"
 msgstr "自動（利用できません）"
+
+msgid "Automatic shows the full page for regions at least 74% wide and 68% high. Fit to the panel region always uses the selected region. Full page ignores the region and zoom level."
+msgstr "自動は幅74%以上・高さ68%以上の範囲でページ全体を表示します。「コマ範囲に合わせる」は常に指定範囲を使用します。「ページ全体」は範囲と拡大率を使用しません。"
+
+msgid "Automatically adjust scroll position"
+msgstr "スクロール位置を自動調整"
 
 msgid "Available"
 msgstr "利用可能"
@@ -83,14 +110,26 @@ msgstr "冊子"
 msgid "Bottom (horizontal)"
 msgstr "下（横並び）"
 
+msgid "CTA"
+msgstr "CTA"
+
 msgid "Center of screen"
 msgstr "画面中央"
+
+msgid "Change cover image"
+msgstr "表紙画像を変更"
 
 msgid "Checking image information. Spread and automatic layouts remain available while checking."
 msgstr "画像情報を確認中です。確認中は見開き・自動を選択できます。"
 
 msgid "Choose again from Manga Library"
 msgstr "漫画ライブラリから選び直す"
+
+msgid "Choose how readers can read this comic. Disabled modes keep their saved settings."
+msgstr "読者が利用できる読み方を選びます。OFFにしても各モードの設定値は保持されます。"
+
+msgid "Choose which page to start from when switching to panel reading after reading partway through the inline viewer."
+msgstr "通常ビュアーで途中まで読んでからコマ読みに切り替えた際、どのページから読み始めるかを選びます。"
 
 msgid "Clear selection"
 msgstr "選択を解除"
@@ -111,7 +150,10 @@ msgid "Comic editing preview"
 msgstr "漫画内容の編集プレビュー"
 
 msgid "Configure mobile panels separately"
-msgstr "スマホ用のコマ設定を個別指定"
+msgstr "スマートフォン用のコマを別に設定"
+
+msgid "Continue from the current page"
+msgstr "読んでいるページから続ける"
 
 msgid "Copied"
 msgstr "コピーしました"
@@ -145,6 +187,9 @@ msgstr "表紙"
 
 msgid "Cover image"
 msgstr "表紙画像"
+
+msgid "Cover selected. Its preview is loading or unavailable."
+msgstr "表紙は選択されています。プレビューは読み込み中、または取得できません。"
 
 msgid "Create AI consultation material"
 msgstr "AI相談資料を作成"
@@ -209,14 +254,35 @@ msgstr "解析を有効にする"
 msgid "Enable free zoom and pan"
 msgstr "自由ズームと移動を有効化"
 
+msgid "Enable fullscreen display"
+msgstr "全画面表示を有効にする"
+
+msgid "Enable fullscreen mode"
+msgstr "全画面モードを有効にする"
+
+msgid "Enable inline display"
+msgstr "通常表示を有効にする"
+
+msgid "Enable inline viewer"
+msgstr "通常ビュアーを有効にする"
+
+msgid "Enable panel reading"
+msgstr "コマ読みを有効にする"
+
+msgid "Enable panel reading mode"
+msgstr "コマ読みモードを有効にする"
+
 msgid "Enable reader event collection"
 msgstr "読者イベントの収集を有効にする"
 
 msgid "Enlarge"
 msgstr "拡大して表示"
 
+msgid "Enlarge configured panels one at a time."
+msgstr "設定したコマを1コマずつ拡大して読むモードです。"
+
 msgid "Enlarge panels in sequence with Panel-by-Panel reading"
-msgstr "Panel-by-Panelでコマを順番に大きく表示"
+msgstr "コマ読みでコマを順番に拡大表示"
 
 msgid "Enlarge registered panels in sequence in a dedicated viewer."
 msgstr "登録したコマを専用ビューアーで順に大きく表示します。"
@@ -239,20 +305,41 @@ msgstr "全画面を終了"
 msgid "Features"
 msgstr "機能"
 
+msgid "First-page preview (not a saved cover)"
+msgstr "1ページ目の代替プレビュー（表紙未設定）"
+
 msgid "Fit"
 msgstr "全体"
+
+msgid "Fit to the panel region"
+msgstr "指定したコマ範囲に合わせる"
 
 msgid "Focus on one page at a time"
 msgstr "1ページずつ大きく読む"
 
+msgid "Free Viewer"
+msgstr "Free Viewer"
+
 msgid "Full page"
 msgstr "ページ全体"
 
+msgid "Fullscreen display settings"
+msgstr "全画面表示の設定"
+
+msgid "Fullscreen mode"
+msgstr "全画面モード"
+
 msgid "Fullscreen reading mode"
-msgstr "全画面の読み方"
+msgstr "全画面表示の読み方"
 
 msgid "Fullscreen spread display"
 msgstr "全画面の見開き表示"
+
+msgid "Fullscreen spread reading mode"
+msgstr "全画面表示での見開きの読み方"
+
+msgid "General settings"
+msgstr "全体設定"
 
 msgid "Gentle"
 msgstr "弱い"
@@ -263,8 +350,23 @@ msgstr "高さ（%）"
 msgid "Image zoom and pan"
 msgstr "画像の拡大と移動"
 
+msgid "In inline display, arrows use available side space or move below the image without reducing its width."
+msgstr "通常表示では、画像幅を縮めずに、配置できる余白または画像下に案内矢印を表示します。"
+
+msgid "In spread view, display the first page on its own."
+msgstr "見開き表示時、先頭ページを1ページだけで表示します。"
+
 msgid "Inline display"
 msgstr "ページ内の表示"
+
+msgid "Inline display settings"
+msgstr "通常表示の設定"
+
+msgid "Inline viewer"
+msgstr "通常ビュアー"
+
+msgid "Keep at least one reading mode enabled."
+msgstr "少なくとも1つの表示モードを有効にしてください。"
 
 msgid "Keep current selection"
 msgstr "選択を変更しない"
@@ -311,14 +413,20 @@ msgstr "漫画ライブラリ"
 msgid "Manga Library cover image URL"
 msgstr "漫画ライブラリの表紙画像URL"
 
+msgid "MangaFocus"
+msgstr "MangaFocus"
+
 msgid "MangaFocus Settings"
 msgstr "MangaFocus 設定"
+
+msgid "MangaFocus – Panel-by-Panel Manga Reader"
+msgstr "MangaFocus – コマ読み対応漫画ビューアー"
 
 msgid "Maximum comic width (px)"
 msgstr "漫画の最大幅（px）"
 
 msgid "Mobile"
-msgstr "スマホ"
+msgstr "スマートフォン"
 
 msgid "Move down"
 msgstr "下へ移動"
@@ -350,8 +458,17 @@ msgstr "選択できる漫画がありません。"
 msgid "No comics found in Trash."
 msgstr "ゴミ箱に漫画はありません。"
 
+msgid "No cover image is set. The first page is displayed instead; it is not saved as a cover."
+msgstr "表紙画像が未設定です。漫画の1ページ目を代わりに表示しますが、表紙画像としては保存されません。"
+
+msgid "No cover is set. The first page is used as a preview instead."
+msgstr "表紙画像が未設定の場合は、1ページ目の画像を代わりに表示します。"
+
 msgid "No cover set"
 msgstr "表紙未設定"
+
+msgid "No panels are configured. Add panels before using panel reading alone."
+msgstr "コマが設定されていません。コマ読みのみを利用する場合は、先にコマを追加してください。"
 
 msgid "No registered comics found."
 msgstr "登録済みの漫画はありません。"
@@ -362,11 +479,32 @@ msgstr "標準"
 msgid "Not installed or inactive"
 msgstr "未導入または無効"
 
+msgid "ON starts at the first panel of the current page. OFF starts at page 1. Closing on the last page returns to page 1; otherwise ON can resume from the same page, including panel-only reading."
+msgstr "ONでは現在のページの先頭コマ、OFFでは1ページ目から開始します。最終ページで閉じると1ページ目に戻ります。それ以外では、コマ読みのみの場合もONで同じページから再開できます。"
+
+msgid "Off: first page only. On: every page."
+msgstr "OFF：先頭ページのみ。ON：全ページに表示します。"
+
+msgid "On smartphones, pages without mobile panels are shown as full pages. Desktop panels are not used as a fallback."
+msgstr "スマートフォンでは、スマートフォン用コマがないページはページ全体を表示します。PC用コマへの自動切り替えは行いません。"
+
 msgid "On the published page, show only the cover and a “Read manga” button, then open the reader in fullscreen. Use the editor preview below to edit the comic as usual."
 msgstr "公開画面では表紙と「漫画を読む」ボタンだけを表示し、全画面で読み始めます。下の編集プレビューでは従来どおり漫画内容を編集できます。"
 
 msgid "On uninstall"
 msgstr "アンインストール時"
+
+msgid "On: enlarge configured panels one at a time. Off: hide the panel reading launch button. Configure at least one panel to use this mode alone."
+msgstr "ON：設定したコマを1コマずつ拡大表示します。OFF：コマ読みの起動ボタンを表示しません。コマ読みだけを使うには、コマを1つ以上設定してください。"
+
+msgid "On: offer fullscreen paged or vertical reading. Off: hide the fullscreen launch button."
+msgstr "ON：全画面でページ送り・縦読みを利用できます。OFF：全画面の起動ボタンを表示しません。"
+
+msgid "On: read within the post or page. Off: show a cover with buttons for the other enabled modes."
+msgstr "ON：投稿・固定ページ内で漫画を表示します。OFF：表紙と、有効な他のモードの起動ボタンを表示します。"
+
+msgid "On: read within the post or page. Off: show a cover with buttons for the other enabled modes. Page images and panel settings are kept."
+msgstr "ON：投稿・固定ページ内で漫画を表示します。OFF：表紙と、有効な他のモードの起動ボタンを表示します。ページ画像やコマ設定は保持されます。"
 
 msgid "Only the cover is shown in the editor. The complete Viewer appears on the published page."
 msgstr "編集画面では表紙のみ表示します。公開側ではViewer全体が表示されます。"
@@ -379,6 +517,9 @@ msgstr "漫画ライブラリを開く"
 
 msgid "Open fullscreen from the cover"
 msgstr "表紙から全画面で読む"
+
+msgid "PC"
+msgstr "PC"
 
 msgid "Page"
 msgstr "ページ"
@@ -408,10 +549,25 @@ msgid "Paged reading"
 msgstr "ページ送り"
 
 msgid "Paged reading, spreads, page focus, fullscreen, vertical reading, zoom, Panel-by-Panel, Manga Library"
-msgstr "ページ送り、見開き、pageFocus、全画面、縦読み、ズーム、コマ読み、Manga Library"
+msgstr "ページ送り、見開き、全画面での1ページ表示、縦読み、ズーム、コマ読み、漫画ライブラリ"
+
+msgid "Pages without panels remain in order as full pages. Add at least one panel before using panel reading alone."
+msgstr "コマ未設定のページも、ページ全体表示で順番に読みます。コマ読みのみで利用するには、1つ以上のコマを設定してください。"
 
 msgid "Panel"
 msgstr "コマ"
+
+msgid "Panel reading also uses this setting when moving between pages."
+msgstr "コマ読みで別のページへ移動するときの演出にも、この設定を使用します。"
+
+msgid "Panel reading mode"
+msgstr "コマ読みモード"
+
+msgid "Panel reading settings"
+msgstr "コマ読みの設定"
+
+msgid "Panel reading start position"
+msgstr "コマ読みの開始位置"
 
 msgid "Panel set to edit"
 msgstr "編集するコマ設定"
@@ -420,7 +576,7 @@ msgid "Panel-by-Panel"
 msgstr "コマ読み"
 
 msgid "Panel-by-Panel viewer"
-msgstr "コマ読みビューアー"
+msgstr "コマ読み画面"
 
 msgid "Pending"
 msgstr "承認待ち"
@@ -456,10 +612,13 @@ msgid "Read all pages by scrolling from top to bottom."
 msgstr "全ページを上から下へスクロールして読みます。"
 
 msgid "Read by panel"
-msgstr "専用ビューアーで読む"
+msgstr "コマ読みを開始"
 
 msgid "Read directly on the page"
 msgstr "ページ内でそのまま読む"
+
+msgid "Read from the first page"
+msgstr "最初のページから読む"
 
 msgid "Read in fullscreen"
 msgstr "全画面で読む"
@@ -470,8 +629,17 @@ msgstr "漫画を読む"
 msgid "Read manga in fullscreen"
 msgstr "漫画を全画面で読む"
 
+msgid "Read manga using the full screen."
+msgstr "漫画を画面いっぱいに表示して読むモードです。"
+
+msgid "Read manga within the post or page."
+msgstr "投稿・固定ページ内で漫画を読む表示方法です。"
+
 msgid "Readers can zoom with the plus and minus controls or pinch gestures, then drag the enlarged image."
 msgstr "読者が＋／－、ピンチ操作で拡大し、拡大中は画像をドラッグして移動できます。"
+
+msgid "Reading modes"
+msgstr "表示モード"
 
 msgid "Register New Comic"
 msgstr "漫画を新規登録"
@@ -501,7 +669,7 @@ msgid "Registering…"
 msgstr "登録中…"
 
 msgid "Remove cover image"
-msgstr "表紙画像を削除"
+msgstr "表紙画像を解除"
 
 msgid "Replace this block with a Registered Viewer"
 msgstr "このブロックを登録済みViewerへ切り替える"
@@ -539,14 +707,23 @@ msgstr "右綴じ（漫画向け）"
 msgid "Scheduled"
 msgstr "予約済み"
 
+msgid "Scroll adjustment position"
+msgstr "スクロール調整位置"
+
+msgid "Scroll adjustment strength"
+msgstr "スクロール調整強度"
+
 msgid "Search by title or Viewer ID"
-msgstr "タイトルまたはViewer IDで検索"
+msgstr "タイトルまたは漫画IDで検索"
 
 msgid "Search comics"
 msgstr "漫画を検索"
 
 msgid "Select and display one registered Viewer from Manga Library."
 msgstr "漫画ライブラリから登録済みのViewerを1冊選んで表示します。"
+
+msgid "Select cover image"
+msgstr "表紙画像を選択"
 
 msgid "Select one or more comic pages."
 msgstr "漫画ページを複数選択してください。"
@@ -560,11 +737,26 @@ msgstr "「コマを追加」を押して、画像上をドラッグしてくだ
 msgid "Selected Viewer"
 msgstr "選択済みのViewer"
 
+msgid "Selected cover preview"
+msgstr "選択中の表紙プレビュー"
+
 msgid "Set cover image"
 msgstr "表紙画像を設定"
 
+msgid "Set the cover here. The standard Featured image panel is also available as a fallback and uses the same image."
+msgstr "表紙画像はこちらで設定できます。標準の「アイキャッチ画像」も予備の操作場所として利用でき、同じ画像に連動します。"
+
+msgid "Set the cover used in the comic list and before reading."
+msgstr "漫画一覧と、読み始める前に表示する表紙画像を設定します。"
+
+msgid "Sets the inline maximum width and the base width for fullscreen vertical reading."
+msgstr "通常表示の最大幅と、全画面の縦読みの基準幅に使用します。"
+
 msgid "Settings"
 msgstr "設定"
+
+msgid "Shared settings"
+msgstr "共通設定"
 
 msgid "Shortcode copied."
 msgstr "ショートコードをコピーしました。"
@@ -583,6 +775,9 @@ msgstr "ページ番号を表示"
 
 msgid "Show the entire spread in the normal view and use the selected mode only in fullscreen."
 msgstr "通常表示では見開き全体を表示し、全画面のときだけ選択した読み方を使用します。"
+
+msgid "Show the first page separately"
+msgstr "先頭ページを単独表示"
 
 msgid "Show the first page separately (cover)"
 msgstr "先頭ページを単独表示（表紙向け）"
@@ -606,7 +801,10 @@ msgid "Start from the current page"
 msgstr "現在のページから開始"
 
 msgid "Start fullscreen from the current page"
-msgstr "現在のページから全画面を開始"
+msgstr "現在のページから全画面表示を開始"
+
+msgid "Start panel reading from the current page"
+msgstr "現在のページからコマ読みを開始"
 
 msgid "Strong"
 msgstr "強い"
@@ -620,20 +818,41 @@ msgstr "現在のページ構成には、見開きとして組み合わせ可能
 msgid "The default is 90 days. Expired data is deleted daily regardless of Pro status."
 msgstr "既定は90日です。Proの状態に関係なく、期限を過ぎたデータを日次で削除します。"
 
+msgid "The first image is page 1 and the last is the back matter. Drag images or use the arrows to reorder them."
+msgstr "先頭の画像が1ページ目、最後の画像があとがきです。ドラッグまたは矢印で並び替えます。"
+
 msgid "The first image is the cover and the last is the back matter. Drag images or use the arrows to reorder them."
 msgstr "先頭は表紙、末尾は巻末です。ドラッグまたは矢印で順番を変更できます。"
+
+msgid "The first page is a preview until you select a cover in Manga Library."
+msgstr "漫画ライブラリで表紙を選ぶまでは、1ページ目を代替表示します。"
+
+msgid "The last save failed. The cover shown here may not be saved yet."
+msgstr "直前の保存に失敗しました。表示中の表紙はまだ保存されていない場合があります。"
+
+msgid "The page-turn animation applies to single-page navigation. Spread navigation and vertical scrolling do not use it."
+msgstr "単ページのページ送りに適用します。見開きでのページ送りと縦読みには適用しません。"
 
 msgid "The selected Viewer could not be found. It may have been deleted or its permissions may have changed."
 msgstr "選択済みのViewerを確認できません。削除または権限変更の可能性があります。"
 
+msgid "The standard Featured image panel edits the same cover. Changes appear in both places."
+msgstr "標準の「アイキャッチ画像」パネルも同じ表紙を編集します。変更は両方に反映されます。"
+
 msgid "There are no comic pages to register."
 msgstr "登録できる漫画ページがありません。"
+
+msgid "This also applies when switching from fullscreen. Continuing starts at the first panel of the current page."
+msgstr "全画面表示からの切り替えにも適用されます。続ける場合も、現在ページの先頭コマから開始します。"
 
 msgid "This block is already registered in Manga Library."
 msgstr "このブロックはすでに漫画ライブラリへ登録されています。"
 
 msgid "This comic is registered as a draft. Publish it before replacing this block with a Registered Viewer."
 msgstr "下書きとして登録されています。登録した漫画を公開すると、登録済みViewerへ切り替えられます。"
+
+msgid "This preview reflects your edits. Save with Publish or Update. Removing a cover does not delete the image file."
+msgstr "このプレビューは編集中の内容です。「公開」または「更新」で保存します。解除しても画像ファイルは削除されません。"
 
 msgid "Title"
 msgstr "タイトル"
@@ -662,6 +881,9 @@ msgstr "更新:"
 msgid "Use as cover image"
 msgstr "表紙画像として使用"
 
+msgid "Use separate panel regions and reading order on smartphones. Desktop panels are copied only when mobile settings do not yet exist; saved mobile panels are kept."
+msgstr "スマートフォン用にコマの範囲と読む順番を設定します。スマートフォン用の設定がまだない場合だけPC用のコマをコピーし、保存済みのコマは保持します。"
+
 msgid "Use the current page navigation mode in fullscreen."
 msgstr "現在のページ送り方式を全画面で使用します。"
 
@@ -670,6 +892,18 @@ msgstr "先頭ページを表紙として使用"
 
 msgid "Use the left and right arrow keys or swipe to navigate pages"
 msgstr "ページを左右キーまたはスワイプで送れます"
+
+msgid "Used for inline and fullscreen paged reading."
+msgstr "通常・全画面のページ送りで使用します。"
+
+msgid "Used for inline and fullscreen reading. Panel magnification is configured separately."
+msgstr "通常表示・全画面表示で使用します。コマ読みの拡大率は別に設定します。"
+
+msgid "Used for inline and fullscreen reading. Panel reading has its own page counter."
+msgstr "通常表示・全画面表示で使用します。コマ読みのページ番号は別の表示です。"
+
+msgid "Used for page and panel navigation. Vertical reading scrolls from top to bottom."
+msgstr "通常・全画面のページ送りとコマ読みに使用します。縦読みは上から下へ読みます。"
 
 msgid "Used when Spread or Automatic is selected."
 msgstr "見開きまたは自動を選んだ場合に使用します。"
@@ -689,11 +923,17 @@ msgstr "見開き全体を見る"
 msgid "Viewer"
 msgstr "ビューアー"
 
+msgid "Viewer ID:"
+msgstr "漫画ID："
+
 msgid "Viewer details"
 msgstr "Viewer情報"
 
 msgid "When disabled, fullscreen starts from the first page. The cover launcher always starts from the first page."
 msgstr "OFFでは先頭ページから開始します。表紙から全画面で読む場合は常に先頭から開始します。"
+
+msgid "When disabled, panel reading starts from the beginning regardless of the page currently open."
+msgstr "OFFの場合、現在のページに関係なく先頭からコマ読みを開始します。"
 
 msgid "When disabled, the dedicated viewer starts from the beginning regardless of the page currently open."
 msgstr "OFFの場合は、通常表示で開いているページに関係なく最初から開始します。"
@@ -707,8 +947,17 @@ msgstr "ONの場合、次ページへ進んだ後もページ端の矢印を表�
 msgid "When scrolling stops, the comic is gently aligned to a comfortable reading position."
 msgstr "スクロールを止めたとき、漫画が読みやすい位置へ少し寄せられます。"
 
+msgid "When switching to panel reading"
+msgstr "コマ読みへの切り替え時"
+
 msgid "Width (%)"
 msgstr "幅（%）"
+
+msgid "X (%)"
+msgstr "X座標（%）"
+
+msgid "Y (%)"
+msgstr "Y座標（%）"
 
 msgid "You do not have permission to change this setting."
 msgstr "この設定を変更する権限がありません。"
@@ -743,7 +992,54 @@ msgstr "日"
 msgid "spread pair(s) will be created. Landscape and unmatched pages are shown separately."
 msgstr "組の見開きが作成されます。横長ページや組み合わせできないページは単独表示されます。"
 
+msgid "—"
+msgstr "—"
+
 msgid "%s page"
 msgid_plural "%s pages"
 msgstr[0] "%sページ"
+
+msgctxt "block description"
+msgid "Display manga images with paged, spread, fullscreen, and Panel-by-Panel reading."
+msgstr "漫画画像をページ送り、見開き、全画面、コマ読みで表示します。"
+
+msgctxt "block description"
+msgid "Select and display one registered Viewer from Manga Library."
+msgstr "漫画ライブラリから登録済みのViewerを1冊選んで表示します。"
+
+msgctxt "block keyword"
+msgid "Booklet"
+msgstr "冊子"
+
+msgctxt "block keyword"
+msgid "Comic"
+msgstr "コミック"
+
+msgctxt "block keyword"
+msgid "Library"
+msgstr "ライブラリ"
+
+msgctxt "block keyword"
+msgid "Manga"
+msgstr "漫画"
+
+msgctxt "block keyword"
+msgid "Page turn"
+msgstr "ページめくり"
+
+msgctxt "block keyword"
+msgid "Registered"
+msgstr "登録済み"
+
+msgctxt "block keyword"
+msgid "Viewer"
+msgstr "ビューアー"
+
+msgctxt "block title"
+msgid "MangaFocus"
+msgstr "MangaFocus"
+
+msgctxt "block title"
+msgid "Registered Viewer"
+msgstr "登録済みViewer"
 

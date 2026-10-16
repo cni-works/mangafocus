@@ -19,7 +19,7 @@ OFFでは先頭ページから開始します。表紙から全画面で読む�
 OFFの場合は、通常表示で開いているページに関係なく最初から開始します。	When disabled, the dedicated viewer starts from the beginning regardless of the page currently open.
 ONにすると、PCのコマを初期値にして、スマホ用の枠と順番を別に調整できます。	When enabled, desktop panels are used as the initial values and you can adjust mobile regions and order separately.
 ONの場合、次ページへ進んだ後もページ端の矢印を表示します。	When enabled, edge arrows remain visible after moving to the next page.
-Panel-by-Panelでコマを順番に大きく表示	Enlarge panels in sequence with Panel-by-Panel reading
+コマ読みでコマを順番に拡大表示	Enlarge panels in sequence with Panel-by-Panel reading
 Proが利用可能な場合だけ収集します。OFFにしても過去の解析データは削除されません。	Events are collected only when Pro is available. Disabling this option does not delete existing analytics data.
 Proバージョン	Pro version
 Pro状態	Pro status
@@ -39,7 +39,7 @@ Viewer情報	Viewer details
 コマ	Panel
 コマへ戻る	Return to panel
 コマ読み	Panel-by-Panel
-コマ読みビューアー	Panel-by-Panel viewer
+コマ読み画面	Panel-by-Panel viewer
 コマ読みを有効化	Enable Panel-by-Panel reading
 コマ範囲を拡大	Enlarge the panel region
 コミック	Comic
@@ -59,11 +59,11 @@ Viewer情報	Viewer details
 ズーム倍率（%）	Zoom level (%)
 スクロールを止めたとき、漫画が読みやすい位置へ少し寄せられます。	When scrolling stops, the comic is gently aligned to a comfortable reading position.
 スクロール位置を整える	Align the scroll position
-スマホ	Mobile
-スマホ用にコマを追加	Add a mobile panel
-スマホ用のコマ設定を個別指定	Configure mobile panels separately
+スマートフォン	Mobile
+スマートフォン用のコマを追加	Add a mobile panel
+スマートフォン用のコマを別に設定	Configure mobile panels separately
 タイトル	Title
-タイトルまたはViewer IDで検索	Search by title or Viewer ID
+タイトルまたは漫画IDで検索	Search by title or Viewer ID
 ビューアー	Viewer
 ビューアーを閉じる	Close viewer
 ページ	Page
@@ -77,7 +77,7 @@ Viewer情報	Viewer details
 ページ全体	Full page
 ページ全体を表示	Show full page
 ページ送り	Paged reading
-ページ送り、見開き、pageFocus、全画面、縦読み、ズーム、コマ読み、Manga Library	Paged reading, spreads, page focus, fullscreen, vertical reading, zoom, Panel-by-Panel, Manga Library
+ページ送り、見開き、全画面での1ページ表示、縦読み、ズーム、コマ読み、漫画ライブラリ	Paged reading, spreads, page focus, fullscreen, vertical reading, zoom, Panel-by-Panel, Manga Library
 ページ端クリックで送る	Navigate by clicking page edges
 ページ内でそのまま読む	Read directly on the page
 ページ内の表示	Inline display
@@ -98,7 +98,6 @@ Viewer情報	Viewer details
 画面中央	Center of screen
 解析・データ	Analytics & Data
 解析データの削除について確認	Review analytics data deletion
-解析データの全削除	Delete all analytics data
 解析データをすべて削除	Delete all analytics data
 解析テーブルと設定をすべて削除する	Delete all analytics tables and settings
 解析を見る	View analytics
@@ -118,7 +117,7 @@ Viewer情報	Viewer details
 見開き全体	Entire spread
 見開き全体を見る	View entire spread
 現在のページから開始	Start from the current page
-現在のページから全画面を開始	Start fullscreen from the current page
+現在のページから全画面表示を開始	Start fullscreen from the current page
 現在のページとViewer設定を独立した漫画としてコピーします。保存済みの追加設定も保持され、元のViewerは変更されません。	Copy the current pages and Viewer settings as an independent comic. Saved extension settings are retained and the original Viewer is not changed.
 現在のページにコマを追加	Add a panel to the current page
 現在のページ構成には、見開きとして組み合わせ可能なページがありません。横長ページなどは単独表示されます。	The current page set has no pages that can be paired as a spread. Landscape pages and other unmatched pages are shown separately.
@@ -161,7 +160,7 @@ Viewer情報	Viewer details
 先頭は表紙、末尾は巻末です。ドラッグまたは矢印で順番を変更できます。	The first image is the cover and the last is the back matter. Drag images or use the arrows to reorder them.
 先頭ページを単独表示（表紙向け）	Show the first page separately (cover)
 先頭ページを表紙として使用	Use the first page as the cover
-専用ビューアーで読む	Read by panel
+コマ読みを開始	Read by panel
 専用ビューアーの開始位置	Dedicated viewer start position
 選択できる漫画がありません。	No comics are available for selection.
 選択を解除	Clear selection
@@ -174,7 +173,7 @@ Viewer情報	Viewer details
 全ページを上から下へスクロールして読みます。	Read all pages by scrolling from top to bottom.
 全画面で読む	Read in fullscreen
 全画面の見開き表示	Fullscreen spread display
-全画面の読み方	Fullscreen reading mode
+全画面表示の読み方	Fullscreen reading mode
 全画面ボタンを表示	Show fullscreen button
 全画面を終了	Exit fullscreen
 全体	Fit
@@ -199,7 +198,7 @@ Viewer情報	Viewer details
 表紙から全画面で読む	Open fullscreen from the cover
 表紙画像	Cover image
 表紙画像として使用	Use as cover image
-表紙画像を削除	Remove cover image
+表紙画像を解除	Remove cover image
 表紙画像を設定	Set cover image
 表紙未設定	No cover set
 表示継続・編集不可	Display active; editing unavailable
@@ -243,3 +242,87 @@ Viewer情報	Viewer details
 予約済み	Scheduled
 利用可能	Available
 利用不可	Unavailable
+通常ビュアー	Inline viewer
+通常ビュアーを有効にする	Enable inline viewer
+投稿・固定ページ内で漫画を読む表示方法です。	Read manga within the post or page.
+全画面モード	Fullscreen mode
+全画面モードを有効にする	Enable fullscreen mode
+漫画を画面いっぱいに表示して読むモードです。	Read manga using the full screen.
+コマ読みモード	Panel reading mode
+コマ読みモードを有効にする	Enable panel reading mode
+設定したコマを1コマずつ拡大して読むモードです。	Enlarge configured panels one at a time.
+全体設定	General settings
+スクロール位置を自動調整	Automatically adjust scroll position
+スクロールが止まったとき、漫画が見やすい位置に収まるよう自動調整します。	Adjust the comic position when scrolling stops.
+スクロール調整位置	Scroll adjustment position
+スクロール調整強度	Scroll adjustment strength
+全画面表示での見開きの読み方	Fullscreen spread reading mode
+コマが設定されていません。コマ読みのみを利用する場合は、先にコマを追加してください。	No panels are configured. Add panels before using panel reading alone.
+少なくとも1つの表示モードを有効にしてください。	Keep at least one reading mode enabled.
+コマ読みのみを利用する場合は、先にコマを追加してください。	Add at least one panel before using panel reading alone.
+コマ読みの開始位置	Panel reading start position
+OFFの場合、現在のページに関係なく先頭からコマ読みを開始します。	When disabled, panel reading starts from the beginning regardless of the page currently open.
+通常・全画面のページ送りで使用します。	Used for inline and fullscreen paged reading.
+通常・全画面のページ送りとコマ読みに使用します。縦読みは上から下へ読みます。	Used for page and panel navigation. Vertical reading scrolls from top to bottom.
+通常表示の最大幅と、全画面の縦読みの基準幅に使用します。	Sets the inline maximum width and the base width for fullscreen vertical reading.
+通常表示・全画面表示で使用します。コマ読みのページ番号は別の表示です。	Used for inline and fullscreen reading. Panel reading has its own page counter.
+単ページのページ送りに適用します。見開きでのページ送りと縦読みには適用しません。	The page-turn animation applies to single-page navigation. Spread navigation and vertical scrolling do not use it.
+通常表示・全画面表示で使用します。コマ読みの拡大率は別に設定します。	Used for inline and fullscreen reading. Panel magnification is configured separately.
+漫画一覧と、読み始める前に表示する表紙画像を設定します。	Set the cover used in the comic list and before reading.
+選択中の表紙プレビュー	Selected cover preview
+表紙は選択されています。プレビューは読み込み中、または取得できません。	Cover selected. Its preview is loading or unavailable.
+表紙画像が未設定の場合は、1ページ目の画像を代わりに表示します。	No cover is set. The first page is used as a preview instead.
+1ページ目の代替プレビュー（表紙未設定）	First-page preview (not a saved cover)
+表紙画像を変更	Change cover image
+表紙画像を選択	Select cover image
+このプレビューは編集中の内容です。「公開」または「更新」で保存します。解除しても画像ファイルは削除されません。	This preview reflects your edits. Save with Publish or Update. Removing a cover does not delete the image file.
+直前の保存に失敗しました。表示中の表紙はまだ保存されていない場合があります。	The last save failed. The cover shown here may not be saved yet.
+漫画ライブラリで表紙を選ぶまでは、1ページ目を代替表示します。	The first page is a preview until you select a cover in Manga Library.
+先頭の画像が1ページ目、最後の画像があとがきです。ドラッグまたは矢印で並び替えます。	The first image is page 1 and the last is the back matter. Drag images or use the arrows to reorder them.
+自動（大きな範囲はページ全体を表示）	Automatic (large regions show the full page)
+指定したコマ範囲に合わせる	Fit to the panel region
+自動は幅74%以上・高さ68%以上の範囲でページ全体を表示します。「コマ範囲に合わせる」は常に指定範囲を使用します。「ページ全体」は範囲と拡大率を使用しません。	Automatic shows the full page for regions at least 74% wide and 68% high. Fit to the panel region always uses the selected region. Full page ignores the region and zoom level.
+コマ範囲の表示にのみ適用します。ページ全体表示では使用しません。小さなコマが大きすぎる場合は値を下げてください。	Adjusts region fitting only. Full-page display does not use this value. Lower it if small panels are enlarged too much.
+現在のページからコマ読みを開始	Start panel reading from the current page
+ONでは現在のページの先頭コマ、OFFでは1ページ目から開始します。最終ページで閉じると1ページ目に戻ります。それ以外では、コマ読みのみの場合もONで同じページから再開できます。	ON starts at the first panel of the current page. OFF starts at page 1. Closing on the last page returns to page 1; otherwise ON can resume from the same page, including panel-only reading.
+コマ未設定のページも、ページ全体表示で順番に読みます。コマ読みのみで利用するには、1つ以上のコマを設定してください。	Pages without panels remain in order as full pages. Add at least one panel before using panel reading alone.
+先頭ページを単独表示	Show the first page separately
+標準の「アイキャッチ画像」パネルも同じ表紙を編集します。変更は両方に反映されます。	The standard Featured image panel edits the same cover. Changes appear in both places.
+OFF：先頭ページのみ。ON：全ページに表示します。	Off: first page only. On: every page.
+表示モード	Reading modes
+読者が利用できる読み方を選びます。OFFにしても各モードの設定値は保持されます。	Choose how readers can read this comic. Disabled modes keep their saved settings.
+通常表示の設定	Inline display settings
+全画面表示の設定	Fullscreen display settings
+コマ読みの設定	Panel reading settings
+共通設定	Shared settings
+通常表示を有効にする	Enable inline display
+全画面表示を有効にする	Enable fullscreen display
+コマ読みを有効にする	Enable panel reading
+ON：投稿・固定ページ内で漫画を表示します。OFF：表紙と、有効な他のモードの起動ボタンを表示します。	On: read within the post or page. Off: show a cover with buttons for the other enabled modes.
+ON：全画面でページ送り・縦読みを利用できます。OFF：全画面の起動ボタンを表示しません。	On: offer fullscreen paged or vertical reading. Off: hide the fullscreen launch button.
+ON：設定したコマを1コマずつ拡大表示します。OFF：コマ読みの起動ボタンを表示しません。コマ読みだけを使うには、コマを1つ以上設定してください。	On: enlarge configured panels one at a time. Off: hide the panel reading launch button. Configure at least one panel to use this mode alone.
+文書のスクロールが止まったとき、画面内の漫画の位置を調整します。ページ送り時の自動位置合わせではありません。	After document scrolling stops, adjust the comic position in the viewport. This is not automatic alignment on page turns.
+案内矢印は「ページ端クリックによるページ送り」が有効な場合に表示されます。	Arrows require page-edge navigation to be enabled.
+表紙画像はこちらで設定できます。標準の「アイキャッチ画像」も予備の操作場所として利用でき、同じ画像に連動します。	Set the cover here. The standard Featured image panel is also available as a fallback and uses the same image.
+表紙画像が未設定です。漫画の1ページ目を代わりに表示しますが、表紙画像としては保存されません。	No cover image is set. The first page is displayed instead; it is not saved as a cover.
+スマートフォン用にコマの範囲と読む順番を設定します。スマートフォン用の設定がまだない場合だけPC用のコマをコピーし、保存済みのコマは保持します。	Use separate panel regions and reading order on smartphones. Desktop panels are copied only when mobile settings do not yet exist; saved mobile panels are kept.
+ON：投稿・固定ページ内で漫画を表示します。OFF：表紙と、有効な他のモードの起動ボタンを表示します。ページ画像やコマ設定は保持されます。	On: read within the post or page. Off: show a cover with buttons for the other enabled modes. Page images and panel settings are kept.
+通常表示では、画像幅を縮めずに、配置できる余白または画像下に案内矢印を表示します。	In inline display, arrows use available side space or move below the image without reducing its width.
+スマートフォンでは、スマートフォン用コマがないページはページ全体を表示します。PC用コマへの自動切り替えは行いません。	On smartphones, pages without mobile panels are shown as full pages. Desktop panels are not used as a fallback.
+X座標（%）	X (%)
+Y座標（%）	Y (%)
+漫画ID：	Viewer ID:
+MangaFocus – コマ読み対応漫画ビューアー	MangaFocus – Panel-by-Panel Manga Reader
+WordPressでページ送り・見開き・縦読み・ズーム・コマ読みを利用できる漫画ビューアーです。	A manga reader for WordPress with page, spread, vertical, zoom, and panel-by-panel reading.
+CTA	CTA
+Free Viewer	Free Viewer
+MangaFocus	MangaFocus
+PC	PC
+—	—
+コマ読みで別のページへ移動するときの演出にも、この設定を使用します。	Panel reading also uses this setting when moving between pages.
+コマ読みへの切り替え時	When switching to panel reading
+通常ビュアーで途中まで読んでからコマ読みに切り替えた際、どのページから読み始めるかを選びます。	Choose which page to start from when switching to panel reading after reading partway through the inline viewer.
+全画面表示からの切り替えにも適用されます。続ける場合も、現在ページの先頭コマから開始します。	This also applies when switching from fullscreen. Continuing starts at the first panel of the current page.
+最初のページから読む	Read from the first page
+読んでいるページから続ける	Continue from the current page
+見開き表示時、先頭ページを1ページだけで表示します。	In spread view, display the first page on its own.

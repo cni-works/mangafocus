@@ -2,7 +2,7 @@
 /**
  * Plugin Name: MangaFocus – Panel-by-Panel Manga Reader
  * Description: A manga reader for WordPress with page, spread, vertical, zoom, and panel-by-panel reading.
- * Version: 0.3.0
+ * Version: 0.4.0
  * Requires at least: 6.3
  * Requires PHP: 7.4
  * Author: CNI
@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( ! defined( 'AI_MANGA_VIEWER_VERSION' ) ) {
-	define( 'AI_MANGA_VIEWER_VERSION', '0.3.0' );
+	define( 'AI_MANGA_VIEWER_VERSION', '0.4.0' );
 }
 
 if ( ! defined( 'AI_MANGA_VIEWER_PLUGIN_FILE' ) ) {
@@ -63,7 +63,7 @@ function ai_manga_viewer_register_blocks() {
 	wp_register_script(
 		'ai-manga-viewer-editor',
 		$url . 'index.js',
-		array( 'ai-manga-viewer-layout', 'wp-api-fetch', 'wp-blocks', 'wp-i18n', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-data', 'wp-hooks' ),
+		array( 'ai-manga-viewer-layout', 'wp-api-fetch', 'wp-blocks', 'wp-i18n', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-data', 'wp-hooks', 'wp-core-data', 'wp-editor' ),
 		filemtime( $path . 'index.js' )
 	);
 	wp_register_script( 'ai-manga-viewer-view', $url . 'view.js', array( 'ai-manga-viewer-layout', 'wp-i18n' ), filemtime( $path . 'view.js' ), true );
@@ -172,7 +172,7 @@ function ai_manga_viewer_register_library_rest_fields() {
 }
 add_action( 'rest_api_init', 'ai_manga_viewer_register_library_rest_fields' );
 
-/** Return the first saved page used as the automatic Library cover candidate. */
+/** Return the first saved page used only as a Library preview fallback. */
 function ai_manga_viewer_library_first_page( $post_id ) {
 	$post_id = absint( $post_id );
 	if ( ! $post_id || 'amv_viewer' !== get_post_type( $post_id ) ) {
@@ -208,57 +208,7 @@ function ai_manga_viewer_library_cover_url( $post_id, $size = 'medium' ) {
 	return $first_page['url'];
 }
 
-/** Keep only plugin-created featured images synchronized with the first page. */
-function ai_manga_viewer_sync_library_featured_image( $post_id ) {
-	$post_id = absint( $post_id );
-	if ( ! $post_id || 'amv_viewer' !== get_post_type( $post_id ) || ! current_user_can( 'edit_post', $post_id ) ) {
-		return;
-	}
-	if ( wp_is_post_revision( $post_id ) || wp_is_post_autosave( $post_id ) ) {
-		return;
-	}
-	$tracking = (string) get_post_meta( $post_id, '_amv_auto_featured_image', true );
-	$current  = absint( get_post_thumbnail_id( $post_id ) );
-	if ( 'manual' === $tracking ) {
-		return;
-	}
-	if ( preg_match( '/^auto:(\d+)$/', $tracking, $matches ) ) {
-		if ( $current !== absint( $matches[1] ) ) {
-			update_post_meta( $post_id, '_amv_auto_featured_image', 'manual' );
-			return;
-		}
-	} elseif ( $current || '' !== $tracking ) {
-		update_post_meta( $post_id, '_amv_auto_featured_image', 'manual' );
-		return;
-	}
-	$first_page = ai_manga_viewer_library_first_page( $post_id );
-	$cover_id   = absint( $first_page['id'] );
-	if ( $cover_id && 'attachment' === get_post_type( $cover_id ) && wp_attachment_is_image( $cover_id ) ) {
-		if ( $current !== $cover_id ) {
-			set_post_thumbnail( $post_id, $cover_id );
-		}
-		update_post_meta( $post_id, '_amv_auto_featured_image', 'auto:' . $cover_id );
-		return;
-	}
-	if ( $current ) {
-		delete_post_thumbnail( $post_id );
-	}
-	update_post_meta( $post_id, '_amv_auto_featured_image', 'auto:0' );
-}
-
-/** Synchronize covers saved through the native block editor. */
-function ai_manga_viewer_sync_library_featured_image_on_save( $post_id ) {
-	ai_manga_viewer_sync_library_featured_image( $post_id );
-}
-add_action( 'save_post_amv_viewer', 'ai_manga_viewer_sync_library_featured_image_on_save', 20 );
-
-/** Synchronize after REST fields, including a manually selected featured image, are applied. */
-function ai_manga_viewer_sync_library_featured_image_after_rest( $post ) {
-	if ( is_object( $post ) && ! empty( $post->ID ) ) {
-		ai_manga_viewer_sync_library_featured_image( $post->ID );
-	}
-}
-add_action( 'rest_after_insert_amv_viewer', 'ai_manga_viewer_sync_library_featured_image_after_rest', 20 );
+/** Covers are edited through core featured_media only. Legacy tracking meta is retained. */
 
 /** Add the cover and stable numeric Viewer ID to the Manga Library list. */
 function ai_manga_viewer_library_columns( $columns ) {
@@ -464,7 +414,7 @@ function ai_manga_viewer_sanitize_library_attributes( $attributes ) {
 		}
 		$pages[] = $clean;
 	}
-	return array(
+	$sanitized = array(
 		'pages'                     => $pages,
 		'binding'                   => 'ltr' === ( $attributes['binding'] ?? '' ) ? 'ltr' : 'rtl',
 		'pageLayout'                => in_array( $attributes['pageLayout'] ?? '', array( 'spread', 'auto' ), true ) ? $attributes['pageLayout'] : 'single',
@@ -488,6 +438,8 @@ function ai_manga_viewer_sanitize_library_attributes( $attributes ) {
 		'focusReaderStartAtCurrent' => ! empty( $attributes['focusReaderStartAtCurrent'] ),
 		'mobileFocusReader'         => ! empty( $attributes['mobileFocusReader'] ),
 	);
+	if ( isset( $attributes['enableInline'] ) && is_bool( $attributes['enableInline'] ) ) { $sanitized['enableInline'] = $attributes['enableInline']; }
+	return $sanitized;
 }
 
 /** Create an independent Manga Library copy of one direct Viewer. */
@@ -512,6 +464,10 @@ function ai_manga_viewer_register_direct_viewer( WP_REST_Request $request ) {
 		}
 	}
 	$attributes = ai_manga_viewer_sanitize_library_attributes( $request->get_param( 'attributes' ) );
+	if ( isset( $attributes['enableInline'] ) && false === $attributes['enableInline'] && ! $attributes['enableFullscreen'] ) {
+		if ( ! $attributes['focusReader'] ) { return new WP_Error( 'amv_reading_mode_required', __( 'Keep at least one reading mode enabled.', 'mangafocus' ), array( 'status' => 400 ) ); }
+		if ( ! ai_manga_viewer_has_panel_areas( $attributes, $attributes['pages'] ) ) { return new WP_Error( 'amv_panel_configuration_required', __( 'Add at least one panel before using panel reading alone.', 'mangafocus' ), array( 'status' => 400 ) ); }
+	}
 	if ( empty( $attributes['pages'] ) ) {
 		return new WP_Error( 'amv_pages_required', __( 'There are no comic pages to register.', 'mangafocus' ), array( 'status' => 400 ) );
 	}
@@ -532,7 +488,6 @@ function ai_manga_viewer_register_direct_viewer( WP_REST_Request $request ) {
 	if ( $source_post_id && $source_key ) {
 		update_post_meta( $viewer_id, '_amv_source_reference', $source_post_id . ':' . $source_key );
 	}
-	ai_manga_viewer_sync_library_featured_image( $viewer_id );
 	return ai_manga_viewer_library_registration_response( $viewer_id, false );
 }
 

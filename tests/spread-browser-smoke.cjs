@@ -12,6 +12,22 @@ const html = execFileSync('php', [path.join(__dirname, 'render-smoke.php'), '--s
   const browser = await chromium.launch({ channel: 'msedge', headless: true });
   try {
     const page = await browser.newPage({ viewport: { width: 1200, height: 900 }, reducedMotion: 'reduce' });
+    // First-only guides are real buttons; later views keep image-edge navigation.
+    async function clickInlineNext(reader, firstView) {
+      const next = reader.locator('.amv-reader__edge--next');
+      assert.equal(await reader.getAttribute('data-guide-arrow'), 'first');
+      assert.equal(await next.isVisible(), firstView, 'Guide visibility follows the first-view-only setting');
+      const before = await reader.locator('.amv-reader__count').textContent();
+      if (firstView) await next.click();
+      else {
+        await reader.locator('.amv-reader__pages').evaluate(el => el.scrollIntoView({block: 'start', behavior: 'instant'}));
+        const box = await reader.locator('.amv-reader__pages').boundingBox();
+        const rtl = await reader.getAttribute('data-binding') === 'rtl';
+        await page.mouse.click(box.x + box.width * (rtl ? .04 : .96), box.y + 30);
+      }
+      const sectionId = await reader.evaluate(el => el.closest('section').id);
+      await page.waitForFunction(({sectionId, before}) => document.getElementById(sectionId).querySelector('.amv-reader__count').textContent !== before, {sectionId, before});
+    }
     const errors = [];
     page.on('pageerror', error => errors.push(error.message));
     await page.route('https://example.test/**', route => {
@@ -97,7 +113,7 @@ const html = execFileSync('php', [path.join(__dirname, 'render-smoke.php'), '--s
     assert.ok(singleWidth <= 652, 'Single cover must retain the configured maxWidth');
     assert.ok(singleStageWidth <= 652, 'A standalone cover must keep its edge controls beside the single-page surface');
 
-    await spread.locator('.amv-reader__edge--next').click();
+    await clickInlineNext(spread, true);
     await page.waitForFunction(() => document.querySelector('#spread-fixture .amv-reader__count').textContent === '2–3 / 6');
     assert.equal(await spread.locator('.amv-reader__page.is-active').count(), 2);
     const activeIndexes = await spread.locator('.amv-reader__page.is-active').evaluateAll(nodes => nodes.map(node => Number(node.dataset.pageIndex)));
@@ -156,13 +172,13 @@ const html = execFileSync('php', [path.join(__dirname, 'render-smoke.php'), '--s
     await spread.locator('.amv-reader__zoom-page--next').click();
     await page.waitForFunction(() => document.querySelector('#spread-fixture .amv-reader__count').textContent === '4–5 / 6');
     assert.equal(await spread.locator('.amv-reader__zoom-level').textContent(), '100%');
-    await spread.locator('.amv-reader__edge--next').click();
+    await clickInlineNext(spread, false);
     assert.equal(await spread.locator('.amv-reader__count').textContent(), '6 / 6', 'Odd final page must be centered as a single page');
     assert.equal(await spread.locator('.amv-reader__page.is-active').count(), 1);
 
     const auto = page.locator('#auto-fixture .amv-reader');
     assert.equal(await auto.locator('.amv-reader__count').textContent(), '1–2 / 6', 'singleFirstPage OFF must pair the first two pages');
-    await auto.locator('.amv-reader__edge--next').click();
+    await clickInlineNext(auto, true);
     assert.equal(await auto.locator('.amv-reader__count').textContent(), '3–4 / 6');
     const ltrBoxes = await auto.locator('.amv-reader__page.is-active').evaluateAll(nodes => nodes.map(node => node.getBoundingClientRect().x));
     assert.ok(ltrBoxes[0] < ltrBoxes[1], 'LTR must place the logically earlier page on the left');
@@ -250,9 +266,9 @@ const html = execFileSync('php', [path.join(__dirname, 'render-smoke.php'), '--s
 
     const wide = page.locator('#wide-fixture .amv-reader');
     await page.waitForFunction(() => Number(document.querySelector('#wide-fixture .amv-reader__page[data-page-index="1"]').dataset.imageWidth) > 0);
-    await wide.locator('.amv-reader__edge--next').click();
+    await clickInlineNext(wide, true);
     assert.equal(await wide.locator('.amv-reader__count').textContent(), '2 / 6', 'A landscape image must remain a single display surface');
-    await wide.locator('.amv-reader__edge--next').click();
+    await clickInlineNext(wide, false);
     assert.equal(await wide.locator('.amv-reader__count').textContent(), '3–4 / 6');
 
     const expectedCounts = {
@@ -267,7 +283,8 @@ const html = execFileSync('php', [path.join(__dirname, 'render-smoke.php'), '--s
       const fixture = page.locator(`#count-fixture-${pageCount} .amv-reader`);
       const actual = [await fixture.locator('.amv-reader__count').textContent()];
       while (!(await fixture.locator('.amv-reader__edge--next').isDisabled())) {
-        await fixture.locator('.amv-reader__edge--next').click();
+        await clickInlineNext(fixture, actual.length === 1);
+        assert.ok(actual.length < expected.length, 'Navigation must terminate at the expected final group');
         actual.push(await fixture.locator('.amv-reader__count').textContent());
       }
       assert.deepEqual(actual, expected, `${pageCount}-page grouping must be stable`);

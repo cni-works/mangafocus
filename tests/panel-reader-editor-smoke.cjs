@@ -27,13 +27,13 @@ const context = { clientId: 'client-panel', currentPageIndex: 0, currentPage: pa
 function find(node, predicate) { if (!node || typeof node !== 'object') return null; if (predicate(node)) return node; for (const child of node.children || []) { const match = find(child, predicate); if (match) return match; } return null; }
 let inspectorElement = filters['aiMangaViewer.editor.inspectorPanels']([], context)[0];
 let inspector = inspectorElement.type(inspectorElement.props);
-const enable = find(inspector, node => node.props && node.props.label === 'Enable Panel-by-Panel reading');
+const enable = find(inspector, node => node.props && node.props.label === 'Enable panel reading mode');
 enable.props.onChange(true);
 assert.strictEqual(JSON.stringify(attributeUpdates[0]), JSON.stringify({ focusReader: true }));
 context.attributes.focusReader = true;
 inspectorElement = filters['aiMangaViewer.editor.inspectorPanels']([], context)[0];
 inspector = inspectorElement.type(inspectorElement.props);
-for (const label of ['Panel-by-Panel', 'Configure mobile panels separately', 'Add a panel to the current page', 'Dedicated viewer start position', 'Start from the current page']) assert.ok(JSON.stringify(inspector).includes(label), `Missing panel editor control: ${label}`);
+for (const label of ['Panel reading mode', 'Configure mobile panels separately', 'Add a panel to the current page', 'When switching to panel reading']) assert.ok(JSON.stringify(inspector).includes(label), `Missing panel editor control: ${label}`);
 find(inspector, node => node.type === 'Button' && (node.children || []).includes('Add a panel to the current page')).props.onClick();
 const stageElement = filters['aiMangaViewer.editor.stageOverlays']([], context)[0];
 const stage = stageElement.type(stageElement.props);
@@ -82,6 +82,23 @@ inspectorElement = filters['aiMangaViewer.editor.inspectorPanels']([], context)[
 inspector = inspectorElement.type(inspectorElement.props);
 find(inspector, node => node.type === 'Button' && node.props.label === 'Delete').props.onClick();
 assert.equal(page.focusAreas.length, 1, 'Selected panel should be deleted');
+
+
+// Labels/help change; persisted enum values, geometry and magnification do not.
+inspectorElement = filters['aiMangaViewer.editor.inspectorPanels']([], context)[0];
+inspector = inspectorElement.type(inspectorElement.props);
+find(inspector, node => node.type === 'Button' && (node.children || []).includes('1. Panel')).props.onClick();
+inspector = filters['aiMangaViewer.editor.inspectorPanels']([], context)[0].type(inspectorElement.props);
+const method = find(inspector, node => node.props.label === 'Display method');
+assert.deepEqual(Array.from(method.props.options, x => x.value), ['auto','focus','overview']);
+assert.ok(method.props.help.includes('74%') && method.props.help.includes('68%'));
+const geometry = JSON.stringify({x:page.focusAreas[0].x,y:page.focusAreas[0].y,width:page.focusAreas[0].width,height:page.focusAreas[0].height,zoom:page.focusAreas[0].zoom});
+for (const view of ['auto','focus','overview']) {
+ inspector = filters['aiMangaViewer.editor.inspectorPanels']([], context)[0].type(inspectorElement.props);
+ find(inspector, node => node.props.label === 'Display method').props.onChange(view);
+ assert.equal(page.focusAreas[0].view,view);
+ assert.equal(JSON.stringify({x:page.focusAreas[0].x,y:page.focusAreas[0].y,width:page.focusAreas[0].width,height:page.focusAreas[0].height,zoom:page.focusAreas[0].zoom}),geometry);
+}
 
 const coreEditor = fs.readFileSync(path.join(root, 'blocks/viewer/index.js'), 'utf8');
 assert.match(coreEditor, /focusAreas: areasOf\( previous \), mobileFocusAreas: areasOf\( previous, true \)/);

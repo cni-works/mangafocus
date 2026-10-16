@@ -16,6 +16,9 @@ foreach (file($map_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $line
 	if (isset($map[$parts[0]])) {
 		throw new RuntimeException('Duplicate Japanese source string: ' . $parts[0]);
 	}
+	if (in_array($parts[1], $map, true)) {
+		throw new RuntimeException('Duplicate English message ID: ' . $parts[1]);
+	}
 	$map[$parts[0]] = $parts[1];
 }
 
@@ -71,6 +74,20 @@ $catalog = array_flip($map);
 $catalog['%s page'] = '%sページ';
 $catalog['%s pages'] = '%sページ';
 ksort($catalog, SORT_STRING);
+// block.json strings use WordPress metadata contexts, in addition to plain JS gettext.
+$metadata_catalog = array();
+foreach (array('blocks/viewer/block.json', 'blocks/library-viewer/block.json') as $relative) {
+	$metadata = json_decode(file_get_contents($root . '/' . $relative), true, 512, JSON_THROW_ON_ERROR);
+	foreach (array('title' => 'block title', 'description' => 'block description', 'keywords' => 'block keyword') as $field => $context) {
+		foreach ((array) ($metadata[$field] ?? array()) as $english) {
+			if (!isset($catalog[$english])) {
+				throw new RuntimeException('Missing metadata translation: ' . $english);
+			}
+			$metadata_catalog[$context . "\4" . $english] = $catalog[$english];
+		}
+	}
+}
+ksort($metadata_catalog, SORT_STRING);
 $singular_page = '%s page';
 $plural_pages = '%s pages';
 
@@ -83,7 +100,7 @@ function po_quote(string $value): string {
 	return '"' . addcslashes($value, "\\\"\n\r\t") . '"';
 }
 
-$header = "Project-Id-Version: MangaFocus 0.3.0\n"
+$header = "Project-Id-Version: MangaFocus 0.4.0\n"
 	. "Report-Msgid-Bugs-To: https://github.com/cni-works/mangafocus/issues\n"
 	. "POT-Creation-Date: 2026-10-04 00:00+0900\n"
 	. "PO-Revision-Date: 2026-10-04 00:00+0900\n"
@@ -99,7 +116,7 @@ foreach (explode("\n", rtrim($header)) as $line) {
 	$po .= po_quote($line . "\n") . "\n";
 }
 $po .= "\n";
-$pot = "msgid \"\"\nmsgstr \"\"\n" . po_quote("Project-Id-Version: MangaFocus 0.3.0\n") . "\n" . po_quote("Content-Type: text/plain; charset=UTF-8\n") . "\n" . po_quote("X-Domain: mangafocus\n") . "\n\n";
+$pot = "msgid \"\"\nmsgstr \"\"\n" . po_quote("Project-Id-Version: MangaFocus 0.4.0\n") . "\n" . po_quote("Content-Type: text/plain; charset=UTF-8\n") . "\n" . po_quote("X-Domain: mangafocus\n") . "\n\n";
 foreach ($catalog as $english => $japanese) {
 	if ($singular_page === $english || $plural_pages === $english) {
 		continue;
@@ -114,6 +131,12 @@ $pot .= 'msgid ' . po_quote($singular_page) . "\n"
 	. 'msgid_plural ' . po_quote($plural_pages) . "\n"
 	. "msgstr[0] \"\"\n"
 	. "msgstr[1] \"\"\n\n";
+foreach ($metadata_catalog as $key => $japanese) {
+	list($context, $english) = explode("\4", $key, 2);
+	$prefix = 'msgctxt ' . po_quote($context) . "\nmsgid " . po_quote($english) . "\n";
+	$po .= $prefix . 'msgstr ' . po_quote($japanese) . "\n\n";
+	$pot .= $prefix . "msgstr \"\"\n\n";
+}
 file_put_contents($languages . '/mangafocus-ja.po', $po);
 file_put_contents($languages . '/mangafocus.pot', $pot);
 
@@ -144,7 +167,7 @@ function build_mo(array $messages): string {
 		. $original_table . $translation_table . $originals . $translations;
 }
 
-$mo_catalog = $catalog;
+$mo_catalog = array_merge($catalog, $metadata_catalog);
 unset($mo_catalog['%s page'], $mo_catalog['%s pages']);
 $mo_catalog["%s page\0%s pages"] = "%sページ\0%sページ";
 file_put_contents($languages . '/mangafocus-ja.mo', build_mo($mo_catalog));

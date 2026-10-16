@@ -4,7 +4,7 @@ Tags: manga, comic, viewer, reader, gutenberg
 Requires at least: 6.3
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.3.0
+Stable tag: 0.4.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -29,7 +29,7 @@ The plugin does not generate images and does not send content to an AI API. It c
 * Fullscreen page navigation and vertical scrolling
 * A fullscreen mode that focuses on one page at a time within a spread
 * Zoom, pan, keyboard, swipe, and page-edge controls
-* A cover launcher that shows only the cover and a reading button in the page
+* Independent inline, fullscreen, and panel reading modes, with cover launch buttons for enabled modes
 * Reuse through Manga Library, the Registered Viewer block, and shortcodes
 
 The one-page-at-a-time spread mode focuses on each complete page in reading order. Panel-by-panel reading instead follows the author-defined regions within each page.
@@ -133,6 +133,15 @@ The release build tool is available in the public development repository at http
 
 == Changelog ==
 
+= 0.4.0 =
+
+* 通常表示・全画面表示・コマ読みを個別に選択可能に。旧設定と保存値を保持。
+* 設定画面とコマ読み開始位置の選択肢を整理。1ページ表示では見開き専用設定を非表示。
+* ブロック設定に表紙画像を追加。アイキャッチの自動設定を廃止し、既存表紙を維持。
+* 縦長表紙の左右余白と、画像を覆わない案内矢印の配置を改善。
+* 自由ズームOFF時の縦読みと、中間ページからの開始位置を修正。
+* 小画面の全画面ページ送り配置と日本語の設定説明を改善。
+
 = 0.3.0 =
 
 * Renamed the plugin to MangaFocus and aligned the distribution slug and Text Domain with `mangafocus`.
@@ -154,3 +163,8 @@ The release build tool is available in the public development repository at http
 = 0.1.0-alpha =
 
 * Initialized the standalone WordPress plugin under its former AI Manga Viewer name.
+
+== Upgrade Notice ==
+
+= 0.4.0 =
+既存の漫画・設定・表紙を保持します。表示モードを変更するまでは旧設定を維持します。1ページ目からのアイキャッチ自動設定は行いません。

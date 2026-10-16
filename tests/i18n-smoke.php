@@ -18,11 +18,41 @@ $runtime_files = array(
 	'blocks/library-viewer/block.json',
 );
 
+/** Keep runtime English; only the approved Japanese 0.4.0 release notes are exempt. */
+function mangafocus_i18n_english_scope( $source, $relative ) {
+	if ( 'readme.txt' !== $relative || false === $source ) { return $source; }
+	$source = preg_replace(
+		'~== Changelog ==\R\R= 0\.4\.0 =\R\R(?:\* [^\r\n]+\R)+\R(?== 0\.3\.0 =)~u',
+		"== Changelog ==\n\n",
+		$source,
+		1,
+		$changelog_count
+	);
+	$source = preg_replace(
+		'~\R== Upgrade Notice ==\R\R= 0\.4\.0 =\R[^\r\n]+\R?\z~u',
+		'',
+		$source,
+		1,
+		$upgrade_count
+	);
+	if ( 1 !== $changelog_count || 1 !== $upgrade_count ) {
+		throw new RuntimeException( 'Expected scoped 0.4.0 release-note sections.' );
+	}
+	return $source;
+}
+
 foreach ( $runtime_files as $relative ) {
 	$source = file_get_contents( $root . '/' . $relative );
+	$source = mangafocus_i18n_english_scope( $source, $relative );
 	if ( false === $source || preg_match( '/[ぁ-んァ-ヶ一-龯]/u', $source ) ) {
 		throw new RuntimeException( 'Japanese source text remains in ' . $relative );
 	}
+}
+
+// Counterexample: Japanese outside release-note sections must still be detected.
+$readme_probe = "Unexpected 日本語 fixture\n" . file_get_contents( $root . '/readme.txt' );
+if ( ! preg_match( '/[ぁ-んァ-ヶ一-龯]/u', mangafocus_i18n_english_scope( $readme_probe, 'readme.txt' ) ) ) {
+	throw new RuntimeException( 'Japanese text outside release notes was incorrectly ignored.' );
 }
 
 $main = file_get_contents( $root . '/mangafocus.php' );

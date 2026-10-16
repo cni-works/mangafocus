@@ -16,6 +16,8 @@ const registered = {};
 const applied = [];
 const hookApi = {
   applyFilters(name, value, context) {
+    // Core-only placement is separate from the three public add-on hooks.
+    if (name === 'mangafocus.editor.panelReaderSettings') return value;
     applied.push({ name, context });
     return value.concat([{ extensionHook: name }]);
   }

@@ -6,7 +6,7 @@
 	if ( ! editorAllowed ) return;
 	const el = wp.element.createElement;
 	const { __ } = wp.i18n;
-	const { Button, PanelBody, RangeControl, SelectControl, ToggleControl } = wp.components;
+	const { Button, PanelBody, RadioControl, RangeControl, SelectControl, ToggleControl } = wp.components;
 	const editorStates = new Map();
 
 	function clamp( value, min, max ) { return Math.max( min, Math.min( max, typeof value === 'number' ? value : min ) ); }
@@ -25,6 +25,7 @@
 	}
 	function updatePageAreas( context, mobile, nextAreas ) { const values = {}; values[ mobile ? 'mobileFocusAreas' : 'focusAreas' ] = nextAreas; context.updateCurrentPage( values ); }
 	function setReaderEnabled( context, value ) {
+		if ( typeof context.setReadingMode === 'function' ) return context.setReadingMode( 'panel', !! value );
 		context.setAttributes( { focusReader: !! value } );
 		return true;
 	}
@@ -35,22 +36,24 @@
 		function setAreas( nextAreas ) { updatePageAreas( context, editingMobile, nextAreas ); }
 		function updateArea( id, values ) { setAreas( areas.map( function( area ) { return area.id === id ? Object.assign( {}, area, values ) : area; } ) ); }
 		function moveArea( from, to ) { if ( to < 0 || to >= areas.length || from === to ) return; const next = areas.slice(); next.splice( to, 0, next.splice( from, 1 )[ 0 ] ); setAreas( next ); }
-		return el( wp.element.Fragment, null,
-			el( PanelBody, { title: __( 'Panel-by-Panel', 'mangafocus' ), initialOpen: !! attributes.focusReader },
-				el( ToggleControl, { label: __( 'Enable Panel-by-Panel reading', 'mangafocus' ), help: __( 'Enlarge registered panels in sequence in a dedicated viewer.', 'mangafocus' ), checked: !! attributes.focusReader, onChange: function( value ) { setReaderEnabled( context, !! value ); } } ),
-				attributes.focusReader ? el( ToggleControl, { label: __( 'Configure mobile panels separately', 'mangafocus' ), help: __( 'When enabled, desktop panels are used as the initial values and you can adjust mobile regions and order separately.', 'mangafocus' ), checked: !! attributes.mobileFocusReader, onChange: function( value ) { const enabled = !! value; const pages = Array.isArray( attributes.pages ) ? attributes.pages : []; context.setAttributes( { mobileFocusReader: enabled, pages: enabled ? pages.map( function( item ) { return Array.isArray( item.mobileFocusAreas ) ? item : Object.assign( {}, item, { mobileFocusAreas: areasOf( item ) } ); } ) : pages } ); if ( ! enabled ) changeState( context.clientId, { editingMobile: false } ); } } ) : null,
+		const details = el( wp.element.Fragment, null,
+				attributes.focusReader ? el( 'p', { className: 'description' }, __( 'Pages without panels remain in order as full pages. Add at least one panel before using panel reading alone.', 'mangafocus' ) ) : null,
+				attributes.focusReader ? el( ToggleControl, { label: __( 'Configure mobile panels separately', 'mangafocus' ), help: __( 'Use separate panel regions and reading order on smartphones. Desktop panels are copied only when mobile settings do not yet exist; saved mobile panels are kept.', 'mangafocus' ) + ' ' + __( 'On smartphones, pages without mobile panels are shown as full pages. Desktop panels are not used as a fallback.', 'mangafocus' ), checked: !! attributes.mobileFocusReader, onChange: function( value ) { const enabled = !! value; const pages = Array.isArray( attributes.pages ) ? attributes.pages : []; context.setAttributes( { mobileFocusReader: enabled, pages: enabled ? pages.map( function( item ) { return Array.isArray( item.mobileFocusAreas ) ? item : Object.assign( {}, item, { mobileFocusAreas: areasOf( item ) } ); } ) : pages } ); if ( ! enabled ) changeState( context.clientId, { editingMobile: false } ); } } ) : null,
 				attributes.focusReader && attributes.mobileFocusReader ? el( SelectControl, { label: __( 'Panel set to edit', 'mangafocus' ), value: editingMobile ? 'mobile' : 'pc', options: [ { label: __( 'PC', 'mangafocus' ), value: 'pc' }, { label: __( 'Mobile', 'mangafocus' ), value: 'mobile' } ], onChange: function( value ) { changeState( context.clientId, { editingMobile: value === 'mobile', selectedId: '', drawing: false, draft: null } ); } } ) : null,
 				attributes.focusReader && page ? el( wp.element.Fragment, null,
 					el( Button, { variant: state.drawing ? 'primary' : 'secondary', onClick: function() { changeState( context.clientId, { drawing: ! state.drawing, selectedId: '', draft: null } ); } }, state.drawing ? __( 'Drag over the image to create a region', 'mangafocus' ) : ( editingMobile ? __( 'Add a mobile panel', 'mangafocus' ) : __( 'Add a panel to the current page', 'mangafocus' ) ) ),
 					areas.length ? el( 'div', { className: 'amv-reader__focus-list' }, areas.map( function( area, index ) { return el( 'div', { key: area.id, className: 'amv-reader__focus-item' + ( state.selectedId === area.id ? ' is-selected' : '' ) }, el( Button, { variant: state.selectedId === area.id ? 'primary' : 'tertiary', onClick: function() { changeState( context.clientId, { selectedId: area.id, drawing: false, draft: null } ); } }, ( index + 1 ) + '. ' + __( 'Panel', 'mangafocus' ) ), el( Button, { icon: 'arrow-up-alt2', label: __( 'Previous', 'mangafocus' ), disabled: index === 0, onClick: function() { moveArea( index, index - 1 ); } } ), el( Button, { icon: 'arrow-down-alt2', label: __( 'Next', 'mangafocus' ), disabled: index === areas.length - 1, onClick: function() { moveArea( index, index + 1 ); } } ), el( Button, { icon: 'trash', label: __( 'Delete', 'mangafocus' ), isDestructive: true, onClick: function() { setAreas( areas.filter( function( value ) { return value.id !== area.id; } ) ); changeState( context.clientId, { selectedId: '' } ); } } ) ); } ) ) : el( 'p', { className: 'description' }, __( 'Select “Add panel,” then drag over the image.', 'mangafocus' ) ),
 					selected ? el( wp.element.Fragment, null,
-						el( SelectControl, { label: __( 'Display method', 'mangafocus' ), value: selected.view || 'auto', options: [ { label: __( 'Automatic (fit to panel size)', 'mangafocus' ), value: 'auto' }, { label: __( 'Enlarge', 'mangafocus' ), value: 'focus' }, { label: __( 'Show full page', 'mangafocus' ), value: 'overview' } ], onChange: function( value ) { updateArea( selected.id, { view: value } ); } } ),
-						el( RangeControl, { label: __( 'Zoom level (%)', 'mangafocus' ), help: __( 'Lower this value if small panels are enlarged too much.', 'mangafocus' ), value: typeof selected.zoom === 'number' ? selected.zoom : 100, min: 60, max: 110, step: 5, onChange: function( value ) { updateArea( selected.id, { zoom: clamp( value || 100, 60, 110 ) } ); } } ),
-						[ [ 'X（%）', 'x', 0, 100 ], [ 'Y（%）', 'y', 0, 100 ], [ __( 'Width (%)', 'mangafocus' ), 'width', 5, 100 ], [ __( 'Height (%)', 'mangafocus' ), 'height', 5, 100 ] ].map( function( field ) { return el( RangeControl, { key: field[ 1 ], label: field[ 0 ], value: selected[ field[ 1 ] ], min: field[ 2 ], max: field[ 3 ], onChange: function( value ) { const update = {}; update[ field[ 1 ] ] = clamp( value, field[ 2 ], field[ 3 ] ); updateArea( selected.id, update ); } } ); } )
+						el( SelectControl, { label: __( 'Display method', 'mangafocus' ), help: __( 'Automatic shows the full page for regions at least 74% wide and 68% high. Fit to the panel region always uses the selected region. Full page ignores the region and zoom level.', 'mangafocus' ), value: selected.view || 'auto', options: [ { label: __( 'Automatic (large regions show the full page)', 'mangafocus' ), value: 'auto' }, { label: __( 'Fit to the panel region', 'mangafocus' ), value: 'focus' }, { label: __( 'Show full page', 'mangafocus' ), value: 'overview' } ], onChange: function( value ) { updateArea( selected.id, { view: value } ); } } ),
+						el( RangeControl, { label: __( 'Zoom level (%)', 'mangafocus' ), help: __( 'Adjusts region fitting only. Full-page display does not use this value. Lower it if small panels are enlarged too much.', 'mangafocus' ), value: typeof selected.zoom === 'number' ? selected.zoom : 100, min: 60, max: 110, step: 5, onChange: function( value ) { updateArea( selected.id, { zoom: clamp( value || 100, 60, 110 ) } ); } } ),
+						[ [ __( 'X (%)', 'mangafocus' ), 'x', 0, 100 ], [ __( 'Y (%)', 'mangafocus' ), 'y', 0, 100 ], [ __( 'Width (%)', 'mangafocus' ), 'width', 5, 100 ], [ __( 'Height (%)', 'mangafocus' ), 'height', 5, 100 ] ].map( function( field ) { return el( RangeControl, { key: field[ 1 ], label: field[ 0 ], value: selected[ field[ 1 ] ], min: field[ 2 ], max: field[ 3 ], onChange: function( value ) { const update = {}; update[ field[ 1 ] ] = clamp( value, field[ 2 ], field[ 3 ] ); updateArea( selected.id, update ); } } ); } )
 					) : null
-				) : null
-			),
-			attributes.focusReader ? el( PanelBody, { title: __( 'Dedicated viewer start position', 'mangafocus' ), initialOpen: false }, el( ToggleControl, { label: __( 'Start from the current page', 'mangafocus' ), help: __( 'When disabled, the dedicated viewer starts from the beginning regardless of the page currently open.', 'mangafocus' ), checked: !! attributes.focusReaderStartAtCurrent, onChange: function( value ) { context.setAttributes( { focusReaderStartAtCurrent: !! value } ); } } ) ) : null
+				) : null,
+			attributes.focusReader ? el( RadioControl, { label: __( 'When switching to panel reading', 'mangafocus' ), help: __( 'Choose which page to start from when switching to panel reading after reading partway through the inline viewer.', 'mangafocus' ) + ' ' + __( 'This also applies when switching from fullscreen. Continuing starts at the first panel of the current page.', 'mangafocus' ), selected: attributes.focusReaderStartAtCurrent ? 'current' : 'first', options: [ { label: __( 'Read from the first page', 'mangafocus' ), value: 'first' }, { label: __( 'Continue from the current page', 'mangafocus' ), value: 'current' } ], onChange: function( value ) { context.setAttributes( { focusReaderStartAtCurrent: value === 'current' } ); } } ) : null
+		);
+		if ( props.embedded ) return details;
+		return el( PanelBody, { title: __( 'Panel reading mode', 'mangafocus' ), initialOpen: true },
+			el( ToggleControl, { label: __( 'Enable panel reading mode', 'mangafocus' ), help: __( 'Enlarge configured panels one at a time.', 'mangafocus' ) + ' ' + __( 'Pages without panels remain in order as full pages. Add at least one panel before using panel reading alone.', 'mangafocus' ), checked: !! attributes.focusReader, onChange: function( value ) { setReaderEnabled( context, !! value ); } } ), details
 		);
 	}
 
@@ -72,6 +75,7 @@
 		);
 	}
 
-	wp.hooks.addFilter( 'aiMangaViewer.editor.inspectorPanels', 'mangafocus/panel-reader-inspector', function( items, context ) { if ( ! context.currentPage ) return items; return items.concat( el( Inspector, { key: 'mangafocus-panel-reader-inspector', context: context } ) ); } );
+	wp.hooks.addFilter( 'mangafocus.editor.panelReaderSettings', 'mangafocus/panel-reader-settings', function( items, context ) { return items.concat( el( Inspector, { key: 'mangafocus-panel-reader-settings', context: context, embedded: true } ) ); } );
+	wp.hooks.addFilter( 'aiMangaViewer.editor.inspectorPanels', 'mangafocus/panel-reader-inspector', function( items, context ) { if ( context.panelReaderSettingsGrouped || ! context.currentPage ) return items; return items.concat( el( Inspector, { key: 'mangafocus-panel-reader-inspector', context: context } ) ); } );
 	wp.hooks.addFilter( 'aiMangaViewer.editor.stageOverlays', 'mangafocus/panel-reader-stage', function( items, context ) { if ( ! context.currentPage ) return items; return items.concat( el( StageOverlay, { key: 'mangafocus-panel-reader-stage', context: context } ) ); } );
 } )( window.wp );
