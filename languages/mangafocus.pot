@@ -1,10 +1,13 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: MangaFocus 0.3.0\n"
+"Project-Id-Version: MangaFocus 0.4.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "X-Domain: mangafocus\n"
 
 msgid "%d days"
+msgstr ""
+
+msgid "A manga reader for WordPress with page, spread, vertical, zoom, and panel-by-panel reading."
 msgstr ""
 
 msgid "AI consultation"
@@ -23,6 +26,18 @@ msgid "Add a mobile panel"
 msgstr ""
 
 msgid "Add a panel to the current page"
+msgstr ""
+
+msgid "Add at least one panel before using panel reading alone."
+msgstr ""
+
+msgid "Adjust the comic position when scrolling stops."
+msgstr ""
+
+msgid "Adjusts region fitting only. Full-page display does not use this value. Lower it if small panels are enlarged too much."
+msgstr ""
+
+msgid "After document scrolling stops, adjust the comic position in the viewport. This is not automatic alignment on page turns."
 msgstr ""
 
 msgid "Align the scroll position"
@@ -46,6 +61,9 @@ msgstr ""
 msgid "Analytics paused"
 msgstr ""
 
+msgid "Arrows require page-edge navigation to be enabled."
+msgstr ""
+
 msgid "At least "
 msgstr ""
 
@@ -58,7 +76,16 @@ msgstr ""
 msgid "Automatic (fit to panel size)"
 msgstr ""
 
+msgid "Automatic (large regions show the full page)"
+msgstr ""
+
 msgid "Automatic (unavailable)"
+msgstr ""
+
+msgid "Automatic shows the full page for regions at least 74% wide and 68% high. Fit to the panel region always uses the selected region. Full page ignores the region and zoom level."
+msgstr ""
+
+msgid "Automatically adjust scroll position"
 msgstr ""
 
 msgid "Available"
@@ -76,13 +103,25 @@ msgstr ""
 msgid "Bottom (horizontal)"
 msgstr ""
 
+msgid "CTA"
+msgstr ""
+
 msgid "Center of screen"
+msgstr ""
+
+msgid "Change cover image"
 msgstr ""
 
 msgid "Checking image information. Spread and automatic layouts remain available while checking."
 msgstr ""
 
 msgid "Choose again from Manga Library"
+msgstr ""
+
+msgid "Choose how readers can read this comic. Disabled modes keep their saved settings."
+msgstr ""
+
+msgid "Choose which page to start from when switching to panel reading after reading partway through the inline viewer."
 msgstr ""
 
 msgid "Clear selection"
@@ -104,6 +143,9 @@ msgid "Comic editing preview"
 msgstr ""
 
 msgid "Configure mobile panels separately"
+msgstr ""
+
+msgid "Continue from the current page"
 msgstr ""
 
 msgid "Copied"
@@ -137,6 +179,9 @@ msgid "Cover"
 msgstr ""
 
 msgid "Cover image"
+msgstr ""
+
+msgid "Cover selected. Its preview is loading or unavailable."
 msgstr ""
 
 msgid "Create AI consultation material"
@@ -202,10 +247,31 @@ msgstr ""
 msgid "Enable free zoom and pan"
 msgstr ""
 
+msgid "Enable fullscreen display"
+msgstr ""
+
+msgid "Enable fullscreen mode"
+msgstr ""
+
+msgid "Enable inline display"
+msgstr ""
+
+msgid "Enable inline viewer"
+msgstr ""
+
+msgid "Enable panel reading"
+msgstr ""
+
+msgid "Enable panel reading mode"
+msgstr ""
+
 msgid "Enable reader event collection"
 msgstr ""
 
 msgid "Enlarge"
+msgstr ""
+
+msgid "Enlarge configured panels one at a time."
 msgstr ""
 
 msgid "Enlarge panels in sequence with Panel-by-Panel reading"
@@ -232,19 +298,40 @@ msgstr ""
 msgid "Features"
 msgstr ""
 
+msgid "First-page preview (not a saved cover)"
+msgstr ""
+
 msgid "Fit"
+msgstr ""
+
+msgid "Fit to the panel region"
 msgstr ""
 
 msgid "Focus on one page at a time"
 msgstr ""
 
+msgid "Free Viewer"
+msgstr ""
+
 msgid "Full page"
+msgstr ""
+
+msgid "Fullscreen display settings"
+msgstr ""
+
+msgid "Fullscreen mode"
 msgstr ""
 
 msgid "Fullscreen reading mode"
 msgstr ""
 
 msgid "Fullscreen spread display"
+msgstr ""
+
+msgid "Fullscreen spread reading mode"
+msgstr ""
+
+msgid "General settings"
 msgstr ""
 
 msgid "Gentle"
@@ -256,7 +343,22 @@ msgstr ""
 msgid "Image zoom and pan"
 msgstr ""
 
+msgid "In inline display, arrows use available side space or move below the image without reducing its width."
+msgstr ""
+
+msgid "In spread view, display the first page on its own."
+msgstr ""
+
 msgid "Inline display"
+msgstr ""
+
+msgid "Inline display settings"
+msgstr ""
+
+msgid "Inline viewer"
+msgstr ""
+
+msgid "Keep at least one reading mode enabled."
 msgstr ""
 
 msgid "Keep current selection"
@@ -304,7 +406,13 @@ msgstr ""
 msgid "Manga Library cover image URL"
 msgstr ""
 
+msgid "MangaFocus"
+msgstr ""
+
 msgid "MangaFocus Settings"
+msgstr ""
+
+msgid "MangaFocus – Panel-by-Panel Manga Reader"
 msgstr ""
 
 msgid "Maximum comic width (px)"
@@ -343,7 +451,16 @@ msgstr ""
 msgid "No comics found in Trash."
 msgstr ""
 
+msgid "No cover image is set. The first page is displayed instead; it is not saved as a cover."
+msgstr ""
+
+msgid "No cover is set. The first page is used as a preview instead."
+msgstr ""
+
 msgid "No cover set"
+msgstr ""
+
+msgid "No panels are configured. Add panels before using panel reading alone."
 msgstr ""
 
 msgid "No registered comics found."
@@ -355,10 +472,31 @@ msgstr ""
 msgid "Not installed or inactive"
 msgstr ""
 
+msgid "ON starts at the first panel of the current page. OFF starts at page 1. Closing on the last page returns to page 1; otherwise ON can resume from the same page, including panel-only reading."
+msgstr ""
+
+msgid "Off: first page only. On: every page."
+msgstr ""
+
+msgid "On smartphones, pages without mobile panels are shown as full pages. Desktop panels are not used as a fallback."
+msgstr ""
+
 msgid "On the published page, show only the cover and a “Read manga” button, then open the reader in fullscreen. Use the editor preview below to edit the comic as usual."
 msgstr ""
 
 msgid "On uninstall"
+msgstr ""
+
+msgid "On: enlarge configured panels one at a time. Off: hide the panel reading launch button. Configure at least one panel to use this mode alone."
+msgstr ""
+
+msgid "On: offer fullscreen paged or vertical reading. Off: hide the fullscreen launch button."
+msgstr ""
+
+msgid "On: read within the post or page. Off: show a cover with buttons for the other enabled modes."
+msgstr ""
+
+msgid "On: read within the post or page. Off: show a cover with buttons for the other enabled modes. Page images and panel settings are kept."
 msgstr ""
 
 msgid "Only the cover is shown in the editor. The complete Viewer appears on the published page."
@@ -371,6 +509,9 @@ msgid "Open Manga Library"
 msgstr ""
 
 msgid "Open fullscreen from the cover"
+msgstr ""
+
+msgid "PC"
 msgstr ""
 
 msgid "Page"
@@ -403,7 +544,22 @@ msgstr ""
 msgid "Paged reading, spreads, page focus, fullscreen, vertical reading, zoom, Panel-by-Panel, Manga Library"
 msgstr ""
 
+msgid "Pages without panels remain in order as full pages. Add at least one panel before using panel reading alone."
+msgstr ""
+
 msgid "Panel"
+msgstr ""
+
+msgid "Panel reading also uses this setting when moving between pages."
+msgstr ""
+
+msgid "Panel reading mode"
+msgstr ""
+
+msgid "Panel reading settings"
+msgstr ""
+
+msgid "Panel reading start position"
 msgstr ""
 
 msgid "Panel set to edit"
@@ -454,6 +610,9 @@ msgstr ""
 msgid "Read directly on the page"
 msgstr ""
 
+msgid "Read from the first page"
+msgstr ""
+
 msgid "Read in fullscreen"
 msgstr ""
 
@@ -463,7 +622,16 @@ msgstr ""
 msgid "Read manga in fullscreen"
 msgstr ""
 
+msgid "Read manga using the full screen."
+msgstr ""
+
+msgid "Read manga within the post or page."
+msgstr ""
+
 msgid "Readers can zoom with the plus and minus controls or pinch gestures, then drag the enlarged image."
+msgstr ""
+
+msgid "Reading modes"
 msgstr ""
 
 msgid "Register New Comic"
@@ -532,6 +700,12 @@ msgstr ""
 msgid "Scheduled"
 msgstr ""
 
+msgid "Scroll adjustment position"
+msgstr ""
+
+msgid "Scroll adjustment strength"
+msgstr ""
+
 msgid "Search by title or Viewer ID"
 msgstr ""
 
@@ -539,6 +713,9 @@ msgid "Search comics"
 msgstr ""
 
 msgid "Select and display one registered Viewer from Manga Library."
+msgstr ""
+
+msgid "Select cover image"
 msgstr ""
 
 msgid "Select one or more comic pages."
@@ -553,10 +730,25 @@ msgstr ""
 msgid "Selected Viewer"
 msgstr ""
 
+msgid "Selected cover preview"
+msgstr ""
+
 msgid "Set cover image"
 msgstr ""
 
+msgid "Set the cover here. The standard Featured image panel is also available as a fallback and uses the same image."
+msgstr ""
+
+msgid "Set the cover used in the comic list and before reading."
+msgstr ""
+
+msgid "Sets the inline maximum width and the base width for fullscreen vertical reading."
+msgstr ""
+
 msgid "Settings"
+msgstr ""
+
+msgid "Shared settings"
 msgstr ""
 
 msgid "Shortcode copied."
@@ -575,6 +767,9 @@ msgid "Show page numbers"
 msgstr ""
 
 msgid "Show the entire spread in the normal view and use the selected mode only in fullscreen."
+msgstr ""
+
+msgid "Show the first page separately"
 msgstr ""
 
 msgid "Show the first page separately (cover)"
@@ -601,6 +796,9 @@ msgstr ""
 msgid "Start fullscreen from the current page"
 msgstr ""
 
+msgid "Start panel reading from the current page"
+msgstr ""
+
 msgid "Strong"
 msgstr ""
 
@@ -613,19 +811,40 @@ msgstr ""
 msgid "The default is 90 days. Expired data is deleted daily regardless of Pro status."
 msgstr ""
 
+msgid "The first image is page 1 and the last is the back matter. Drag images or use the arrows to reorder them."
+msgstr ""
+
 msgid "The first image is the cover and the last is the back matter. Drag images or use the arrows to reorder them."
+msgstr ""
+
+msgid "The first page is a preview until you select a cover in Manga Library."
+msgstr ""
+
+msgid "The last save failed. The cover shown here may not be saved yet."
+msgstr ""
+
+msgid "The page-turn animation applies to single-page navigation. Spread navigation and vertical scrolling do not use it."
 msgstr ""
 
 msgid "The selected Viewer could not be found. It may have been deleted or its permissions may have changed."
 msgstr ""
 
+msgid "The standard Featured image panel edits the same cover. Changes appear in both places."
+msgstr ""
+
 msgid "There are no comic pages to register."
+msgstr ""
+
+msgid "This also applies when switching from fullscreen. Continuing starts at the first panel of the current page."
 msgstr ""
 
 msgid "This block is already registered in Manga Library."
 msgstr ""
 
 msgid "This comic is registered as a draft. Publish it before replacing this block with a Registered Viewer."
+msgstr ""
+
+msgid "This preview reflects your edits. Save with Publish or Update. Removing a cover does not delete the image file."
 msgstr ""
 
 msgid "Title"
@@ -655,6 +874,9 @@ msgstr ""
 msgid "Use as cover image"
 msgstr ""
 
+msgid "Use separate panel regions and reading order on smartphones. Desktop panels are copied only when mobile settings do not yet exist; saved mobile panels are kept."
+msgstr ""
+
 msgid "Use the current page navigation mode in fullscreen."
 msgstr ""
 
@@ -662,6 +884,18 @@ msgid "Use the first page as the cover"
 msgstr ""
 
 msgid "Use the left and right arrow keys or swipe to navigate pages"
+msgstr ""
+
+msgid "Used for inline and fullscreen paged reading."
+msgstr ""
+
+msgid "Used for inline and fullscreen reading. Panel magnification is configured separately."
+msgstr ""
+
+msgid "Used for inline and fullscreen reading. Panel reading has its own page counter."
+msgstr ""
+
+msgid "Used for page and panel navigation. Vertical reading scrolls from top to bottom."
 msgstr ""
 
 msgid "Used when Spread or Automatic is selected."
@@ -682,10 +916,16 @@ msgstr ""
 msgid "Viewer"
 msgstr ""
 
+msgid "Viewer ID:"
+msgstr ""
+
 msgid "Viewer details"
 msgstr ""
 
 msgid "When disabled, fullscreen starts from the first page. The cover launcher always starts from the first page."
+msgstr ""
+
+msgid "When disabled, panel reading starts from the beginning regardless of the page currently open."
 msgstr ""
 
 msgid "When disabled, the dedicated viewer starts from the beginning regardless of the page currently open."
@@ -700,7 +940,16 @@ msgstr ""
 msgid "When scrolling stops, the comic is gently aligned to a comfortable reading position."
 msgstr ""
 
+msgid "When switching to panel reading"
+msgstr ""
+
 msgid "Width (%)"
+msgstr ""
+
+msgid "X (%)"
+msgstr ""
+
+msgid "Y (%)"
 msgstr ""
 
 msgid "You do not have permission to change this setting."
@@ -736,8 +985,55 @@ msgstr ""
 msgid "spread pair(s) will be created. Landscape and unmatched pages are shown separately."
 msgstr ""
 
+msgid "—"
+msgstr ""
+
 msgid "%s page"
 msgid_plural "%s pages"
 msgstr[0] ""
 msgstr[1] ""
+
+msgctxt "block description"
+msgid "Display manga images with paged, spread, fullscreen, and Panel-by-Panel reading."
+msgstr ""
+
+msgctxt "block description"
+msgid "Select and display one registered Viewer from Manga Library."
+msgstr ""
+
+msgctxt "block keyword"
+msgid "Booklet"
+msgstr ""
+
+msgctxt "block keyword"
+msgid "Comic"
+msgstr ""
+
+msgctxt "block keyword"
+msgid "Library"
+msgstr ""
+
+msgctxt "block keyword"
+msgid "Manga"
+msgstr ""
+
+msgctxt "block keyword"
+msgid "Page turn"
+msgstr ""
+
+msgctxt "block keyword"
+msgid "Registered"
+msgstr ""
+
+msgctxt "block keyword"
+msgid "Viewer"
+msgstr ""
+
+msgctxt "block title"
+msgid "MangaFocus"
+msgstr ""
+
+msgctxt "block title"
+msgid "Registered Viewer"
+msgstr ""
 

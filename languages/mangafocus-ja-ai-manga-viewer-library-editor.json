@@ -30,6 +30,9 @@
             "Untitled comic": [
                 "無題の漫画"
             ],
+            "Viewer ID:": [
+                "漫画ID："
+            ],
             "Only the cover is shown in the editor. The complete Viewer appears on the published page.": [
                 "編集画面では表紙のみ表示します。公開側ではViewer全体が表示されます。"
             ],
@@ -55,7 +58,7 @@
                 "選択を解除"
             ],
             "Search by title or Viewer ID": [
-                "タイトルまたはViewer IDで検索"
+                "タイトルまたは漫画IDで検索"
             ],
             "No comics are available for selection.": [
                 "選択できる漫画がありません。"

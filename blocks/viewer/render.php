@@ -89,13 +89,13 @@ function ai_manga_viewer_number( $value, $minimum, $maximum, $fallback ) {
 	return max( $minimum, min( $maximum, $value ) );
 }
 
-function ai_manga_viewer_image( $page, $index ) {
+function ai_manga_viewer_image( $page, $index, $defer = false ) {
 	$image_attributes = array(
 		'class'         => 'amv-reader__image',
 		'alt'           => $page['alt'],
-		'loading'       => 0 === $index ? 'eager' : 'lazy',
+		'loading'       => ! $defer && 0 === $index ? 'eager' : 'lazy',
 		'decoding'      => 'async',
-		'fetchpriority' => 0 === $index ? 'high' : 'auto',
+		'fetchpriority' => ! $defer && 0 === $index ? 'high' : 'auto',
 	);
 	if ( $page['id'] ) {
 		$image = wp_get_attachment_image( $page['id'], 'large', false, $image_attributes );
@@ -103,7 +103,7 @@ function ai_manga_viewer_image( $page, $index ) {
 			return $image;
 		}
 	}
-	return '<img class="amv-reader__image" src="' . esc_url( $page['url'] ) . '" alt="' . esc_attr( $page['alt'] ) . '" loading="' . ( 0 === $index ? 'eager' : 'lazy' ) . '" decoding="async"' . ( 0 === $index ? ' fetchpriority="high"' : '' ) . ' />';
+	return '<img class="amv-reader__image" src="' . esc_url( $page['url'] ) . '" alt="' . esc_attr( $page['alt'] ) . '" loading="' . ( ! $defer && 0 === $index ? 'eager' : 'lazy' ) . '" decoding="async"' . ( ! $defer && 0 === $index ? ' fetchpriority="high"' : '' ) . ' />';
 }
 
 function ai_manga_viewer_viewer_image_url( $page ) {
@@ -133,6 +133,26 @@ function ai_manga_viewer_zoom_controls( $modifier = '' ) {
 	return '<div class="' . esc_attr( $class ) . '" role="group" aria-label="' . esc_attr__( 'Image zoom and pan', 'mangafocus' ) . '"><button type="button" class="amv-reader__zoom-out" aria-label="' . esc_attr__( 'Zoom out', 'mangafocus' ) . '">−</button><output class="amv-reader__zoom-level" aria-live="polite">100%</output><button type="button" class="amv-reader__zoom-in" aria-label="' . esc_attr__( 'Zoom in', 'mangafocus' ) . '">＋</button><button type="button" class="amv-reader__zoom-reset">' . esc_html__( 'Fit', 'mangafocus' ) . '</button></div>';
 }
 
+/** Whether any preserved PC/mobile panel can enable the panel reader. */
+function ai_manga_viewer_has_panel_areas( $attributes, $pages ) {
+	foreach ( $pages as $page ) {
+		if ( ! empty( $page['focusAreas'] ) || ( ! empty( $attributes['mobileFocusReader'] ) && ! empty( $page['mobileFocusAreas'] ) ) ) { return true; }
+	}
+	return false;
+}
+
+/** Resolve legacy or explicit modes without rewriting stored attributes. */
+function ai_manga_viewer_reading_modes( $attributes, $pages ) {
+	$modern = isset( $attributes['enableInline'] ) && is_bool( $attributes['enableInline'] );
+	$cover = 'coverLauncher' === ( $attributes['inlineDisplayMode'] ?? '' );
+	$inline = $modern ? $attributes['enableInline'] : ! $cover;
+	$fullscreen = ( ! $modern && $cover ) || ! empty( $attributes['enableFullscreen'] );
+	$panel = ! empty( $attributes['focusReader'] ) && ai_manga_viewer_has_panel_areas( $attributes, $pages ) && ai_manga_viewer_has_capability( 'panel_reader', 'runtime' );
+	// Malformed new data must remain readable without enabling fullscreen or changing storage.
+	if ( $modern && ! $inline && ! $fullscreen && ! $panel ) { $inline = true; }
+	return array( 'modern' => $modern, 'inline' => $inline, 'fullscreen' => $fullscreen, 'panel' => $panel );
+}
+
 function ai_manga_viewer_render_viewer( $attributes ) {
 	$pages = ai_manga_viewer_pages( $attributes['pages'] ?? array() );
 	if ( empty( $pages ) ) {
@@ -146,9 +166,11 @@ function ai_manga_viewer_render_viewer( $attributes ) {
 	$edge_click    = ! isset( $attributes['enableEdgeClick'] ) || ! empty( $attributes['enableEdgeClick'] );
 	$guide_arrow_all_pages = ! empty( $attributes['showGuideArrowOnAllPages'] );
 	$animation     = ! isset( $attributes['enableAnimation'] ) || ! empty( $attributes['enableAnimation'] );
-	$inline_display_mode = 'coverLauncher' === ( $attributes['inlineDisplayMode'] ?? '' ) ? 'coverLauncher' : 'reader';
-	$cover_launcher = 'coverLauncher' === $inline_display_mode;
-	$fullscreen    = $cover_launcher || ! empty( $attributes['enableFullscreen'] );
+	$reading_modes = ai_manga_viewer_reading_modes( $attributes, $pages );
+	$cover_launcher = ! $reading_modes['inline'];
+	$inline_display_mode = $cover_launcher ? 'coverLauncher' : 'reader';
+	$fullscreen = $reading_modes['fullscreen'];
+	$hidden_reader = $reading_modes['modern'] && $cover_launcher ? ' hidden inert aria-hidden="true"' : '';
 	$fullscreen_reading_mode = 'vertical' === ( $attributes['fullscreenReadingMode'] ?? '' ) ? 'vertical' : 'paged';
 	$zoom          = ! empty( $attributes['enableZoom'] );
 	$zoom_position = in_array( $attributes['zoomControlsPosition'] ?? '', array( 'bottom', 'right', 'left' ), true ) ? $attributes['zoomControlsPosition'] : 'bottom';
@@ -208,7 +230,7 @@ function ai_manga_viewer_render_viewer( $attributes ) {
 		),
 	);
 
-	$output = '<div ' . $wrapper . ( '' !== $viewer_key ? ' data-viewer-key="' . esc_attr( $viewer_key ) . '"' : '' ) . ( '' !== $instance_key ? ' data-instance-key="' . esc_attr( $instance_key ) . '"' : '' ) . ' data-binding="' . esc_attr( $binding ) . '" data-page-layout="' . esc_attr( $page_layout ) . '" data-inline-display-mode="' . esc_attr( $inline_display_mode ) . '" data-single-first-page="' . ( $single_first ? 'on' : 'off' ) . '" data-spread-reading-mode="' . esc_attr( $spread_reading_mode ) . '" data-fullscreen-reading-mode="' . esc_attr( $fullscreen_reading_mode ) . '" data-fullscreen-start="' . ( ! empty( $attributes['fullscreenStartAtCurrent'] ) ? 'current' : 'first' ) . '" data-edge-click="' . ( $edge_click ? 'on' : 'off' ) . '" data-guide-arrow="' . ( $guide_arrow_all_pages ? 'all' : 'first' ) . '" data-animation="' . ( $animation ? 'on' : 'off' ) . '" data-zoom="' . ( $zoom ? 'on' : 'off' ) . '" data-zoom-position="' . esc_attr( $zoom_position ) . '" data-scroll-assist="' . ( $scroll_assist ? 'on' : 'off' ) . '" data-scroll-position="' . esc_attr( $scroll_position ) . '" data-scroll-strength="' . esc_attr( $scroll_strength ) . '"' . ai_manga_viewer_extension_root_attributes( $extension_context ) . '>';
+	$output = '<div ' . $wrapper . ( '' !== $viewer_key ? ' data-viewer-key="' . esc_attr( $viewer_key ) . '"' : '' ) . ( '' !== $instance_key ? ' data-instance-key="' . esc_attr( $instance_key ) . '"' : '' ) . ( $reading_modes['modern'] ? ' data-enable-inline="' . ( $reading_modes['inline'] ? 'on' : 'off' ) . '"' : '' ) . ' data-binding="' . esc_attr( $binding ) . '" data-page-layout="' . esc_attr( $page_layout ) . '" data-inline-display-mode="' . esc_attr( $inline_display_mode ) . '" data-single-first-page="' . ( $single_first ? 'on' : 'off' ) . '" data-spread-reading-mode="' . esc_attr( $spread_reading_mode ) . '" data-fullscreen-reading-mode="' . esc_attr( $fullscreen_reading_mode ) . '" data-fullscreen-start="' . ( ! empty( $attributes['fullscreenStartAtCurrent'] ) ? 'current' : 'first' ) . '" data-edge-click="' . ( $edge_click ? 'on' : 'off' ) . '" data-guide-arrow="' . ( $guide_arrow_all_pages ? 'all' : 'first' ) . '" data-animation="' . ( $animation ? 'on' : 'off' ) . '" data-zoom="' . ( $zoom ? 'on' : 'off' ) . '" data-zoom-position="' . esc_attr( $zoom_position ) . '" data-scroll-assist="' . ( $scroll_assist ? 'on' : 'off' ) . '" data-scroll-position="' . esc_attr( $scroll_position ) . '" data-scroll-strength="' . esc_attr( $scroll_strength ) . '"' . ai_manga_viewer_extension_root_attributes( $extension_context ) . '>';
 	if ( $cover_launcher ) {
 		$cover_url   = esc_url_raw( $attributes['_libraryCoverUrl'] ?? '' );
 		$cover_url   = $cover_url ?: ai_manga_viewer_viewer_image_url( $pages[0] );
@@ -226,10 +248,11 @@ function ai_manga_viewer_render_viewer( $attributes ) {
 		} else {
 			$output .= '<div class="amv-reader__cover-placeholder">' . esc_html__( 'No cover set', 'mangafocus' ) . '</div>';
 		}
-		$output .= '<div class="amv-reader__cover-actions"><button type="button" class="amv-reader__cover-launcher-button" aria-label="' . esc_attr( $button_label ) . '">' . esc_html__( 'Read manga', 'mangafocus' ) . '</button>';
+		$output .= '<div class="amv-reader__cover-actions">';
+		if ( $fullscreen ) { $output .= '<button type="button" class="amv-reader__cover-launcher-button" aria-label="' . esc_attr( $button_label ) . '">' . esc_html__( 'Read manga', 'mangafocus' ) . '</button>'; }
 		$output .= '</div></div>';
 	}
-	$output .= '<div id="' . esc_attr( $stage_id ) . '" class="amv-reader__stage" tabindex="0" role="group" aria-roledescription="' . esc_attr__( 'Page viewer', 'mangafocus' ) . '" aria-label="' . esc_attr__( 'Use the left and right arrow keys or swipe to navigate pages', 'mangafocus' ) . '">';
+	$output .= '<div id="' . esc_attr( $stage_id ) . '" class="amv-reader__stage"' . $hidden_reader . ' tabindex="0" role="group" aria-roledescription="' . esc_attr__( 'Page viewer', 'mangafocus' ) . '" aria-label="' . esc_attr__( 'Use the left and right arrow keys or swipe to navigate pages', 'mangafocus' ) . '">';
 	$output .= '<button type="button" class="amv-reader__edge amv-reader__edge--previous" aria-label="' . esc_attr__( 'Previous page', 'mangafocus' ) . '"></button>';
 	$output .= '<div class="amv-reader__pages">';
 	$output .= '<div class="amv-reader__focus-layer">';
@@ -238,7 +261,7 @@ function ai_manga_viewer_render_viewer( $attributes ) {
 		list( $image_width, $image_height ) = ai_manga_viewer_page_dimensions( $page );
 		/* translators: %d: one-based page number. */
 		$page_label = sprintf( __( 'Page %d', 'mangafocus' ), $index + 1 );
-		$output .= '<figure class="amv-reader__page' . ( 0 === $index ? ' is-active' : '' ) . '" data-page-index="' . esc_attr( (string) $index ) . '"' . ( '' !== $page['pageKey'] ? ' data-page-key="' . esc_attr( $page['pageKey'] ) . '"' : '' ) . ( $image_width && $image_height ? ' data-image-width="' . esc_attr( (string) $image_width ) . '" data-image-height="' . esc_attr( (string) $image_height ) . '"' : '' ) . ' data-viewer-src="' . esc_url( ai_manga_viewer_viewer_image_url( $page ) ) . '" role="group" aria-label="' . esc_attr( $page_label ) . '"><div class="amv-reader__canvas">' . ai_manga_viewer_image( $page, $index ) . ai_manga_viewer_extension_page_overlay( $page, $index, $extension_context ) . '</div></figure>';
+		$output .= '<figure class="amv-reader__page' . ( 0 === $index ? ' is-active' : '' ) . '" data-page-index="' . esc_attr( (string) $index ) . '"' . ( '' !== $page['pageKey'] ? ' data-page-key="' . esc_attr( $page['pageKey'] ) . '"' : '' ) . ( $image_width && $image_height ? ' data-image-width="' . esc_attr( (string) $image_width ) . '" data-image-height="' . esc_attr( (string) $image_height ) . '"' : '' ) . ' data-viewer-src="' . esc_url( ai_manga_viewer_viewer_image_url( $page ) ) . '" role="group" aria-label="' . esc_attr( $page_label ) . '"><div class="amv-reader__canvas">' . ai_manga_viewer_image( $page, $index, $reading_modes['modern'] && $cover_launcher ) . ai_manga_viewer_extension_page_overlay( $page, $index, $extension_context ) . '</div></figure>';
 	}
 	$output .= '</div>';
 	$output .= '</div>';
@@ -248,7 +271,7 @@ function ai_manga_viewer_render_viewer( $attributes ) {
 		$output .= ai_manga_viewer_zoom_controls( 'amv-reader__zoom-controls--side' );
 	}
 	$output .= '</div>';
-	$output .= '<div class="amv-reader__controls">';
+	$output .= '<div class="amv-reader__controls"' . $hidden_reader . '>';
 	$output .= '<button type="button" class="amv-reader__button amv-reader__button--previous" aria-controls="' . esc_attr( $stage_id ) . '">' . esc_html__( 'Previous page', 'mangafocus' ) . '</button>';
 	if ( $zoom ) {
 		$output .= '<button type="button" class="amv-reader__zoom-page amv-reader__zoom-page--previous" aria-controls="' . esc_attr( $stage_id ) . '" aria-label="' . esc_attr__( 'Reset zoom and go to the previous page', 'mangafocus' ) . '"></button>';
@@ -266,8 +289,8 @@ function ai_manga_viewer_render_viewer( $attributes ) {
 	}
 	$output .= '<button type="button" class="amv-reader__button amv-reader__button--next" aria-controls="' . esc_attr( $stage_id ) . '">' . esc_html__( 'Next page', 'mangafocus' ) . '</button>';
 	$output .= '</div>';
-	if ( $fullscreen ) {
-		$output .= '<div class="amv-reader__mode-controls">';
+	if ( $fullscreen || ( $reading_modes['modern'] && $reading_modes['panel'] ) ) {
+		$output .= '<div class="amv-reader__mode-controls"' . $hidden_reader . '>';
 		if ( $fullscreen ) {
 			$output .= '<button type="button" class="amv-reader__fullscreen" aria-controls="' . esc_attr( $stage_id ) . '" aria-pressed="false">' . esc_html__( 'Read in fullscreen', 'mangafocus' ) . '</button>';
 		}

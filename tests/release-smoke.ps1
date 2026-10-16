@@ -13,6 +13,13 @@ $files = @('mangafocus.php', 'readme.txt', 'includes/features.php', 'includes/ca
     'languages/mangafocus-ja-ai-manga-viewer-panel-reader-editor.json', 'languages/mangafocus-ja-ai-manga-viewer-panel-reader-frontend.json',
     'scripts/build-release.ps1')
 $utf8 = [Text.UTF8Encoding]::new($false)
+function Assert-PanelEditorContract([string]$Source) {
+    if (-not $Source.Contains('checked: !! attributes.focusReader') -or
+        -not $Source.Contains("setReadingMode( 'panel', !! value )") -or
+        -not $Source.Contains('context.setAttributes( { focusReader: !! value } )')) {
+        throw 'Panel editor enablement contract missing.'
+    }
+}
 function Expect-Failure([scriptblock]$Action, [string]$Message) {
     $failed = $false
     try { & $Action | Out-Null } catch {
@@ -84,10 +91,16 @@ try {
 			throw 'Pro-owned CTA runtime or editor implementation leaked into the Free Core ZIP.'
 		}
 		$panelEditorSource = [IO.File]::ReadAllText((Join-Path $fixture 'assets/panel-reader/editor.js'))
+		Assert-PanelEditorContract $panelEditorSource
+		# A translated label must not affect the contract; missing state/setters must fail.
+		Assert-PanelEditorContract ($panelEditorSource.Replace('Enable panel reading mode', 'label fixture'))
+		Expect-Failure { Assert-PanelEditorContract ($panelEditorSource.Replace('checked: !! attributes.focusReader', 'checked: false')) } 'Panel editor enablement contract missing'
+		Expect-Failure { Assert-PanelEditorContract ($panelEditorSource.Replace("setReadingMode( 'panel', !! value )", 'missingModernSetter()')) } 'Panel editor enablement contract missing'
+		Expect-Failure { Assert-PanelEditorContract ($panelEditorSource.Replace('context.setAttributes( { focusReader: !! value } )', 'missingLegacySetter()')) } 'Panel editor enablement contract missing'
 		$panelRendererSource = [IO.File]::ReadAllText((Join-Path $fixture 'includes/panel-reader/renderer.php'))
 		$panelViewSource = [IO.File]::ReadAllText((Join-Path $fixture 'assets/panel-reader/frontend.js'))
 		$panelStyleSource = [IO.File]::ReadAllText((Join-Path $fixture 'assets/panel-reader/style.css'))
-		if ($panelEditorSource -notmatch 'Enable Panel-by-Panel reading' -or $panelEditorSource -notmatch 'mobileFocusAreas' -or $panelRendererSource -notmatch 'data-amv-panel-reader' -or $panelViewSource -notmatch 'setExtensionMode' -or $panelStyleSource -notmatch '\.amv-modal') {
+		if ($panelEditorSource -notmatch 'mobileFocusAreas' -or $panelRendererSource -notmatch 'data-amv-panel-reader' -or $panelViewSource -notmatch 'setExtensionMode' -or $panelStyleSource -notmatch '\.amv-modal') {
 			throw 'Core-owned panel reader runtime or editor implementation is missing from the Free ZIP.'
 		}
 		if ($editorSource -notmatch 'previous\.cta' -or -not $rendererSource.Contains("'cta' => `$cta") -or [IO.File]::ReadAllText((Join-Path $fixture 'mangafocus.php')) -notmatch 'ai_manga_viewer_sanitize_library_cta') {

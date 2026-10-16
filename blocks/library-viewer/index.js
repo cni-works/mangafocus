@@ -52,7 +52,7 @@
 			cover ? el( 'img', { src: cover, alt: '', style: { display: 'block', width: 'min(100%,260px)', height: 'auto', maxHeight: '320px', objectFit: 'contain', borderRadius: '3px', background: '#fff' } } ) : el( 'span', { 'aria-hidden': 'true', style: { display: 'grid', placeItems: 'center', width: 'min(100%,260px)', aspectRatio: '3 / 4', maxHeight: '320px', borderRadius: '3px', background: '#e2e4e7', color: '#646970', fontSize: '56px' } }, '▤' ),
 			el( 'div', { style: { maxWidth: '100%' } },
 				el( 'strong', { style: { display: 'block', overflowWrap: 'anywhere' } }, titleOf( item ) || __( 'Untitled comic', 'mangafocus' ) ),
-				el( 'span', { style: { display: 'block', marginTop: '4px', color: '#646970', fontSize: '12px' } }, 'Viewer ID: ' + viewerId ),
+				el( 'span', { style: { display: 'block', marginTop: '4px', color: '#646970', fontSize: '12px' } }, __( 'Viewer ID:', 'mangafocus' ) + ' ' + viewerId ),
 				statusOf( item ) ? el( 'span', { style: { display: 'block', marginTop: '2px', color: '#646970', fontSize: '12px' } }, statusOf( item ) ) : null,
 				el( 'span', { style: { display: 'block', marginTop: '6px', color: '#646970', fontSize: '12px' } }, __( 'Only the cover is shown in the editor. The complete Viewer appears on the published page.', 'mangafocus' ) )
 			)

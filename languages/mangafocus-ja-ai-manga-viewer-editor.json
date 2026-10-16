@@ -12,14 +12,50 @@
                 "lang": "ja",
                 "plural-forms": "nplurals=1; plural=0;"
             },
-            "Cover": [
-                "表紙"
+            "Page": [
+                "ページ"
             ],
             "Back matter": [
                 "巻末"
             ],
-            "Page": [
-                "ページ"
+            "Set the cover used in the comic list and before reading.": [
+                "漫画一覧と、読み始める前に表示する表紙画像を設定します。"
+            ],
+            "Set the cover here. The standard Featured image panel is also available as a fallback and uses the same image.": [
+                "表紙画像はこちらで設定できます。標準の「アイキャッチ画像」も予備の操作場所として利用でき、同じ画像に連動します。"
+            ],
+            "Selected cover preview": [
+                "選択中の表紙プレビュー"
+            ],
+            "Cover selected. Its preview is loading or unavailable.": [
+                "表紙は選択されています。プレビューは読み込み中、または取得できません。"
+            ],
+            "No cover image is set. The first page is displayed instead; it is not saved as a cover.": [
+                "表紙画像が未設定です。漫画の1ページ目を代わりに表示しますが、表紙画像としては保存されません。"
+            ],
+            "First-page preview (not a saved cover)": [
+                "1ページ目の代替プレビュー（表紙未設定）"
+            ],
+            "Change cover image": [
+                "表紙画像を変更"
+            ],
+            "Select cover image": [
+                "表紙画像を選択"
+            ],
+            "Remove cover image": [
+                "表紙画像を解除"
+            ],
+            "This preview reflects your edits. Save with Publish or Update. Removing a cover does not delete the image file.": [
+                "このプレビューは編集中の内容です。「公開」または「更新」で保存します。解除しても画像ファイルは削除されません。"
+            ],
+            "The last save failed. The cover shown here may not be saved yet.": [
+                "直前の保存に失敗しました。表示中の表紙はまだ保存されていない場合があります。"
+            ],
+            "Cover image": [
+                "表紙画像"
+            ],
+            "MangaFocus": [
+                "MangaFocus"
             ],
             "Display manga images with paged, spread, fullscreen, and Panel-by-Panel reading.": [
                 "漫画画像をページ送り、見開き、全画面、コマ読みで表示します。"
@@ -38,6 +74,12 @@
             ],
             "Untitled comic": [
                 "無題の漫画"
+            ],
+            "Keep at least one reading mode enabled.": [
+                "少なくとも1つの表示モードを有効にしてください。"
+            ],
+            "Add at least one panel before using panel reading alone.": [
+                "コマ読みのみを利用する場合は、先にコマを追加してください。"
             ],
             "Edit page images": [
                 "ページ画像を編集"
@@ -60,6 +102,9 @@
             "Registered in Manga Library. The original Viewer was not changed.": [
                 "漫画ライブラリへ登録しました。元のViewerは変更されていません。"
             ],
+            "Viewer ID:": [
+                "漫画ID："
+            ],
             "This comic is registered as a draft. Publish it before replacing this block with a Registered Viewer.": [
                 "下書きとして登録されています。登録した漫画を公開すると、登録済みViewerへ切り替えられます。"
             ],
@@ -78,8 +123,8 @@
             "Title": [
                 "タイトル"
             ],
-            "Use the first page as the cover": [
-                "先頭ページを表紙として使用"
+            "The first page is a preview until you select a cover in Manga Library.": [
+                "漫画ライブラリで表紙を選ぶまでは、1ページ目を代替表示します。"
             ],
             "Registering…": [
                 "登録中…"
@@ -90,26 +135,11 @@
             "To use Manga Analytics and AI consultation, register the comic in Manga Library and display it as a Registered Viewer.": [
                 "漫画解析・AI相談を利用するには、漫画ライブラリへの登録後、登録済みViewerとして表示してください。"
             ],
-            "Inline display": [
-                "ページ内の表示"
-            ],
-            "Display method": [
-                "表示方法"
-            ],
-            "Read directly on the page": [
-                "ページ内でそのまま読む"
-            ],
-            "Open fullscreen from the cover": [
-                "表紙から全画面で読む"
-            ],
-            "On the published page, show only the cover and a “Read manga” button, then open the reader in fullscreen. Use the editor preview below to edit the comic as usual.": [
-                "公開画面では表紙と「漫画を読む」ボタンだけを表示し、全画面で読み始めます。下の編集プレビューでは従来どおり漫画内容を編集できます。"
-            ],
             "Page images": [
                 "ページ画像"
             ],
-            "The first image is the cover and the last is the back matter. Drag images or use the arrows to reorder them.": [
-                "先頭は表紙、末尾は巻末です。ドラッグまたは矢印で順番を変更できます。"
+            "The first image is page 1 and the last is the back matter. Drag images or use the arrows to reorder them.": [
+                "先頭の画像が1ページ目、最後の画像があとがきです。ドラッグまたは矢印で並び替えます。"
             ],
             "Move up": [
                 "上へ移動"
@@ -120,11 +150,107 @@
             "Delete": [
                 "削除"
             ],
+            "Inline viewer": [
+                "通常ビュアー"
+            ],
+            "Enable inline viewer": [
+                "通常ビュアーを有効にする"
+            ],
+            "On: read within the post or page. Off: show a cover with buttons for the other enabled modes. Page images and panel settings are kept.": [
+                "ON：投稿・固定ページ内で漫画を表示します。OFF：表紙と、有効な他のモードの起動ボタンを表示します。ページ画像やコマ設定は保持されます。"
+            ],
+            "Automatically adjust scroll position": [
+                "スクロール位置を自動調整"
+            ],
+            "After document scrolling stops, adjust the comic position in the viewport. This is not automatic alignment on page turns.": [
+                "文書のスクロールが止まったとき、画面内の漫画の位置を調整します。ページ送り時の自動位置合わせではありません。"
+            ],
+            "Scroll adjustment position": [
+                "スクロール調整位置"
+            ],
+            "Automatic (center when it fits)": [
+                "自動（収まるときは中央）"
+            ],
+            "Top of screen": [
+                "画面上部"
+            ],
+            "Center of screen": [
+                "画面中央"
+            ],
+            "Scroll adjustment strength": [
+                "スクロール調整強度"
+            ],
+            "Gentle": [
+                "弱い"
+            ],
+            "Normal": [
+                "標準"
+            ],
+            "Strong": [
+                "強い"
+            ],
+            "Fullscreen mode": [
+                "全画面モード"
+            ],
+            "Enable fullscreen mode": [
+                "全画面モードを有効にする"
+            ],
+            "On: offer fullscreen paged or vertical reading. Off: hide the fullscreen launch button.": [
+                "ON：全画面でページ送り・縦読みを利用できます。OFF：全画面の起動ボタンを表示しません。"
+            ],
+            "Fullscreen reading mode": [
+                "全画面表示の読み方"
+            ],
+            "Read all pages by scrolling from top to bottom.": [
+                "全ページを上から下へスクロールして読みます。"
+            ],
+            "Use the current page navigation mode in fullscreen.": [
+                "現在のページ送り方式を全画面で使用します。"
+            ],
             "Paged reading": [
                 "ページ送り"
             ],
+            "Vertical scrolling": [
+                "縦スクロール"
+            ],
+            "Start fullscreen from the current page": [
+                "現在のページから全画面表示を開始"
+            ],
+            "When disabled, fullscreen starts from the first page. The cover launcher always starts from the first page.": [
+                "OFFでは先頭ページから開始します。表紙から全画面で読む場合は常に先頭から開始します。"
+            ],
+            "Fullscreen spread reading mode": [
+                "全画面表示での見開きの読み方"
+            ],
+            "Show the entire spread in the normal view and use the selected mode only in fullscreen.": [
+                "通常表示では見開き全体を表示し、全画面のときだけ選択した読み方を使用します。"
+            ],
+            "Entire spread": [
+                "見開き全体"
+            ],
+            "Focus on one page at a time": [
+                "1ページずつ大きく読む"
+            ],
+            "Panel reading mode": [
+                "コマ読みモード"
+            ],
+            "Enable panel reading mode": [
+                "コマ読みモードを有効にする"
+            ],
+            "On: enlarge configured panels one at a time. Off: hide the panel reading launch button. Configure at least one panel to use this mode alone.": [
+                "ON：設定したコマを1コマずつ拡大表示します。OFF：コマ読みの起動ボタンを表示しません。コマ読みだけを使うには、コマを1つ以上設定してください。"
+            ],
+            "No panels are configured. Add panels before using panel reading alone.": [
+                "コマが設定されていません。コマ読みのみを利用する場合は、先にコマを追加してください。"
+            ],
+            "General settings": [
+                "全体設定"
+            ],
             "Page layout": [
                 "ページレイアウト"
+            ],
+            "Used for inline and fullscreen paged reading.": [
+                "通常・全画面のページ送りで使用します。"
             ],
             "Single page": [
                 "1ページ"
@@ -141,11 +267,11 @@
             "Automatic": [
                 "自動"
             ],
-            "Show the first page separately (cover)": [
-                "先頭ページを単独表示（表紙向け）"
+            "Show the first page separately": [
+                "先頭ページを単独表示"
             ],
-            "Used when Spread or Automatic is selected.": [
-                "見開きまたは自動を選んだ場合に使用します。"
+            "In spread view, display the first page on its own.": [
+                "見開き表示時、先頭ページを1ページだけで表示します。"
             ],
             "Checking image information. Spread and automatic layouts remain available while checking.": [
                 "画像情報を確認中です。確認中は見開き・自動を選択できます。"
@@ -162,6 +288,9 @@
             "Binding direction": [
                 "綴じ方向"
             ],
+            "Used for page and panel navigation. Vertical reading scrolls from top to bottom.": [
+                "通常・全画面のページ送りとコマ読みに使用します。縦読みは上から下へ読みます。"
+            ],
             "Right binding (manga)": [
                 "右綴じ（漫画向け）"
             ],
@@ -171,8 +300,14 @@
             "Maximum comic width (px)": [
                 "漫画の最大幅（px）"
             ],
+            "Sets the inline maximum width and the base width for fullscreen vertical reading.": [
+                "通常表示の最大幅と、全画面の縦読みの基準幅に使用します。"
+            ],
             "Show page numbers": [
                 "ページ番号を表示"
+            ],
+            "Used for inline and fullscreen reading. Panel reading has its own page counter.": [
+                "通常表示・全画面表示で使用します。コマ読みのページ番号は別の表示です。"
             ],
             "Navigate by clicking page edges": [
                 "ページ端クリックで送る"
@@ -180,53 +315,32 @@
             "Show navigation arrows on every page": [
                 "案内矢印をすべてのページで表示"
             ],
-            "When enabled, edge arrows remain visible after moving to the next page.": [
-                "ONの場合、次ページへ進んだ後もページ端の矢印を表示します。"
+            "Arrows require page-edge navigation to be enabled.": [
+                "案内矢印は「ページ端クリックによるページ送り」が有効な場合に表示されます。"
+            ],
+            "Off: first page only. On: every page.": [
+                "OFF：先頭ページのみ。ON：全ページに表示します。"
+            ],
+            "In inline display, arrows use available side space or move below the image without reducing its width.": [
+                "通常表示では、画像幅を縮めずに、配置できる余白または画像下に案内矢印を表示します。"
             ],
             "Page transition animation": [
                 "ページめくり演出"
             ],
-            "Show fullscreen button": [
-                "全画面ボタンを表示"
+            "The page-turn animation applies to single-page navigation. Spread navigation and vertical scrolling do not use it.": [
+                "単ページのページ送りに適用します。見開きでのページ送りと縦読みには適用しません。"
             ],
-            "Allow readers to expand the regular page view to fill the browser.": [
-                "読者が通常のページ表示をブラウザー全体へ広げられます。"
-            ],
-            "Start fullscreen from the current page": [
-                "現在のページから全画面を開始"
-            ],
-            "When disabled, fullscreen starts from the first page. The cover launcher always starts from the first page.": [
-                "OFFでは先頭ページから開始します。表紙から全画面で読む場合は常に先頭から開始します。"
-            ],
-            "Fullscreen reading mode": [
-                "全画面の読み方"
-            ],
-            "Read all pages by scrolling from top to bottom.": [
-                "全ページを上から下へスクロールして読みます。"
-            ],
-            "Use the current page navigation mode in fullscreen.": [
-                "現在のページ送り方式を全画面で使用します。"
-            ],
-            "Vertical scrolling": [
-                "縦スクロール"
-            ],
-            "Fullscreen spread display": [
-                "全画面の見開き表示"
-            ],
-            "Show the entire spread in the normal view and use the selected mode only in fullscreen.": [
-                "通常表示では見開き全体を表示し、全画面のときだけ選択した読み方を使用します。"
-            ],
-            "Entire spread": [
-                "見開き全体"
-            ],
-            "Focus on one page at a time": [
-                "1ページずつ大きく読む"
+            "Panel reading also uses this setting when moving between pages.": [
+                "コマ読みで別のページへ移動するときの演出にも、この設定を使用します。"
             ],
             "Enable free zoom and pan": [
                 "自由ズームと移動を有効化"
             ],
             "Readers can zoom with the plus and minus controls or pinch gestures, then drag the enlarged image.": [
                 "読者が＋／－、ピンチ操作で拡大し、拡大中は画像をドラッグして移動できます。"
+            ],
+            "Used for inline and fullscreen reading. Panel magnification is configured separately.": [
+                "通常表示・全画面表示で使用します。コマ読みの拡大率は別に設定します。"
             ],
             "Zoom control position": [
                 "ズームボタンの位置"
@@ -240,41 +354,14 @@
             "Left (vertical)": [
                 "左（縦並び）"
             ],
-            "Align the scroll position": [
-                "スクロール位置を整える"
-            ],
-            "When scrolling stops, the comic is gently aligned to a comfortable reading position.": [
-                "スクロールを止めたとき、漫画が読みやすい位置へ少し寄せられます。"
-            ],
-            "Alignment position": [
-                "合わせる位置"
-            ],
-            "Automatic (center when it fits)": [
-                "自動（収まるときは中央）"
-            ],
-            "Top of screen": [
-                "画面上部"
-            ],
-            "Center of screen": [
-                "画面中央"
-            ],
-            "Alignment strength": [
-                "引っかかりの強さ"
-            ],
-            "Gentle": [
-                "弱い"
-            ],
-            "Normal": [
-                "標準"
-            ],
-            "Strong": [
-                "強い"
-            ],
             "Select one or more comic pages.": [
                 "漫画ページを複数選択してください。"
             ],
             "Read manga": [
                 "漫画を読む"
+            ],
+            "Read by panel": [
+                "コマ読みを開始"
             ],
             "Published display preview": [
                 "公開画面の表示プレビュー"

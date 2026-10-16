@@ -213,7 +213,7 @@ $registration_pages[0]['id'] = 901;
 $registration_pages[0]['cta'] = array( 'enabled' => true, 'label' => 'Contact <b>now</b>', 'url' => 'https://example.test/contact', 'backgroundColor' => '#123456' );
 $registration = ai_manga_viewer_register_direct_viewer( new WP_REST_Request( array( 'title' => '登録テスト<script>', 'sourcePostId' => 456, 'sourceInstanceKey' => 'instance-source', 'attributes' => array_merge( $attrs, array( 'pages' => $registration_pages, 'binding' => 'ltr', 'pageLayout' => 'spread', 'singleFirstPage' => false, 'spreadReadingMode' => 'pageFocus', 'maxWidth' => 900, 'enableFullscreen' => true, 'fullscreenStartAtCurrent' => true, 'inlineDisplayMode' => 'coverLauncher', 'fullscreenReadingMode' => 'vertical', 'enableZoom' => true, 'zoomControlsPosition' => 'right', 'libraryViewerId' => 999 ) ) ) ) );
 $registered_attrs = $GLOBALS['serialized_library_block']['attrs'] ?? array();
-if ( 2444 !== ( $registration['id'] ?? 0 ) || empty( $registration['canSwitch'] ) || 'publish' !== ( $registration['status'] ?? '' ) || 'library-viewer-2444' !== ( $registered_attrs['viewerKey'] ?? '' ) || 'library-source-2444' !== ( $registered_attrs['instanceKey'] ?? '' ) || 0 !== ( $registered_attrs['libraryViewerId'] ?? -1 ) || 'spread' !== ( $registered_attrs['pageLayout'] ?? '' ) || false !== ( $registered_attrs['singleFirstPage'] ?? null ) || 'pageFocus' !== ( $registered_attrs['spreadReadingMode'] ?? '' ) || empty( $registered_attrs['fullscreenStartAtCurrent'] ) || 'coverLauncher' !== ( $registered_attrs['inlineDisplayMode'] ?? '' ) || 'vertical' !== ( $registered_attrs['fullscreenReadingMode'] ?? '' ) || 2 !== count( $registered_attrs['pages'] ?? array() ) || 2 !== count( $registered_attrs['pages'][0]['focusAreas'] ?? array() ) || 1 !== count( $registered_attrs['pages'][0]['mobileFocusAreas'] ?? array() ) || 'Contact now' !== ( $registered_attrs['pages'][0]['cta']['label'] ?? '' ) || 901 !== ( $GLOBALS['test_thumbnail'][2444] ?? 0 ) || 'auto:901' !== ( $GLOBALS['test_meta'][2444]['_amv_auto_featured_image'] ?? '' ) || '456:instance-source' !== ( $GLOBALS['test_meta'][2444]['_amv_source_reference'] ?? '' ) ) { throw new Exception( 'Direct Viewer Library registration did not preserve and sanitize the Viewer configuration' ); }
+if ( 2444 !== ( $registration['id'] ?? 0 ) || empty( $registration['canSwitch'] ) || 'publish' !== ( $registration['status'] ?? '' ) || 'library-viewer-2444' !== ( $registered_attrs['viewerKey'] ?? '' ) || 'library-source-2444' !== ( $registered_attrs['instanceKey'] ?? '' ) || 0 !== ( $registered_attrs['libraryViewerId'] ?? -1 ) || 'spread' !== ( $registered_attrs['pageLayout'] ?? '' ) || false !== ( $registered_attrs['singleFirstPage'] ?? null ) || 'pageFocus' !== ( $registered_attrs['spreadReadingMode'] ?? '' ) || empty( $registered_attrs['fullscreenStartAtCurrent'] ) || 'coverLauncher' !== ( $registered_attrs['inlineDisplayMode'] ?? '' ) || 'vertical' !== ( $registered_attrs['fullscreenReadingMode'] ?? '' ) || 2 !== count( $registered_attrs['pages'] ?? array() ) || 2 !== count( $registered_attrs['pages'][0]['focusAreas'] ?? array() ) || 1 !== count( $registered_attrs['pages'][0]['mobileFocusAreas'] ?? array() ) || 'Contact now' !== ( $registered_attrs['pages'][0]['cta']['label'] ?? '' ) || isset( $GLOBALS['test_thumbnail'][2444] ) || isset( $GLOBALS['test_meta'][2444]['_amv_auto_featured_image'] ) || '456:instance-source' !== ( $GLOBALS['test_meta'][2444]['_amv_source_reference'] ?? '' ) ) { throw new Exception( 'Direct Viewer Library registration did not preserve and sanitize the Viewer configuration' ); }
 $duplicate = ai_manga_viewer_register_direct_viewer( new WP_REST_Request( array( 'title' => '再登録', 'sourcePostId' => 456, 'sourceInstanceKey' => 'instance-source', 'existingViewerId' => 2444, 'attributes' => $attrs ) ) );
 if ( 2444 !== ( $duplicate['id'] ?? 0 ) || empty( $duplicate['duplicate'] ) ) { throw new Exception( 'Direct Viewer duplicate registration prevention failed' ); }
 $GLOBALS['test_can_publish'] = false;
@@ -249,33 +249,22 @@ $GLOBALS['test_parsed_blocks']['viewer-123'] = array( array( 'blockName' => 'cor
 $GLOBALS['test_posts'][901] = (object) array( 'post_type' => 'attachment' );
 $GLOBALS['test_posts'][902] = (object) array( 'post_type' => 'attachment' );
 $GLOBALS['test_posts'][903] = (object) array( 'post_type' => 'attachment' );
-$GLOBALS['test_posts'][130] = (object) array( 'post_type' => 'amv_viewer', 'post_content' => 'cover-auto-1' );
-$GLOBALS['test_parsed_blocks']['cover-auto-1'] = array( array( 'blockName' => 'ai-manga-viewer/viewer', 'attrs' => array( 'pages' => array( array( 'id' => 901, 'url' => 'https://example.test/page-one.jpg' ) ) ), 'innerBlocks' => array() ) );
-ai_manga_viewer_sync_library_featured_image( 130 );
-if ( 901 !== ( $GLOBALS['test_thumbnail'][130] ?? 0 ) || 'auto:901' !== ( $GLOBALS['test_meta'][130]['_amv_auto_featured_image'] ?? '' ) ) { throw new Exception( 'First Library page was not installed as an automatic featured image' ); }
-$GLOBALS['test_posts'][130]->post_content = 'cover-auto-2';
-$GLOBALS['test_parsed_blocks']['cover-auto-2'] = array( array( 'blockName' => 'ai-manga-viewer/viewer', 'attrs' => array( 'pages' => array( array( 'id' => 902, 'url' => 'https://example.test/page-two.jpg' ) ) ), 'innerBlocks' => array() ) );
-ai_manga_viewer_sync_library_featured_image( 130 );
-if ( 902 !== ( $GLOBALS['test_thumbnail'][130] ?? 0 ) || 'auto:902' !== ( $GLOBALS['test_meta'][130]['_amv_auto_featured_image'] ?? '' ) ) { throw new Exception( 'Automatic Library featured image did not follow a changed first page' ); }
+
+// No first-page sync: native saves/REST/registration must retain cover and legacy metadata.
+if ( ! empty( $GLOBALS['actions']['save_post_amv_viewer'] ) || ! empty( $GLOBALS['actions']['rest_after_insert_amv_viewer'] ) || function_exists( 'ai_manga_viewer_sync_library_featured_image' ) ) { throw new Exception( 'Automatic featured-image synchronization is still reachable' ); }
+$GLOBALS['test_posts'][130] = (object) array( 'post_type' => 'amv_viewer', 'post_content' => 'manual-cover-pages' );
 $GLOBALS['test_thumbnail'][130] = 903;
-ai_manga_viewer_sync_library_featured_image( 130 );
-if ( 903 !== ( $GLOBALS['test_thumbnail'][130] ?? 0 ) || 'manual' !== ( $GLOBALS['test_meta'][130]['_amv_auto_featured_image'] ?? '' ) ) { throw new Exception( 'Manual Library featured image was overwritten' ); }
-unset( $GLOBALS['test_thumbnail'][130] );
-ai_manga_viewer_sync_library_featured_image( 130 );
-if ( isset( $GLOBALS['test_thumbnail'][130] ) || 'manual' !== ( $GLOBALS['test_meta'][130]['_amv_auto_featured_image'] ?? '' ) ) { throw new Exception( 'A manually removed Library featured image was recreated' ); }
-$GLOBALS['test_posts'][131] = (object) array( 'post_type' => 'amv_viewer', 'post_content' => 'cover-external' );
-$GLOBALS['test_parsed_blocks']['cover-external'] = array( array( 'blockName' => 'ai-manga-viewer/viewer', 'attrs' => array( 'pages' => array( array( 'id' => 0, 'url' => 'https://cdn.example.test/external-cover.jpg', 'thumbnailUrl' => '' ) ) ), 'innerBlocks' => array() ) );
-ai_manga_viewer_sync_library_featured_image( 131 );
-if ( isset( $GLOBALS['test_thumbnail'][131] ) || 'auto:0' !== ( $GLOBALS['test_meta'][131]['_amv_auto_featured_image'] ?? '' ) || 'https://cdn.example.test/external-cover.jpg' !== ai_manga_viewer_library_cover_url( 131 ) ) { throw new Exception( 'External first page cover fallback or no-sideload policy failed' ); }
-$GLOBALS['test_posts'][132] = (object) array( 'post_type' => 'amv_viewer', 'post_content' => 'cover-empty' );
-$GLOBALS['test_parsed_blocks']['cover-empty'] = array( array( 'blockName' => 'ai-manga-viewer/viewer', 'attrs' => array( 'pages' => array() ), 'innerBlocks' => array() ) );
-ai_manga_viewer_sync_library_featured_image( 132 );
-if ( '' !== ai_manga_viewer_library_cover_url( 132 ) || 'auto:0' !== ( $GLOBALS['test_meta'][132]['_amv_auto_featured_image'] ?? '' ) ) { throw new Exception( 'Empty Library Viewer must keep the cover placeholder' ); }
-$GLOBALS['test_posts'][133] = (object) array( 'post_type' => 'amv_viewer', 'post_content' => 'cover-existing-manual' );
-$GLOBALS['test_parsed_blocks']['cover-existing-manual'] = array( array( 'blockName' => 'ai-manga-viewer/viewer', 'attrs' => array( 'pages' => array( array( 'id' => 901, 'url' => 'https://example.test/page-one.jpg' ) ) ), 'innerBlocks' => array() ) );
-$GLOBALS['test_thumbnail'][133] = 903;
-ai_manga_viewer_sync_library_featured_image( 133 );
-if ( 903 !== ( $GLOBALS['test_thumbnail'][133] ?? 0 ) || 'manual' !== ( $GLOBALS['test_meta'][133]['_amv_auto_featured_image'] ?? '' ) ) { throw new Exception( 'Pre-existing manual Library featured image was overwritten' ); }
+$GLOBALS['test_meta'][130]['_amv_auto_featured_image'] = 'auto:903';
+foreach ( array(901, 902, 0) as $page_id ) {
+ $GLOBALS['test_parsed_blocks']['manual-cover-pages'] = array( array( 'blockName' => 'ai-manga-viewer/viewer', 'attrs' => array( 'pages' => array( array( 'id' => $page_id, 'url' => 'https://example.test/first.jpg' ) ) ), 'innerBlocks' => array() ) );
+ if ( 'https://example.test/media/903-medium.jpg' !== ai_manga_viewer_library_cover_url(130) || 903 !== $GLOBALS['test_thumbnail'][130] || 'auto:903' !== $GLOBALS['test_meta'][130]['_amv_auto_featured_image'] ) { throw new Exception('Page change altered the saved cover/tracking meta'); }
+}
+unset($GLOBALS['test_thumbnail'][130]);
+if ( 'https://example.test/first.jpg' !== ai_manga_viewer_library_cover_url(130) || isset($GLOBALS['test_thumbnail'][130]) || 'auto:903' !== $GLOBALS['test_meta'][130]['_amv_auto_featured_image'] ) { throw new Exception('Unset cover fallback recreated thumbnail or changed legacy meta'); }
+$GLOBALS['test_posts'][132] = (object) array('post_type'=>'amv_viewer','post_content'=>'empty-cover-pages');
+$GLOBALS['test_parsed_blocks']['empty-cover-pages'] = array(array('blockName'=>'ai-manga-viewer/viewer','attrs'=>array('pages'=>array()),'innerBlocks'=>array()));
+if ( '' !== ai_manga_viewer_library_cover_url(132) || isset($GLOBALS['test_meta'][132]['_amv_auto_featured_image']) ) { throw new Exception('Empty comic created cover metadata'); }
+
 $GLOBALS['test_options']['ai_manga_viewer_analytics_enabled'] = '1';
 $GLOBALS['test_can_manage'] = true;
 $column_buffer_level = ob_get_level(); ob_start(); ai_manga_viewer_library_column( 'amv_details', 123 ); $details_column = ob_get_clean();
