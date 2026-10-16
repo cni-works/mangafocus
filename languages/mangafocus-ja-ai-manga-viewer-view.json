@@ -1,0 +1,50 @@
+{
+    "translation-revision-date": "2026-10-04 00:00+0900",
+    "generator": "MangaFocus scripts/build-translations.php",
+    "source": [
+        "blocks/viewer/view.js"
+    ],
+    "domain": "messages",
+    "locale_data": {
+        "messages": {
+            "": {
+                "domain": "messages",
+                "lang": "ja",
+                "plural-forms": "nplurals=1; plural=0;"
+            },
+            "Return to page view": [
+                "ページ表示に戻る"
+            ],
+            "View entire spread": [
+                "見開き全体を見る"
+            ],
+            "Near page %d. Scroll vertically to read.": [
+                "%dページ目付近を表示中。上下にスクロールして読めます"
+            ],
+            "Exit fullscreen": [
+                "全画面を終了"
+            ],
+            "Next page": [
+                "次のページ"
+            ],
+            "Reset zoom and exit fullscreen": [
+                "ズームを解除して全画面を終了"
+            ],
+            "Reset zoom and go to the next page": [
+                "ズームを解除して次のページ"
+            ],
+            "Page %d is enlarged. Use the left and right arrow keys or swipe to navigate.": [
+                "%dページ目を拡大表示中。左右キーまたはスワイプで送れます"
+            ],
+            "Showing pages %1$d and %2$d. Use the left and right arrow keys or swipe to navigate.": [
+                "%1$dページ目と%2$dページ目を表示中。左右キーまたはスワイプで送れます"
+            ],
+            "Showing page %d. Use the left and right arrow keys or swipe to navigate.": [
+                "%dページ目を表示中。左右キーまたはスワイプで送れます"
+            ],
+            "Read in fullscreen": [
+                "全画面で読む"
+            ]
+        }
+    }
+}

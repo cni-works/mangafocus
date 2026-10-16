@@ -1,0 +1,245 @@
+「コマを追加」を押して、画像上をドラッグしてください。	Select “Add panel,” then drag over the image.
+%1$dページ目と%2$dページ目を表示中。左右キーまたはスワイプで送れます	Showing pages %1$d and %2$d. Use the left and right arrow keys or swipe to navigate.
+%dページ目	Page %d
+%dページ目を拡大表示中。左右キーまたはスワイプで送れます	Page %d is enlarged. Use the left and right arrow keys or swipe to navigate.
+%dページ目を表示中。左右キーまたはスワイプで送れます	Showing page %d. Use the left and right arrow keys or swipe to navigate.
+%dページ目付近を表示中。上下にスクロールして読めます	Near page %d. Scroll vertically to read.
+%d日	%d days
+%sを全画面で読む	Read %s in fullscreen
+1ページ	Single page
+1ページずつ大きく読む	Focus on one page at a time
+AI相談	AI consultation
+AI相談資料を作成	Create AI consultation material
+AI漫画制作サポート	AI manga production support
+Coreバージョン	Core version
+Manga Libraryで再利用する漫画を管理します。	Manage reusable comics in Manga Library.
+Manga Library登録済み漫画の解析設定と、保存済みデータの保持期間を管理します。Analytics収集とレポートにはMangaFocus Proが必要です。	Manage analytics settings and data retention for comics in Manga Library. MangaFocus Pro is required for analytics collection and reports.
+MangaFocus 設定	MangaFocus Settings
+OFFでは先頭ページから開始します。表紙から全画面で読む場合は常に先頭から開始します。	When disabled, fullscreen starts from the first page. The cover launcher always starts from the first page.
+OFFの場合は、通常表示で開いているページに関係なく最初から開始します。	When disabled, the dedicated viewer starts from the beginning regardless of the page currently open.
+ONにすると、PCのコマを初期値にして、スマホ用の枠と順番を別に調整できます。	When enabled, desktop panels are used as the initial values and you can adjust mobile regions and order separately.
+ONの場合、次ページへ進んだ後もページ端の矢印を表示します。	When enabled, edge arrows remain visible after moving to the next page.
+Panel-by-Panelでコマを順番に大きく表示	Enlarge panels in sequence with Panel-by-Panel reading
+Proが利用可能な場合だけ収集します。OFFにしても過去の解析データは削除されません。	Events are collected only when Pro is available. Disabling this option does not delete existing analytics data.
+Proバージョン	Pro version
+Pro状態	Pro status
+Viewer情報	Viewer details
+アンインストール時	On uninstall
+クリックしてショートコードをコピー	Click to copy the shortcode
+このブロックはすでに漫画ライブラリへ登録されています。	This block is already registered in Manga Library.
+このブロックを登録済みViewerへ切り替える	Replace this block with a Registered Viewer
+この画面を表示する権限がありません。	You do not have permission to view this screen.
+この設定を変更する権限がありません。	You do not have permission to change this setting.
+この操作を行う権限がありません。	You do not have permission to perform this action.
+この投稿から漫画を登録する権限がありません。	You do not have permission to register a comic from this post.
+この漫画を編集	Edit this comic
+コピー	Copy
+コピーしました	Copied
+コピーできませんでした。	Could not copy.
+コマ	Panel
+コマへ戻る	Return to panel
+コマ読み	Panel-by-Panel
+コマ読みビューアー	Panel-by-Panel viewer
+コマ読みを有効化	Enable Panel-by-Panel reading
+コマ範囲を拡大	Enlarge the panel region
+コミック	Comic
+ライブラリ	Library
+登録済み	Registered
+ページめくり	Page turn
+冊子	Booklet
+ゴミ箱に漫画はありません。	No comics found in Trash.
+ショートコード %s をコピー	Copy shortcode %s
+ショートコードをコピー	Copy shortcode
+ショートコードをコピーしました。	Shortcode copied.
+ズームボタンの位置	Zoom control position
+ズームボタンの配置プレビュー	Zoom control position preview
+ズームを解除して次のページ	Reset zoom and go to the next page
+ズームを解除して前のページ	Reset zoom and go to the previous page
+ズームを解除して全画面を終了	Reset zoom and exit fullscreen
+ズーム倍率（%）	Zoom level (%)
+スクロールを止めたとき、漫画が読みやすい位置へ少し寄せられます。	When scrolling stops, the comic is gently aligned to a comfortable reading position.
+スクロール位置を整える	Align the scroll position
+スマホ	Mobile
+スマホ用にコマを追加	Add a mobile panel
+スマホ用のコマ設定を個別指定	Configure mobile panels separately
+タイトル	Title
+タイトルまたはViewer IDで検索	Search by title or Viewer ID
+ビューアー	Viewer
+ビューアーを閉じる	Close viewer
+ページ	Page
+ページビューアー	Page viewer
+ページめくり演出	Page transition animation
+ページレイアウト	Page layout
+ページを左右キーまたはスワイプで送れます	Use the left and right arrow keys or swipe to navigate pages
+ページ画像	Page images
+ページ画像を選択	Select page images
+ページ画像を編集	Edit page images
+ページ全体	Full page
+ページ全体を表示	Show full page
+ページ送り	Paged reading
+ページ送り、見開き、pageFocus、全画面、縦読み、ズーム、コマ読み、Manga Library	Paged reading, spreads, page focus, fullscreen, vertical reading, zoom, Panel-by-Panel, Manga Library
+ページ端クリックで送る	Navigate by clicking page edges
+ページ内でそのまま読む	Read directly on the page
+ページ内の表示	Inline display
+ページ番号を表示	Show page numbers
+ページ表示に戻る	Return to page view
+案内矢印をすべてのページで表示	Show navigation arrows on every page
+引っかかりの強さ	Alignment strength
+右（縦並び）	Right (vertical)
+右綴じ（漫画向け）	Right binding (manga)
+下（横並び）	Bottom (horizontal)
+下へ移動	Move down
+下書き	Draft
+下書きとして登録されています。登録した漫画を公開すると、登録済みViewerへ切り替えられます。	This comic is registered as a draft. Publish it before replacing this block with a Registered Viewer.
+画像の拡大と移動	Image zoom and pan
+画像上をドラッグして枠を作成	Drag over the image to create a region
+画像情報を確認中です。確認中は見開き・自動を選択できます。	Checking image information. Spread and automatic layouts remain available while checking.
+画面上部	Top of screen
+画面中央	Center of screen
+解析・データ	Analytics & Data
+解析データの削除について確認	Review analytics data deletion
+解析データの全削除	Delete all analytics data
+解析データをすべて削除	Delete all analytics data
+解析テーブルと設定をすべて削除する	Delete all analytics tables and settings
+解析を見る	View analytics
+解析を有効にする	Enable analytics
+解析設定	Analytics Settings
+解析設定を開く	Open Analytics Settings
+解析停止中	Analytics paused
+拡大	Zoom in
+拡大して表示	Enlarge
+巻末	Back matter
+既定は90日です。Proの状態に関係なく、期限を過ぎたデータを日次で削除します。	The default is 90 days. Expired data is deleted daily regardless of Pro status.
+機能	Features
+強い	Strong
+見開き	Spread
+見開き（利用できません）	Spread (unavailable)
+見開きまたは自動を選んだ場合に使用します。	Used when Spread or Automatic is selected.
+見開き全体	Entire spread
+見開き全体を見る	View entire spread
+現在のページから開始	Start from the current page
+現在のページから全画面を開始	Start fullscreen from the current page
+現在のページとViewer設定を独立した漫画としてコピーします。保存済みの追加設定も保持され、元のViewerは変更されません。	Copy the current pages and Viewer settings as an independent comic. Saved extension settings are retained and the original Viewer is not changed.
+現在のページにコマを追加	Add a panel to the current page
+現在のページ構成には、見開きとして組み合わせ可能なページがありません。横長ページなどは単独表示されます。	The current page set has no pages that can be paired as a spread. Landscape pages and other unmatched pages are shown separately.
+現在のページ送り方式を全画面で使用します。	Use the current page navigation mode in fullscreen.
+公開画面では表紙と「漫画を読む」ボタンだけを表示し、全画面で読み始めます。下の編集プレビューでは従来どおり漫画内容を編集できます。	On the published page, show only the cover and a “Read manga” button, then open the reader in fullscreen. Use the editor preview below to edit the comic as usual.
+公開画面の表示プレビュー	Published display preview
+公開済み	Published
+更新:	Updated:
+更新日	Updated
+高さ（%）	Height (%)
+合わせる位置	Alignment position
+左（縦並び）	Left (vertical)
+左右にスワイプしてコマを送れます	Swipe left or right to navigate panels
+左綴じ	Left binding
+再利用する漫画Viewerを登録・編集します。	Register and edit reusable manga Viewers.
+削除	Delete
+次のコマ	Next panel
+次のページ	Next page
+次へ	Next
+自動	Automatic
+自動（コマの大きさに合わせる）	Automatic (fit to panel size)
+自動（収まるときは中央）	Automatic (center when it fits)
+自動（利用できません）	Automatic (unavailable)
+自由ズームと移動を有効化	Enable free zoom and pan
+弱い	Gentle
+収集のON/OFF、保存期間、全削除は解析専用の設定画面で管理します。	Manage collection, retention, and deletion from the dedicated Analytics Settings screen.
+収集継続・レポート利用不可	Collection active; reports unavailable
+縦スクロール	Vertical scrolling
+縮小	Zoom out
+小さなコマで寄りすぎる場合は下げてください。	Lower this value if small panels are enlarged too much.
+少なくとも	At least 
+承認待ち	Pending
+詳細データの保存期間	Detailed data retention
+上へ移動	Move up
+新しい漫画	New comic
+新しい漫画を登録	Register a new comic
+新規追加	Add New
+製品の状態を確認し、漫画の管理や解析データの設定へ移動できます。	Review product status and open comic management or analytics settings.
+設定	Settings
+先頭は表紙、末尾は巻末です。ドラッグまたは矢印で順番を変更できます。	The first image is the cover and the last is the back matter. Drag images or use the arrows to reorder them.
+先頭ページを単独表示（表紙向け）	Show the first page separately (cover)
+先頭ページを表紙として使用	Use the first page as the cover
+専用ビューアーで読む	Read by panel
+専用ビューアーの開始位置	Dedicated viewer start position
+選択できる漫画がありません。	No comics are available for selection.
+選択を解除	Clear selection
+選択を変更しない	Keep current selection
+選択済みのViewer	Selected Viewer
+選択済みのViewerを確認できません。削除または権限変更の可能性があります。	The selected Viewer could not be found. It may have been deleted or its permissions may have changed.
+前のコマ	Previous panel
+前のページ	Previous page
+前へ	Previous
+全ページを上から下へスクロールして読みます。	Read all pages by scrolling from top to bottom.
+全画面で読む	Read in fullscreen
+全画面の見開き表示	Fullscreen spread display
+全画面の読み方	Fullscreen reading mode
+全画面ボタンを表示	Show fullscreen button
+全画面を終了	Exit fullscreen
+全体	Fit
+全体表示に戻る	Return to full view
+組の見開きが作成されます。横長ページや組み合わせできないページは単独表示されます。	spread pair(s) will be created. Landscape and unmatched pages are shown separately.
+通常表示では見開き全体を表示し、全画面のときだけ選択した読み方を使用します。	Show the entire spread in the normal view and use the selected mode only in fullscreen.
+綴じ方向	Binding direction
+登録したコマを専用ビューアーで順に大きく表示します。	Enlarge registered panels in sequence in a dedicated viewer.
+登録した漫画を編集	Edit registered comic
+登録できる漫画ページがありません。	There are no comic pages to register.
+登録済みViewer	Registered Viewer
+登録済みの漫画はありません。	No registered comics found.
+登録済み漫画	Registered Comics
+登録中…	Registering…
+読者イベントの収集を有効にする	Enable reader event collection
+読者が＋／－、ピンチ操作で拡大し、拡大中は画像をドラッグして移動できます。	Readers can zoom with the plus and minus controls or pinch gestures, then drag the enlarged image.
+読者が通常のページ表示をブラウザー全体へ広げられます。	Allow readers to expand the regular page view to fill the browser.
+日	days
+非公開	Private
+標準	Normal
+表紙	Cover
+表紙から全画面で読む	Open fullscreen from the cover
+表紙画像	Cover image
+表紙画像として使用	Use as cover image
+表紙画像を削除	Remove cover image
+表紙画像を設定	Set cover image
+表紙未設定	No cover set
+表示継続・編集不可	Display active; editing unavailable
+表示方法	Display method
+不明	Unknown
+幅（%）	Width (%)
+編集	Edit
+編集するコマ設定	Panel set to edit
+編集画面では表紙のみ表示します。公開側ではViewer全体が表示されます。	Only the cover is shown in the editor. The complete Viewer appears on the published page.
+保存済みのセッション、ページ到達、イベントをすべて削除します。この操作は元に戻せません。設定とテーブルは残ります。	Delete all saved sessions, page progress, and events. This action cannot be undone. Settings and tables remain.
+漫画	Manga
+漫画タイトルを入力してください。	Enter a comic title.
+漫画の最大幅（px）	Maximum comic width (px)
+漫画ページを複数選択してください。	Select one or more comic pages.
+漫画ライブラリ	Manga Library
+漫画ライブラリから選び直す	Choose again from Manga Library
+漫画ライブラリから登録済みのViewerを1冊選んで表示します。	Select and display one registered Viewer from Manga Library.
+漫画ライブラリに登録	Register in Manga Library
+漫画ライブラリの表紙画像URL	Manga Library cover image URL
+漫画ライブラリへの登録に失敗しました。	Could not register the comic in Manga Library.
+漫画ライブラリへ登録しました。元のViewerは変更されていません。	Registered in Manga Library. The original Viewer was not changed.
+漫画ライブラリを開く	Open Manga Library
+漫画ライブラリを読み込めませんでした。	Could not load Manga Library.
+漫画を確認	View comic
+漫画を検索	Search comics
+漫画を新規登録	Register New Comic
+漫画を全画面で読む	Read manga in fullscreen
+漫画を読む	Read manga
+漫画を編集	Edit comic
+漫画画像をページ送り、見開き、全画面、コマ読みで表示します。	Display manga images with paged, spread, fullscreen, and Panel-by-Panel reading.
+漫画解析	Manga Analytics
+漫画解析・AI相談を利用するには、漫画ライブラリへの登録後、登録済みViewerとして表示してください。	To use Manga Analytics and AI consultation, register the comic in Manga Library and display it as a Registered Viewer.
+漫画解析データをすべて削除しますか？	Delete all Manga Analytics data?
+漫画解析データを削除しました。	Manga Analytics data deleted.
+漫画解析は現在利用できません	Manga Analytics is currently unavailable
+漫画解析設定	Manga Analytics Settings
+漫画内容の編集プレビュー	Comic editing preview
+未導入または無効	Not installed or inactive
+無題の漫画	Untitled comic
+有効	Active
+予約済み	Scheduled
+利用可能	Available
+利用不可	Unavailable

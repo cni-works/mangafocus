@@ -1,0 +1,19 @@
+{
+  "apiVersion": 3,
+  "name": "ai-manga-viewer/library-viewer",
+  "title": "Registered Viewer",
+  "category": "ai-manga-viewer",
+  "icon": "book-alt",
+  "description": "Select and display one registered Viewer from Manga Library.",
+  "keywords": [ "Manga", "Library", "Registered", "Viewer" ],
+  "textdomain": "mangafocus",
+  "attributes": {
+    "viewerId": { "type": "integer", "default": 0 },
+    "instanceKey": { "type": "string", "default": "" }
+  },
+  "supports": {
+    "align": [ "wide", "full" ],
+    "anchor": true,
+    "html": false
+  }
+}
