@@ -127,9 +127,9 @@ for name in ['Description','Installation','Frequently Asked Questions','Screensh
 for rel in ['docs/readme-next-draft.txt','docs/changelog-next-draft.md','docs/manual-settings-phase5.md','docs/manual-settings-phase5.json','docs/translation-inventory-phase5.csv']:
  assert rel not in allow
 assert len(re.findall(r'^\d+\. ',draft.split('== Screenshots ==')[1].split('== Development ==')[0],re.M))==6
-assert 'Stable tag: 0.4.0' in readme and 'Stable tag: 0.3.0' in draft
-main=(r/'mangafocus.php').read_text(encoding='utf-8');assert re.search(r'\* Version:\s*(\S+)',main)[1]=='0.4.0'
-assert "define( 'AI_MANGA_VIEWER_VERSION', '0.4.0' )" in main
+assert 'Stable tag: 0.4.1' in readme and 'Stable tag: 0.3.0' in draft
+main=(r/'mangafocus.php').read_text(encoding='utf-8');assert re.search(r'\* Version:\s*(\S+)',main)[1]=='0.4.1'
+assert "define( 'AI_MANGA_VIEWER_VERSION', '0.4.1' )" in main
 assert translations.info()['project-id-version']=='MangaFocus 0.4.0'
 # Counterexamples and deterministic regeneration are isolated in a fresh temporary directory.
 with tempfile.TemporaryDirectory(prefix='mangafocus-i18n-check-') as work:

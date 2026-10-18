@@ -4,13 +4,16 @@ Tags: manga, comic, viewer, reader, gutenberg
 Requires at least: 6.3
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.4.0
+Stable tag: 0.4.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 Publish image-based comics with panel-by-panel reading, page turns, spreads, fullscreen, vertical scrolling, zoom, and Manga Library.
 
 == Description ==
+
+* [Official website](https://mangafocus.cn-introduce.com/)
+* [Documentation (Japanese)](https://mangafocus.cn-introduce.com/guide/)
 
 = About MangaFocus =
 
@@ -51,6 +54,8 @@ Choose a single-page, spread, or automatic layout. Spread and automatic layouts 
 Fullscreen reading supports normal page navigation or continuous vertical scrolling. Spread-based comics can also focus on one complete page at a time while fullscreen.
 
 = Pro add-on =
+
+Pro is being prepared for release. Free works independently.
 
 The Core plugin can be extended by a compatible Pro add-on. Pro features include calls to action, analytics reports, AI consultation material, and AI manga production support. Panel-by-panel reading is included in Free/Core.
 
@@ -132,6 +137,10 @@ The maintained development repository is available at https://github.com/cni-wor
 The release build tool is available in the public development repository at https://github.com/cni-works/mangafocus/blob/3c13166c04880ebe4342dfcdb4f4bd9dbbcc70eb/scripts/build-release.ps1 and is not included in the distributed plugin. To run it, check out the corresponding repository revision and run `powershell -File scripts/build-release.ps1` from the repository root.
 
 == Changelog ==
+
+= 0.4.1 =
+
+* Added website/manual links and clarified Pro's upcoming release. No feature or data changes.
 
 = 0.4.0 =
 

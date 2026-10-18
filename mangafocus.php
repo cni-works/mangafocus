@@ -2,7 +2,7 @@
 /**
  * Plugin Name: MangaFocus – Panel-by-Panel Manga Reader
  * Description: A manga reader for WordPress with page, spread, vertical, zoom, and panel-by-panel reading.
- * Version: 0.4.0
+ * Version: 0.4.1
  * Requires at least: 6.3
  * Requires PHP: 7.4
  * Author: CNI
@@ -10,14 +10,14 @@
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: mangafocus
  * Domain Path: /languages
+ * Plugin URI: https://mangafocus.cn-introduce.com/
  */
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
 if ( ! defined( 'AI_MANGA_VIEWER_VERSION' ) ) {
-	define( 'AI_MANGA_VIEWER_VERSION', '0.4.0' );
+	define( 'AI_MANGA_VIEWER_VERSION', '0.4.1' );
 }
 
 if ( ! defined( 'AI_MANGA_VIEWER_PLUGIN_FILE' ) ) {

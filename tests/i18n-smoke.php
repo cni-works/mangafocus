@@ -22,8 +22,8 @@ $runtime_files = array(
 function mangafocus_i18n_english_scope( $source, $relative ) {
 	if ( 'readme.txt' !== $relative || false === $source ) { return $source; }
 	$source = preg_replace(
-		'~== Changelog ==\R\R= 0\.4\.0 =\R\R(?:\* [^\r\n]+\R)+\R(?== 0\.3\.0 =)~u',
-		"== Changelog ==\n\n",
+		'~= 0\.4\.0 =\R\R(?:\* [^\r\n]+\R)+\R(?== 0\.3\.0 =)~u',
+		'',
 		$source,
 		1,
 		$changelog_count
