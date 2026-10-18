@@ -19,7 +19,7 @@ OFFでは先頭ページから開始します。表紙から全画面で読む�
 OFFの場合は、通常表示で開いているページに関係なく最初から開始します。	When disabled, the dedicated viewer starts from the beginning regardless of the page currently open.
 ONにすると、PCのコマを初期値にして、スマホ用の枠と順番を別に調整できます。	When enabled, desktop panels are used as the initial values and you can adjust mobile regions and order separately.
 ONの場合、次ページへ進んだ後もページ端の矢印を表示します。	When enabled, edge arrows remain visible after moving to the next page.
-コマ読みでコマを順番に拡大表示	Enlarge panels in sequence with Panel-by-Panel reading
+フォーカスモードでコマを順番に拡大表示	Enlarge panels in sequence with Focus Mode
 Proが利用可能な場合だけ収集します。OFFにしても過去の解析データは削除されません。	Events are collected only when Pro is available. Disabling this option does not delete existing analytics data.
 Proバージョン	Pro version
 Pro状態	Pro status
@@ -38,9 +38,8 @@ Viewer情報	Viewer details
 コピーできませんでした。	Could not copy.
 コマ	Panel
 コマへ戻る	Return to panel
-コマ読み	Panel-by-Panel
-コマ読み画面	Panel-by-Panel viewer
-コマ読みを有効化	Enable Panel-by-Panel reading
+フォーカスモード	Focus Mode
+フォーカスモードを有効にする	Enable Focus Mode
 コマ範囲を拡大	Enlarge the panel region
 コミック	Comic
 ライブラリ	Library
@@ -68,7 +67,7 @@ Viewer情報	Viewer details
 ビューアーを閉じる	Close viewer
 ページ	Page
 ページビューアー	Page viewer
-ページめくり演出	Page transition animation
+ページ切り替え効果	Page transition animation
 ページレイアウト	Page layout
 ページを左右キーまたはスワイプで送れます	Use the left and right arrow keys or swipe to navigate pages
 ページ画像	Page images
@@ -77,7 +76,7 @@ Viewer情報	Viewer details
 ページ全体	Full page
 ページ全体を表示	Show full page
 ページ送り	Paged reading
-ページ送り、見開き、全画面での1ページ表示、縦読み、ズーム、コマ読み、漫画ライブラリ	Paged reading, spreads, page focus, fullscreen, vertical reading, zoom, Panel-by-Panel, Manga Library
+ページ送り、見開き、全画面での1ページ表示、縦読み、ズーム、フォーカスモード、漫画ライブラリ	Paged reading, spreads, page focus, fullscreen, vertical reading, zoom, Focus Mode, Manga Library
 ページ端クリックで送る	Navigate by clicking page edges
 ページ内でそのまま読む	Read directly on the page
 ページ内の表示	Inline display
@@ -160,7 +159,6 @@ Viewer情報	Viewer details
 先頭は表紙、末尾は巻末です。ドラッグまたは矢印で順番を変更できます。	The first image is the cover and the last is the back matter. Drag images or use the arrows to reorder them.
 先頭ページを単独表示（表紙向け）	Show the first page separately (cover)
 先頭ページを表紙として使用	Use the first page as the cover
-コマ読みを開始	Read by panel
 専用ビューアーの開始位置	Dedicated viewer start position
 選択できる漫画がありません。	No comics are available for selection.
 選択を解除	Clear selection
@@ -228,7 +226,7 @@ Viewer情報	Viewer details
 漫画を全画面で読む	Read manga in fullscreen
 漫画を読む	Read manga
 漫画を編集	Edit comic
-漫画画像をページ送り、見開き、全画面、コマ読みで表示します。	Display manga images with paged, spread, fullscreen, and Panel-by-Panel reading.
+漫画画像をページ送り、見開き、全画面、フォーカスモードで表示します。	Display manga images with paged, spread, fullscreen, and Focus Mode.
 漫画解析	Manga Analytics
 漫画解析・AI相談を利用するには、漫画ライブラリへの登録後、登録済みViewerとして表示してください。	To use Manga Analytics and AI consultation, register the comic in Manga Library and display it as a Registered Viewer.
 漫画解析データをすべて削除しますか？	Delete all Manga Analytics data?
@@ -248,8 +246,6 @@ Viewer情報	Viewer details
 全画面モード	Fullscreen mode
 全画面モードを有効にする	Enable fullscreen mode
 漫画を画面いっぱいに表示して読むモードです。	Read manga using the full screen.
-コマ読みモード	Panel reading mode
-コマ読みモードを有効にする	Enable panel reading mode
 設定したコマを1コマずつ拡大して読むモードです。	Enlarge configured panels one at a time.
 全体設定	General settings
 スクロール位置を自動調整	Automatically adjust scroll position
@@ -257,17 +253,17 @@ Viewer情報	Viewer details
 スクロール調整位置	Scroll adjustment position
 スクロール調整強度	Scroll adjustment strength
 全画面表示での見開きの読み方	Fullscreen spread reading mode
-コマが設定されていません。コマ読みのみを利用する場合は、先にコマを追加してください。	No panels are configured. Add panels before using panel reading alone.
+コマが設定されていません。フォーカスモードのみを利用する場合は、先にコマを追加してください。	No panels are configured. Add panels before using Focus Mode alone.
 少なくとも1つの表示モードを有効にしてください。	Keep at least one reading mode enabled.
-コマ読みのみを利用する場合は、先にコマを追加してください。	Add at least one panel before using panel reading alone.
-コマ読みの開始位置	Panel reading start position
-OFFの場合、現在のページに関係なく先頭からコマ読みを開始します。	When disabled, panel reading starts from the beginning regardless of the page currently open.
+フォーカスモードのみを利用する場合は、先にコマを追加してください。	Add at least one panel before using Focus Mode alone.
+フォーカスモードの開始位置	Focus Mode start position
+OFFの場合、現在のページに関係なく先頭からフォーカスモードを開始します。	When disabled, Focus Mode starts from the beginning regardless of the page currently open.
 通常・全画面のページ送りで使用します。	Used for inline and fullscreen paged reading.
-通常・全画面のページ送りとコマ読みに使用します。縦読みは上から下へ読みます。	Used for page and panel navigation. Vertical reading scrolls from top to bottom.
+通常・全画面のページ送りとフォーカスモードに使用します。縦読みは上から下へ読みます。	Used for page and panel navigation. Vertical reading scrolls from top to bottom.
 通常表示の最大幅と、全画面の縦読みの基準幅に使用します。	Sets the inline maximum width and the base width for fullscreen vertical reading.
-通常表示・全画面表示で使用します。コマ読みのページ番号は別の表示です。	Used for inline and fullscreen reading. Panel reading has its own page counter.
+通常表示・全画面表示で使用します。フォーカスモードのページ番号は別の表示です。	Used for inline and fullscreen reading. Focus Mode has its own page counter.
 単ページのページ送りに適用します。見開きでのページ送りと縦読みには適用しません。	The page-turn animation applies to single-page navigation. Spread navigation and vertical scrolling do not use it.
-通常表示・全画面表示で使用します。コマ読みの拡大率は別に設定します。	Used for inline and fullscreen reading. Panel magnification is configured separately.
+通常表示・全画面表示で使用します。フォーカスモードの拡大率は別に設定します。	Used for inline and fullscreen reading. Panel magnification is configured separately.
 漫画一覧と、読み始める前に表示する表紙画像を設定します。	Set the cover used in the comic list and before reading.
 選択中の表紙プレビュー	Selected cover preview
 表紙は選択されています。プレビューは読み込み中、または取得できません。	Cover selected. Its preview is loading or unavailable.
@@ -283,9 +279,9 @@ OFFの場合、現在のページに関係なく先頭からコマ読みを開�
 指定したコマ範囲に合わせる	Fit to the panel region
 自動は幅74%以上・高さ68%以上の範囲でページ全体を表示します。「コマ範囲に合わせる」は常に指定範囲を使用します。「ページ全体」は範囲と拡大率を使用しません。	Automatic shows the full page for regions at least 74% wide and 68% high. Fit to the panel region always uses the selected region. Full page ignores the region and zoom level.
 コマ範囲の表示にのみ適用します。ページ全体表示では使用しません。小さなコマが大きすぎる場合は値を下げてください。	Adjusts region fitting only. Full-page display does not use this value. Lower it if small panels are enlarged too much.
-現在のページからコマ読みを開始	Start panel reading from the current page
-ONでは現在のページの先頭コマ、OFFでは1ページ目から開始します。最終ページで閉じると1ページ目に戻ります。それ以外では、コマ読みのみの場合もONで同じページから再開できます。	ON starts at the first panel of the current page. OFF starts at page 1. Closing on the last page returns to page 1; otherwise ON can resume from the same page, including panel-only reading.
-コマ未設定のページも、ページ全体表示で順番に読みます。コマ読みのみで利用するには、1つ以上のコマを設定してください。	Pages without panels remain in order as full pages. Add at least one panel before using panel reading alone.
+現在のページからフォーカスモードを開く	Start Focus Mode from the current page
+ONでは現在のページの先頭コマ、OFFでは1ページ目から開始します。最終ページで閉じると1ページ目に戻ります。それ以外では、フォーカスモードのみの場合もONで同じページから再開できます。	ON starts at the first panel of the current page. OFF starts at page 1. Closing on the last page returns to page 1; otherwise ON can resume from the same page, including Focus Mode alone.
+コマ未設定のページも、ページ全体表示で順番に読みます。フォーカスモードのみで利用するには、1つ以上のコマを設定してください。	Pages without panels remain in order as full pages. Add at least one panel before using Focus Mode alone.
 先頭ページを単独表示	Show the first page separately
 標準の「アイキャッチ画像」パネルも同じ表紙を編集します。変更は両方に反映されます。	The standard Featured image panel edits the same cover. Changes appear in both places.
 OFF：先頭ページのみ。ON：全ページに表示します。	Off: first page only. On: every page.
@@ -293,14 +289,13 @@ OFF：先頭ページのみ。ON：全ページに表示します。	Off: first 
 読者が利用できる読み方を選びます。OFFにしても各モードの設定値は保持されます。	Choose how readers can read this comic. Disabled modes keep their saved settings.
 通常表示の設定	Inline display settings
 全画面表示の設定	Fullscreen display settings
-コマ読みの設定	Panel reading settings
+フォーカスモードの設定	Focus Mode settings
 共通設定	Shared settings
 通常表示を有効にする	Enable inline display
 全画面表示を有効にする	Enable fullscreen display
-コマ読みを有効にする	Enable panel reading
 ON：投稿・固定ページ内で漫画を表示します。OFF：表紙と、有効な他のモードの起動ボタンを表示します。	On: read within the post or page. Off: show a cover with buttons for the other enabled modes.
 ON：全画面でページ送り・縦読みを利用できます。OFF：全画面の起動ボタンを表示しません。	On: offer fullscreen paged or vertical reading. Off: hide the fullscreen launch button.
-ON：設定したコマを1コマずつ拡大表示します。OFF：コマ読みの起動ボタンを表示しません。コマ読みだけを使うには、コマを1つ以上設定してください。	On: enlarge configured panels one at a time. Off: hide the panel reading launch button. Configure at least one panel to use this mode alone.
+ON：設定したコマを1コマずつ拡大表示します。OFF：フォーカスモードの起動ボタンを表示しません。フォーカスモードだけを使うには、コマを1つ以上設定してください。	On: enlarge configured panels one at a time. Off: hide the Focus Mode launch button. Configure at least one panel to use this mode alone.
 文書のスクロールが止まったとき、画面内の漫画の位置を調整します。ページ送り時の自動位置合わせではありません。	After document scrolling stops, adjust the comic position in the viewport. This is not automatic alignment on page turns.
 案内矢印は「ページ端クリックによるページ送り」が有効な場合に表示されます。	Arrows require page-edge navigation to be enabled.
 表紙画像はこちらで設定できます。標準の「アイキャッチ画像」も予備の操作場所として利用でき、同じ画像に連動します。	Set the cover here. The standard Featured image panel is also available as a fallback and uses the same image.
@@ -313,16 +308,22 @@ X座標（%）	X (%)
 Y座標（%）	Y (%)
 漫画ID：	Viewer ID:
 MangaFocus – コマ読み対応漫画ビューアー	MangaFocus – Panel-by-Panel Manga Reader
-WordPressでページ送り・見開き・縦読み・ズーム・コマ読みを利用できる漫画ビューアーです。	A manga reader for WordPress with page, spread, vertical, zoom, and panel-by-panel reading.
+WordPressでページ送り・見開き・縦読み・ズーム・フォーカスモードを利用できる漫画ビューアーです。	A manga reader for WordPress with page, spread, vertical, zoom, and Focus Mode.
 CTA	CTA
 Free Viewer	Free Viewer
 MangaFocus	MangaFocus
 PC	PC
 —	—
-コマ読みで別のページへ移動するときの演出にも、この設定を使用します。	Panel reading also uses this setting when moving between pages.
-コマ読みへの切り替え時	When switching to panel reading
-通常ビュアーで途中まで読んでからコマ読みに切り替えた際、どのページから読み始めるかを選びます。	Choose which page to start from when switching to panel reading after reading partway through the inline viewer.
+フォーカスモードで別のページへ移動するときの演出にも、この設定を使用します。	Focus Mode also uses this setting when moving between pages.
+フォーカスモードへの切り替え時	When switching to Focus Mode
+通常ビュアーで途中まで読んでからフォーカスモードに切り替えた際、どのページから読み始めるかを選びます。	Choose which page to start from when switching to Focus Mode after reading partway through the inline viewer.
 全画面表示からの切り替えにも適用されます。続ける場合も、現在ページの先頭コマから開始します。	This also applies when switching from fullscreen. Continuing starts at the first panel of the current page.
 最初のページから読む	Read from the first page
 読んでいるページから続ける	Continue from the current page
 見開き表示時、先頭ページを1ページだけで表示します。	In spread view, display the first page on its own.
+通常のページ送りと見開き全体の切り替えに使用します。フォーカスモード・縦読み・全画面の1ページ拡大では従来の演出を維持します。	Used for normal page navigation, including entire spreads. Focus Mode, vertical scrolling and fullscreen page focus keep their own effects.
+なし	None
+フェード	Fade
+スライド	Slide
+フォーカスモードで読む	Read in Focus Mode
+フォーカスモードを終了	Exit Focus Mode

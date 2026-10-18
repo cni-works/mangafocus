@@ -4,8 +4,8 @@ const path = require('node:path');
 const vm = require('node:vm');
 const root = path.resolve(__dirname, '..');
 const clone = value => JSON.parse(JSON.stringify(value));
-const names = ['Page images', 'Inline viewer', 'Fullscreen mode', 'Panel reading mode', 'General settings'];
-const switches = ['Enable inline viewer', 'Enable fullscreen mode', 'Enable panel reading mode'];
+const names = ['Page images', 'Inline viewer', 'Fullscreen mode', 'Focus Mode', 'General settings'];
+const switches = ['Enable inline viewer', 'Enable fullscreen mode', 'Enable Focus Mode'];
 function harness(locale = 'en', withPro = false, withCover = false) {
  const messages = {};
  for (const handle of ['editor', 'panel-reader-editor']) Object.assign(messages, JSON.parse(fs.readFileSync(path.join(root, 'languages/mangafocus-ja-ai-manga-viewer-'+handle+'.json'))).locale_data.messages);
@@ -47,7 +47,7 @@ function run() {
    assert.ok(h.findLabel(panel,['Automatically adjust scroll position','Fullscreen reading mode','Configure mobile panels separately'][i]),'Details share their switch panel');
   }
   const before=clone(h.attrs);
-  const dedicated=[['Enable inline viewer','Automatically adjust scroll position'],['Enable fullscreen mode','Fullscreen reading mode'],['Enable panel reading mode','Configure mobile panels separately']];
+  const dedicated=[['Enable inline viewer','Automatically adjust scroll position'],['Enable fullscreen mode','Fullscreen reading mode'],['Enable Focus Mode','Configure mobile panels separately']];
   for(const [toggle,detail] of dedicated) {
    h.findLabel(tree,toggle).props.onChange(false); tree=h.render();
    assert.equal(h.findLabel(tree,detail),null,'OFF must hide details');
@@ -84,10 +84,10 @@ function run() {
   tree=h.render();h.findLabel(tree,'Enable inline viewer').props.onChange(false);tree=h.render();
   assert.equal(h.updates.length,0);assert.ok(JSON.stringify(tree).includes(h.translate('Keep at least one reading mode enabled.','mangafocus')));
   h.reset({...h.fields,enableInline:true,enableFullscreen:false,focusReader:true,pages:h.fields.pages.map(p=>({...p,focusAreas:[],mobileFocusAreas:[]}))});
-  tree=h.render();assert.ok(JSON.stringify(tree).includes(h.translate('No panels are configured. Add panels before using panel reading alone.','mangafocus')));
+  tree=h.render();assert.ok(JSON.stringify(tree).includes(h.translate('No panels are configured. Add panels before using Focus Mode alone.','mangafocus')));
   h.findLabel(tree,'Enable inline viewer').props.onChange(false);assert.equal(h.updates.length,0);
   h.reset({...h.fields,pages:[]});tree=h.render();assert.deepEqual(h.panels(tree).map(p=>p.props.title),names.map(n=>h.translate(n,'mangafocus')),'Five core panels without pages');
-  for(const name of [...names,...switches,'When switching to panel reading','No panels are configured. Add panels before using panel reading alone.']) {
+  for(const name of [...names,...switches,'When switching to Focus Mode','No panels are configured. Add panels before using Focus Mode alone.']) {
    if(locale==='ja')assert.notEqual(h.translate(name,'mangafocus'),name,'Missing Japanese '+name);
    else assert.equal(h.translate(name,'mangafocus'),name);
   }
@@ -98,7 +98,7 @@ function run() {
   h.reset({...h.fields,enableInline:inline,enableFullscreen:full,focusReader:panel});
   const tree=h.render();for(const [label,value]of [[switches[0],inline],[switches[1],full],[switches[2],panel]])assert.equal(h.findLabel(tree,label).props.checked,value);
  }
- for(const [label,value,key,stored=value] of [['Scroll adjustment strength','gentle','scrollAssistStrength'],['Fullscreen reading mode','vertical','fullscreenReadingMode'],['When switching to panel reading','first','focusReaderStartAtCurrent',false],['Page layout','single','pageLayout'],['Maximum comic width (px)',700,'maxWidth']]) {
+ for(const [label,value,key,stored=value] of [['Scroll adjustment strength','gentle','scrollAssistStrength'],['Fullscreen reading mode','vertical','fullscreenReadingMode'],['When switching to Focus Mode','first','focusReaderStartAtCurrent',false],['Page layout','single','pageLayout'],['Maximum comic width (px)',700,'maxWidth']]) {
   const legacy={...h.fields};delete legacy.enableInline;h.reset(legacy);
   const tree=h.render();h.runEffects();assert.equal(h.updates.length,0);
   h.findLabel(tree,label).props.onChange(value);

@@ -3,8 +3,8 @@ const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const path=require('node:path');
 const {harness}=require('./inspector-groups-smoke.cjs');
-const title='When switching to panel reading';
-const description='Choose which page to start from when switching to panel reading after reading partway through the inline viewer.';
+const title='When switching to Focus Mode';
+const description='Choose which page to start from when switching to Focus Mode after reading partway through the inline viewer.';
 const note='This also applies when switching from fullscreen. Continuing starts at the first panel of the current page.';
 const options=[['first',false,'Read from the first page'],['current',true,'Continue from the current page']];
 let cases=0;
@@ -20,7 +20,7 @@ for(const locale of ['en','ja'])for(const legacy of [false,true])for(const saved
  assert.equal(control().props.selected,saved?'current':'first');
  assert.deepEqual(Array.from(control().props.options,o=>({value:o.value,label:o.label})),options.map(([value,,label])=>({value,label:t(label)})));
  assert.equal(control().props.help,t(description)+' '+t(note));
- assert.equal(h.findLabel(tree,'Start panel reading from the current page'),null,'Old toggle must not coexist');
+ assert.equal(h.findLabel(tree,'Start Focus Mode from the current page'),null,'Old toggle must not coexist');
  for(const [value,stored] of options){
   const before=JSON.parse(JSON.stringify(h.attrs));const n=h.updates.length;
   control().props.onChange(value);assert.equal(h.updates.length,n+1);

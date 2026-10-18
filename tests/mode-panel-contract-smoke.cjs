@@ -3,7 +3,7 @@ const assert=require('node:assert/strict');
 const {harness,switches}=require('./inspector-groups-smoke.cjs');
 for(const locale of ['en','ja']) {
  const h=harness(locale,true,true), t=s=>h.translate(s,'mangafocus');let tree=h.render();h.runEffects();
- const expected=['Cover image','Page images','Inline viewer','Fullscreen mode','Panel reading mode','General settings'];
+ const expected=['Cover image','Page images','Inline viewer','Fullscreen mode','Focus Mode','General settings'];
  assert.deepEqual(h.panels(tree).slice(0,6).map(p=>p.props.title),expected.map(t));assert.equal(h.panels(tree).length,7,'Pro panel follows six core groups');
  const initial=JSON.parse(JSON.stringify(h.attrs));
  for(let i=0;i<3;i++) {

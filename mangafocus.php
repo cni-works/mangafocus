@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name: MangaFocus – Panel-by-Panel Manga Reader
- * Description: A manga reader for WordPress with page, spread, vertical, zoom, and panel-by-panel reading.
- * Version: 0.4.1
+ * Description: A manga reader for WordPress with page, spread, vertical, zoom, and Focus Mode.
+ * Version: 0.5.0
  * Requires at least: 6.3
  * Requires PHP: 7.4
  * Author: CNI
@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( ! defined( 'AI_MANGA_VIEWER_VERSION' ) ) {
-	define( 'AI_MANGA_VIEWER_VERSION', '0.4.1' );
+	define( 'AI_MANGA_VIEWER_VERSION', '0.5.0' );
 }
 
 if ( ! defined( 'AI_MANGA_VIEWER_PLUGIN_FILE' ) ) {
@@ -44,7 +44,7 @@ function ai_manga_viewer_load_textdomain() {
 
 	if ( file_exists( $language_pack ) ) {
 		load_textdomain( 'mangafocus', $language_pack );
-		return;
+		// Merge bundled messages missing from an older official language pack.
 	}
 
 	if ( file_exists( $bundled ) ) {
@@ -439,6 +439,7 @@ function ai_manga_viewer_sanitize_library_attributes( $attributes ) {
 		'mobileFocusReader'         => ! empty( $attributes['mobileFocusReader'] ),
 	);
 	if ( isset( $attributes['enableInline'] ) && is_bool( $attributes['enableInline'] ) ) { $sanitized['enableInline'] = $attributes['enableInline']; }
+	if ( isset( $attributes['pageTransition'] ) && is_string( $attributes['pageTransition'] ) && in_array( $attributes['pageTransition'], array( 'none', 'turn', 'fade', 'slide' ), true ) ) { $sanitized['pageTransition'] = $attributes['pageTransition']; }
 	return $sanitized;
 }
 
@@ -466,7 +467,7 @@ function ai_manga_viewer_register_direct_viewer( WP_REST_Request $request ) {
 	$attributes = ai_manga_viewer_sanitize_library_attributes( $request->get_param( 'attributes' ) );
 	if ( isset( $attributes['enableInline'] ) && false === $attributes['enableInline'] && ! $attributes['enableFullscreen'] ) {
 		if ( ! $attributes['focusReader'] ) { return new WP_Error( 'amv_reading_mode_required', __( 'Keep at least one reading mode enabled.', 'mangafocus' ), array( 'status' => 400 ) ); }
-		if ( ! ai_manga_viewer_has_panel_areas( $attributes, $attributes['pages'] ) ) { return new WP_Error( 'amv_panel_configuration_required', __( 'Add at least one panel before using panel reading alone.', 'mangafocus' ), array( 'status' => 400 ) ); }
+		if ( ! ai_manga_viewer_has_panel_areas( $attributes, $attributes['pages'] ) ) { return new WP_Error( 'amv_panel_configuration_required', __( 'Add at least one panel before using Focus Mode alone.', 'mangafocus' ), array( 'status' => 400 ) ); }
 	}
 	if ( empty( $attributes['pages'] ) ) {
 		return new WP_Error( 'amv_pages_required', __( 'There are no comic pages to register.', 'mangafocus' ), array( 'status' => 400 ) );

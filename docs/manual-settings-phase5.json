@@ -5,7 +5,7 @@
     "japanese": "表紙画像を選択",
     "description": "漫画ライブラリで表紙画像を選択する。",
     "initial": "未設定（featured_media=0）",
-    "modes": "通常表示・全画面表示・コマ読み",
+    "modes": "通常表示・全画面表示・フォーカスモード",
     "key": "featured_media → _thumbnail_id",
     "notes": "ライブラリの選択中ブロックだけに表示。通常投稿・固定ページのアイキャッチは操作しない。"
   },
@@ -15,7 +15,7 @@
     "japanese": "表紙画像を変更",
     "description": "選択済みの表紙画像を変更する。",
     "initial": "設定済みの場合に表示",
-    "modes": "通常表示・全画面表示・コマ読み",
+    "modes": "通常表示・全画面表示・フォーカスモード",
     "key": "featured_media → _thumbnail_id",
     "notes": "標準アイキャッチと未保存の編集状態も共通。公開／更新で保存。"
   },
@@ -25,7 +25,7 @@
     "japanese": "表紙画像を解除",
     "description": "表紙の指定を解除する。",
     "initial": "設定済みの場合に表示",
-    "modes": "通常表示・全画面表示・コマ読み",
+    "modes": "通常表示・全画面表示・フォーカスモード",
     "key": "featured_media=0 → _thumbnail_id",
     "notes": "画像ファイルは削除しない。未設定時の1ページ目表示は代替プレビューであり自動保存しない。"
   },
@@ -35,7 +35,7 @@
     "japanese": "ページ画像を選択",
     "description": "メディアライブラリから漫画のページ画像を選択する。",
     "initial": "空配列",
-    "modes": "通常表示・全画面表示・コマ読み",
+    "modes": "通常表示・全画面表示・フォーカスモード",
     "key": "pages[]",
     "notes": "表紙画像とは別。ページ一覧で編集対象ページを選択する。"
   },
@@ -45,7 +45,7 @@
     "japanese": "ページ画像を編集",
     "description": "ページ画像を追加・選択し直す。",
     "initial": "画像選択後に表示",
-    "modes": "通常表示・全画面表示・コマ読み",
+    "modes": "通常表示・全画面表示・フォーカスモード",
     "key": "pages[]",
     "notes": "既存メディアと照合できる場合はコマ・pageKey・CTAを保持。画像の削除はページデータに影響するため確認して操作。"
   },
@@ -55,7 +55,7 @@
     "japanese": "上へ移動",
     "description": "選択した画像を前へ移動する。",
     "initial": "操作",
-    "modes": "通常表示・全画面表示・コマ読み",
+    "modes": "通常表示・全画面表示・フォーカスモード",
     "key": "pages[] の順序",
     "notes": "ドラッグによる並べ替えも可能。先頭は実行不可。"
   },
@@ -65,7 +65,7 @@
     "japanese": "下へ移動",
     "description": "選択した画像を後ろへ移動する。",
     "initial": "操作",
-    "modes": "通常表示・全画面表示・コマ読み",
+    "modes": "通常表示・全画面表示・フォーカスモード",
     "key": "pages[] の順序",
     "notes": "末尾は実行不可。"
   },
@@ -75,7 +75,7 @@
     "japanese": "削除",
     "description": "漫画から対象ページを外す。",
     "initial": "操作",
-    "modes": "通常表示・全画面表示・コマ読み",
+    "modes": "通常表示・全画面表示・フォーカスモード",
     "key": "pages[]",
     "notes": "そのページのコマ等も漫画データから外れる。メディアの画像自体を削除する操作ではない。"
   },
@@ -102,12 +102,12 @@
     "schema_default": false
   },
   {
-    "group": "コマ読みモード",
-    "english": "Enable panel reading mode",
-    "japanese": "コマ読みモードを有効にする",
+    "group": "フォーカスモード",
+    "english": "Enable Focus Mode",
+    "japanese": "フォーカスモードを有効にする",
     "description": "設定したコマを順番に拡大して読む機能を有効にする。",
     "initial": "OFF",
-    "modes": "コマ読み",
+    "modes": "フォーカスモード",
     "key": "focusReader",
     "notes": "単独使用には有効なコマが1つ以上必要。OFFでは起動ボタンを表示しない。",
     "schema_default": false
@@ -153,7 +153,7 @@
     "initial": "ページ送り",
     "modes": "全画面表示",
     "key": "fullscreenReadingMode",
-    "notes": "paged／vertical。通常表示やコマ読みの表示方式とは別。",
+    "notes": "paged／vertical。通常表示やフォーカスモードの表示方式とは別。",
     "schema_default": "paged"
   },
   {
@@ -179,18 +179,18 @@
     "schema_default": "overview"
   },
   {
-    "group": "コマ読みモード",
+    "group": "フォーカスモード",
     "english": "Configure mobile panels separately",
     "japanese": "スマートフォン用のコマを別に設定",
     "description": "スマートフォン用のコマ領域と順序を別に指定する。",
     "initial": "OFF",
-    "modes": "コマ読み",
+    "modes": "フォーカスモード",
     "key": "mobileFocusReader",
-    "notes": "スマートフォンでのコマ読み有効化スイッチではない。781 CSS px以下で別コマを使用。未設定の配列だけPCから初期コピーし、空配列を含む既存設定は保持。",
+    "notes": "スマートフォンでのフォーカスモード有効化スイッチではない。781 CSS px以下で別コマを使用。未設定の配列だけPCから初期コピーし、空配列を含む既存設定は保持。",
     "schema_default": false
   },
   {
-    "group": "コマ読みモード",
+    "group": "フォーカスモード",
     "english": "Panel set to edit",
     "japanese": "編集するコマ設定",
     "description": "PC用とスマートフォン用のどちらを編集するか選ぶ。",
@@ -200,124 +200,124 @@
     "notes": "スマートフォン別設定ONの場合のみ表示。モードやデータを切り替えるスイッチではない。"
   },
   {
-    "group": "コマ読みモード",
+    "group": "フォーカスモード",
     "english": "Add a panel to the current page",
     "japanese": "現在のページにコマを追加",
     "description": "現在ページの画像上をドラッグしてPC用のコマを追加する。",
     "initial": "コマなし",
-    "modes": "コマ読み",
+    "modes": "フォーカスモード",
     "key": "pages[].focusAreas[]",
     "notes": "描いた範囲からx／y／width／heightを決定。idは自動付与される内部識別子。"
   },
   {
-    "group": "コマ読みモード",
+    "group": "フォーカスモード",
     "english": "Add a mobile panel",
     "japanese": "スマートフォン用のコマを追加",
     "description": "現在ページにスマートフォン用コマを追加する。",
     "initial": "コマなし",
-    "modes": "スマートフォンのコマ読み",
+    "modes": "スマートフォンのフォーカスモード",
     "key": "pages[].mobileFocusAreas[]",
     "notes": "空の配列は有効な保存状態。スマートフォン用コマがないページはページ全体表示となりPC用へフォールバックしない。"
   },
   {
-    "group": "コマ読みモード",
+    "group": "フォーカスモード",
     "english": "Previous",
     "japanese": "前へ",
     "description": "選択したコマを読む順番の前へ移動する。",
     "initial": "操作",
-    "modes": "コマ読み",
+    "modes": "フォーカスモード",
     "key": "focusAreas[]／mobileFocusAreas[] の順序",
     "notes": "ページ一覧の「前へ移動」と区別する。"
   },
   {
-    "group": "コマ読みモード",
+    "group": "フォーカスモード",
     "english": "Next",
     "japanese": "次へ",
     "description": "選択したコマを読む順番の後ろへ移動する。",
     "initial": "操作",
-    "modes": "コマ読み",
+    "modes": "フォーカスモード",
     "key": "focusAreas[]／mobileFocusAreas[] の順序",
     "notes": "コマ一覧で操作。"
   },
   {
-    "group": "コマ読みモード",
+    "group": "フォーカスモード",
     "english": "Delete",
     "japanese": "削除",
     "description": "選択したコマを削除する。",
     "initial": "操作",
-    "modes": "コマ読み",
+    "modes": "フォーカスモード",
     "key": "focusAreas[]／mobileFocusAreas[]",
     "notes": "ページ画像やメディア自体は削除しない。"
   },
   {
-    "group": "コマ読みモード",
+    "group": "フォーカスモード",
     "english": "Display method",
     "japanese": "表示方法",
     "description": "コマの表示方法を選択する。",
     "initial": "自動（auto）",
-    "modes": "コマ読み",
+    "modes": "フォーカスモード",
     "key": "focusAreas[].view／mobileFocusAreas[].view",
     "notes": "自動は幅74%以上かつ高さ68%以上なら全体表示。focusはコマ領域、overviewはページ全体。"
   },
   {
-    "group": "コマ読みモード",
+    "group": "フォーカスモード",
     "english": "Zoom level (%)",
     "japanese": "ズーム倍率（%）",
     "description": "コマ領域に合わせる倍率を調整する。",
     "initial": "100%",
-    "modes": "コマ読み",
+    "modes": "フォーカスモード",
     "key": "focusAreas[].zoom／mobileFocusAreas[].zoom",
     "notes": "UIは60～110%、5刻み。全体表示ではこの値を使わない。通常表示の自由ズームとは別。"
   },
   {
-    "group": "コマ読みモード",
+    "group": "フォーカスモード",
     "english": "X (%)",
     "japanese": "X座標（%）",
     "description": "コマ中心の横位置を画像に対する割合で調整する。",
     "initial": "描画範囲により決定",
-    "modes": "コマ読み",
+    "modes": "フォーカスモード",
     "key": "focusAreas[].x／mobileFocusAreas[].x",
     "notes": "X／Yは0～100、幅／高さは5～100。コマ選択時に表示。"
   },
   {
-    "group": "コマ読みモード",
+    "group": "フォーカスモード",
     "english": "Y (%)",
     "japanese": "Y座標（%）",
     "description": "コマ中心の縦位置を画像に対する割合で調整する。",
     "initial": "描画範囲により決定",
-    "modes": "コマ読み",
+    "modes": "フォーカスモード",
     "key": "focusAreas[].y／mobileFocusAreas[].y",
     "notes": "X／Yは0～100、幅／高さは5～100。コマ選択時に表示。"
   },
   {
-    "group": "コマ読みモード",
+    "group": "フォーカスモード",
     "english": "Width (%)",
     "japanese": "幅（%）",
     "description": "コマの幅を画像に対する割合で調整する。",
     "initial": "描画範囲により決定",
-    "modes": "コマ読み",
+    "modes": "フォーカスモード",
     "key": "focusAreas[].width／mobileFocusAreas[].width",
     "notes": "X／Yは0～100、幅／高さは5～100。コマ選択時に表示。"
   },
   {
-    "group": "コマ読みモード",
+    "group": "フォーカスモード",
     "english": "Height (%)",
     "japanese": "高さ（%）",
     "description": "コマの高さを画像に対する割合で調整する。",
     "initial": "描画範囲により決定",
-    "modes": "コマ読み",
+    "modes": "フォーカスモード",
     "key": "focusAreas[].height／mobileFocusAreas[].height",
     "notes": "X／Yは0～100、幅／高さは5～100。コマ選択時に表示。"
   },
   {
-    "group": "コマ読みモード",
-    "english": "When switching to panel reading",
-    "japanese": "コマ読みへの切り替え時",
-    "description": "通常ビュアーで途中まで読んでからコマ読みに切り替えた際、どのページから読み始めるかを選びます。",
+    "group": "フォーカスモード",
+    "english": "When switching to Focus Mode",
+    "japanese": "フォーカスモードへの切り替え時",
+    "description": "通常ビュアーで途中まで読んでからフォーカスモードに切り替えた際、どのページから読み始めるかを選びます。",
     "initial": "最初のページから読む（false）",
-    "modes": "コマ読み",
+    "modes": "フォーカスモード",
     "key": "focusReaderStartAtCurrent",
-    "notes": "ラジオ2択。「最初のページから読む」はfalse、「読んでいるページから続ける」はtrue。通常表示・全画面から切替可能。続ける場合も現在ページの先頭コマ。コマ読みのみの再開にも適用し、最終ページで閉じると先頭へ戻る。",
+    "notes": "ラジオ2択。「最初のページから読む」はfalse、「読んでいるページから続ける」はtrue。通常表示・全画面から切替可能。続ける場合も現在ページの先頭コマ。フォーカスモードのみの再開にも適用し、最終ページで閉じると先頭へ戻る。",
     "schema_default": false
   },
   {
@@ -328,7 +328,7 @@
     "initial": "1ページ",
     "modes": "通常表示・全画面ページ送り",
     "key": "pageLayout",
-    "notes": "single／spread／auto。横長画像や対にできないページは単独。縦読み・コマ読みは独自レイアウト。",
+    "notes": "single／spread／auto。横長画像や対にできないページは単独。縦読み・フォーカスモードは独自レイアウト。",
     "schema_default": "single"
   },
   {
@@ -348,7 +348,7 @@
     "japanese": "綴じ方向",
     "description": "ページとコマの送り方向を選択する。",
     "initial": "右綴じ（漫画向け） (rtl)",
-    "modes": "通常表示・全画面表示・コマ読み",
+    "modes": "通常表示・全画面表示・フォーカスモード",
     "key": "binding",
     "notes": "rtl／ltr。縦読みは上から下。",
     "schema_default": "rtl"
@@ -372,7 +372,7 @@
     "initial": "ON",
     "modes": "通常表示・全画面表示",
     "key": "showPageNumbers",
-    "notes": "コマ読みのカウンターは独立。",
+    "notes": "フォーカスモードのカウンターは独立。",
     "schema_default": true
   },
   {
@@ -400,13 +400,12 @@
   {
     "group": "全体設定",
     "english": "Page transition animation",
-    "japanese": "ページめくり演出",
-    "description": "単ページを送るときの演出を有効にする。",
-    "initial": "ON",
-    "modes": "単ページのページ送り",
-    "key": "enableAnimation",
-    "notes": "見開き送りと縦読みは対象外。コマ読みのページ境界の演出にも同じ値を参照する。",
-    "schema_default": true
+    "japanese": "ページ切り替え効果",
+    "description": "なし・ページめくり・フェード・スライドから通常ページ送りの演出を選ぶ。",
+    "initial": "ページめくり（旧設定のみの場合は旧ON/OFFを継承）",
+    "modes": "通常表示・全画面の通常ページ送り",
+    "key": "pageTransition",
+    "notes": "旧enableAnimationは保持。フォーカスモード・縦読み・全画面の1ページ拡大は既存動作。"
   },
   {
     "group": "全体設定",
@@ -446,7 +445,7 @@
     "japanese": "漫画ライブラリに登録",
     "description": "現在の漫画設定を漫画ライブラリへ独立コピーする。",
     "initial": "操作",
-    "modes": "通常表示・全画面表示・コマ読み",
+    "modes": "通常表示・全画面表示・フォーカスモード",
     "key": "新規amv_viewerのpost_content",
     "notes": "ページ画像とタイトルが必要。登録後の直接ブロックと自動同期しない。"
   },
@@ -476,7 +475,7 @@
     "japanese": "このブロックを登録済みViewerへ切り替える",
     "description": "元の直接ブロックを登録済みViewerブロックへ置き換える。",
     "initial": "操作",
-    "modes": "通常表示・全画面表示・コマ読み",
+    "modes": "通常表示・全画面表示・フォーカスモード",
     "key": "ai-manga-viewer/library-viewer: viewerId／instanceKey",
     "notes": "登録先が公開済みで置換が許可された場合のみ。置換前に登録先の内容を確認する。"
   },
@@ -496,7 +495,7 @@
     "japanese": "漫画ライブラリから選び直す",
     "description": "別の登録済み漫画を選択する。",
     "initial": "未選択（viewerId=0）",
-    "modes": "通常表示・全画面表示・コマ読み",
+    "modes": "通常表示・全画面表示・フォーカスモード",
     "key": "viewerId",
     "notes": "Registered Viewerブロックの属性。識別子instanceKeyとは別。"
   },
@@ -506,7 +505,7 @@
     "japanese": "選択を解除",
     "description": "登録済み漫画の選択を解除する。",
     "initial": "操作",
-    "modes": "通常表示・全画面表示・コマ読み",
+    "modes": "通常表示・全画面表示・フォーカスモード",
     "key": "viewerId=0",
     "notes": "登録済みの漫画そのものは削除しない。"
   },

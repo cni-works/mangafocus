@@ -24,7 +24,7 @@ for (const display of ['reader', 'coverLauncher']) for (const full of [false, tr
  assert.equal(updates.length, 0, 'Opening complete legacy data must not save anything');
  assert.equal(find(tree, 'Enable inline viewer').props.checked, display === 'reader');
  assert.equal(find(tree, 'Enable fullscreen mode').props.checked, full || display === 'coverLauncher');
- assert.equal(find(tree, 'Enable panel reading mode').props.checked, panel);
+ assert.equal(find(tree, 'Enable Focus Mode').props.checked, panel);
  assert.equal(JSON.stringify(tree).includes('Display method'), false, 'Legacy selector must not conflict');
  find(tree, 'Maximum comic width (px)').props.onChange(700);
  assert.deepEqual(JSON.parse(JSON.stringify(updates)), [{maxWidth: 700}]);
@@ -34,7 +34,7 @@ for (const inline of [false, true]) for (const full of [false, true]) for (const
  if (!inline && !full && !panel) continue;
  updates = []; const a = {...base, enableInline: inline, enableFullscreen: full, focusReader: panel, inlineDisplayMode: 'coverLauncher'};
  const tree = render(a);
- for (const [label, value] of [['Enable inline viewer', inline], ['Enable fullscreen mode', full], ['Enable panel reading mode', panel]]) assert.equal(find(tree, label).props.checked, value);
+ for (const [label, value] of [['Enable inline viewer', inline], ['Enable fullscreen mode', full], ['Enable Focus Mode', panel]]) assert.equal(find(tree, label).props.checked, value);
 }
 let a = {...base, inlineDisplayMode: 'coverLauncher', enableFullscreen: false}; updates = [];
 let tree = render(a);

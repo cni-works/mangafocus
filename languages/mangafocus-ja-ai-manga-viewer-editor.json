@@ -57,8 +57,8 @@
             "MangaFocus": [
                 "MangaFocus"
             ],
-            "Display manga images with paged, spread, fullscreen, and Panel-by-Panel reading.": [
-                "漫画画像をページ送り、見開き、全画面、コマ読みで表示します。"
+            "Display manga images with paged, spread, fullscreen, and Focus Mode.": [
+                "漫画画像をページ送り、見開き、全画面、フォーカスモードで表示します。"
             ],
             "Manga": [
                 "漫画"
@@ -69,8 +69,8 @@
             "Viewer": [
                 "ビューアー"
             ],
-            "Panel-by-Panel": [
-                "コマ読み"
+            "Focus Mode": [
+                "フォーカスモード"
             ],
             "Untitled comic": [
                 "無題の漫画"
@@ -78,8 +78,8 @@
             "Keep at least one reading mode enabled.": [
                 "少なくとも1つの表示モードを有効にしてください。"
             ],
-            "Add at least one panel before using panel reading alone.": [
-                "コマ読みのみを利用する場合は、先にコマを追加してください。"
+            "Add at least one panel before using Focus Mode alone.": [
+                "フォーカスモードのみを利用する場合は、先にコマを追加してください。"
             ],
             "Edit page images": [
                 "ページ画像を編集"
@@ -231,17 +231,14 @@
             "Focus on one page at a time": [
                 "1ページずつ大きく読む"
             ],
-            "Panel reading mode": [
-                "コマ読みモード"
+            "Enable Focus Mode": [
+                "フォーカスモードを有効にする"
             ],
-            "Enable panel reading mode": [
-                "コマ読みモードを有効にする"
+            "On: enlarge configured panels one at a time. Off: hide the Focus Mode launch button. Configure at least one panel to use this mode alone.": [
+                "ON：設定したコマを1コマずつ拡大表示します。OFF：フォーカスモードの起動ボタンを表示しません。フォーカスモードだけを使うには、コマを1つ以上設定してください。"
             ],
-            "On: enlarge configured panels one at a time. Off: hide the panel reading launch button. Configure at least one panel to use this mode alone.": [
-                "ON：設定したコマを1コマずつ拡大表示します。OFF：コマ読みの起動ボタンを表示しません。コマ読みだけを使うには、コマを1つ以上設定してください。"
-            ],
-            "No panels are configured. Add panels before using panel reading alone.": [
-                "コマが設定されていません。コマ読みのみを利用する場合は、先にコマを追加してください。"
+            "No panels are configured. Add panels before using Focus Mode alone.": [
+                "コマが設定されていません。フォーカスモードのみを利用する場合は、先にコマを追加してください。"
             ],
             "General settings": [
                 "全体設定"
@@ -289,7 +286,7 @@
                 "綴じ方向"
             ],
             "Used for page and panel navigation. Vertical reading scrolls from top to bottom.": [
-                "通常・全画面のページ送りとコマ読みに使用します。縦読みは上から下へ読みます。"
+                "通常・全画面のページ送りとフォーカスモードに使用します。縦読みは上から下へ読みます。"
             ],
             "Right binding (manga)": [
                 "右綴じ（漫画向け）"
@@ -306,8 +303,8 @@
             "Show page numbers": [
                 "ページ番号を表示"
             ],
-            "Used for inline and fullscreen reading. Panel reading has its own page counter.": [
-                "通常表示・全画面表示で使用します。コマ読みのページ番号は別の表示です。"
+            "Used for inline and fullscreen reading. Focus Mode has its own page counter.": [
+                "通常表示・全画面表示で使用します。フォーカスモードのページ番号は別の表示です。"
             ],
             "Navigate by clicking page edges": [
                 "ページ端クリックで送る"
@@ -325,13 +322,22 @@
                 "通常表示では、画像幅を縮めずに、配置できる余白または画像下に案内矢印を表示します。"
             ],
             "Page transition animation": [
-                "ページめくり演出"
+                "ページ切り替え効果"
             ],
-            "The page-turn animation applies to single-page navigation. Spread navigation and vertical scrolling do not use it.": [
-                "単ページのページ送りに適用します。見開きでのページ送りと縦読みには適用しません。"
+            "Used for normal page navigation, including entire spreads. Focus Mode, vertical scrolling and fullscreen page focus keep their own effects.": [
+                "通常のページ送りと見開き全体の切り替えに使用します。フォーカスモード・縦読み・全画面の1ページ拡大では従来の演出を維持します。"
             ],
-            "Panel reading also uses this setting when moving between pages.": [
-                "コマ読みで別のページへ移動するときの演出にも、この設定を使用します。"
+            "None": [
+                "なし"
+            ],
+            "Page turn": [
+                "ページめくり"
+            ],
+            "Fade": [
+                "フェード"
+            ],
+            "Slide": [
+                "スライド"
             ],
             "Enable free zoom and pan": [
                 "自由ズームと移動を有効化"
@@ -340,7 +346,7 @@
                 "読者が＋／－、ピンチ操作で拡大し、拡大中は画像をドラッグして移動できます。"
             ],
             "Used for inline and fullscreen reading. Panel magnification is configured separately.": [
-                "通常表示・全画面表示で使用します。コマ読みの拡大率は別に設定します。"
+                "通常表示・全画面表示で使用します。フォーカスモードの拡大率は別に設定します。"
             ],
             "Zoom control position": [
                 "ズームボタンの位置"
@@ -360,8 +366,8 @@
             "Read manga": [
                 "漫画を読む"
             ],
-            "Read by panel": [
-                "コマ読みを開始"
+            "Read in Focus Mode": [
+                "フォーカスモードで読む"
             ],
             "Published display preview": [
                 "公開画面の表示プレビュー"

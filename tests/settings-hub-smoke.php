@@ -46,11 +46,11 @@ amv_expect( false !== strpos( ai_manga_viewer_settings_url(), 'page=ai-manga-vie
 amv_expect( false !== strpos( ai_manga_viewer_plugin_action_links( array( '<a>Deactivate</a>' ) )[0], '>Settings<' ), 'Core settings action link missing.' );
 
 ob_start(); ai_manga_viewer_render_settings_page(); $core_html = ob_get_clean();
-foreach ( array( '0.3.0', 'Not installed or inactive', 'Open Manga Library', 'Register a new comic', 'Open Analytics Settings', 'Free Viewer', 'Panel-by-Panel', 'CTA', 'Manga Analytics', 'AI consultation', 'AI manga production support' ) as $needle ) {
+foreach ( array( '0.3.0', 'Not installed or inactive', 'Open Manga Library', 'Register a new comic', 'Open Analytics Settings', 'Free Viewer', 'Focus Mode', 'CTA', 'Manga Analytics', 'AI consultation', 'AI manga production support' ) as $needle ) {
 	amv_expect( false !== strpos( $core_html, $needle ), 'Core-only settings output missing: ' . $needle );
 }
 amv_expect( false === strpos( $core_html, '0.1.0-alpha' ), 'Core-only screen leaked a Pro version.' );
-amv_expect( false !== strpos( $core_html, 'Panel-by-Panel' ) && 5 === substr_count( $core_html, 'is-unavailable">Unavailable' ), 'Core-only feature statuses are invalid.' );
+amv_expect( false !== strpos( $core_html, 'Focus Mode' ) && 5 === substr_count( $core_html, 'is-unavailable">Unavailable' ), 'Core-only feature statuses are invalid.' );
 
 $GLOBALS['amv_settings_pro'] = array( 'installed' => true, 'active' => true, 'version' => '0.1.0-alpha' );
 $GLOBALS['amv_settings_features'] = array( 'panel_reader' => true, 'cta' => true, 'analytics' => true, 'ai_consultation' => true, 'manga_creation' => true );

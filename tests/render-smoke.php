@@ -427,7 +427,7 @@ $cover_fixture = preg_replace( '/<div\b/', '<div data-analytics-source="library"
 $cover_vertical_fixture_attrs = array_merge( $cover_fixture_attrs, array( 'viewerKey' => 'cover-vertical-viewer', 'instanceKey' => 'cover-vertical-instance', 'fullscreenReadingMode' => 'vertical', 'zoomControlsPosition' => 'right' ) );
 $cover_vertical_fixture = preg_replace( '/<div\b/', '<div data-analytics-source="library"', ai_manga_viewer_render_viewer( $cover_vertical_fixture_attrs ), 1 );
 if ( false === strpos( $cover_fixture, 'amv-reader--cover-launcher' ) || false === strpos( $cover_fixture, 'data-inline-display-mode="coverLauncher"' ) || false === strpos( $cover_fixture, 'class="amv-reader__cover-launcher-button"' ) || false === strpos( $cover_fixture, '>Read manga<' ) || false === strpos( $cover_fixture, 'class="amv-reader__fullscreen"' ) ) { throw new Exception( 'Core cover launcher or forced fullscreen machinery failed' ); }
-if ( $with_pro_panel && ( false === strpos( $cover_fixture, 'class="amv-reader__cover-focus-open"' ) || false === strpos( $cover_fixture, '>Read by panel<' ) ) ) { throw new Exception( 'Pro panel action is missing beside the cover launcher' ); }
+if ( $with_pro_panel && ( false === strpos( $cover_fixture, 'class="amv-reader__cover-focus-open"' ) || false === strpos( $cover_fixture, '>Read in Focus Mode<' ) ) ) { throw new Exception( 'Pro panel action is missing beside the cover launcher' ); }
 if ( ! $with_pro_panel && false !== strpos( $cover_fixture, 'amv-reader__cover-focus-open' ) ) { throw new Exception( 'Core-only cover launcher exposed the Pro panel action' ); }
 $count_fixture_html = '';
 foreach ( array( 1, 2, 3, 4, 5, 10 ) as $fixture_count ) {

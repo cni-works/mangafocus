@@ -86,6 +86,108 @@
 		let activeMode = 'standard', extensionMode = '';
 		let verticalStartCleanup = null;
 		let extensionReady = false, lastPublicView = '', lastPublicFullscreen = false;
+
+		// Visual-only outgoing sheet: never clone page/extension DOM, IDs or listeners.
+		let navigationEffect = null;
+		let transitionContent = null;
+		const reducedMotion = window.matchMedia( '(prefers-reduced-motion: reduce)' );
+		function cancelNavigationAnimation( commit ) {
+			if ( navigationEffect ) navigationEffect.finish( commit !== false );
+		}
+		function transitionKind() {
+			const value = root.dataset.pageTransition;
+			return [ 'none', 'turn', 'fade', 'slide' ].indexOf( value ) !== -1 ? value : ( root.dataset.animation === 'off' ? 'none' : 'turn' );
+		}
+		function warmAdjacentViews() {
+			// Keep this bounded to neighboring views, and do not change legacy loading behavior.
+			if ( [ 'turn', 'fade', 'slide' ].indexOf( root.dataset.pageTransition ) === -1 || ! readerVisible() || isVerticalReading() || extensionMode === 'panel' || usesPageFocusNavigation() || ( isRootFullscreen() && fullscreenReadingMode === 'vertical' ) ) return;
+			[ currentView - 1, currentView + 1 ].forEach( function( index ) {
+				( views[ index ] || [] ).forEach( function( pageIndex ) {
+					const image = pages[ pageIndex ].querySelector( '.amv-reader__image' );
+					if ( image ) image.loading = 'eager';
+				} );
+			} );
+		}
+		function transitionImagesReady( indexes ) {
+			return indexes.every( function( index ) {
+				const image = pages[ index ] && pages[ index ].querySelector( '.amv-reader__image' );
+				return image && image.complete && image.naturalWidth > 0;
+			} );
+		}
+		function animateViewChange( nextView, effect, direction ) {
+			const viewport = root.querySelector( '.amv-reader__pages' );
+			if ( ! viewport || typeof viewport.animate !== 'function' || ! transitionImagesReady( activePageIndexes() ) || ! transitionImagesReady( views[ nextView ] ) ) return false;
+			const rect = viewport.getBoundingClientRect();
+			if ( ! rect.width || ! rect.height ) return false;
+			const sheet = document.createElement( 'div' );
+			sheet.className = 'amv-reader__transition-sheet';
+			sheet.setAttribute( 'aria-hidden', 'true' ); sheet.inert = true;
+			const imageBoxes = [];
+			activePageIndexes().forEach( function( index ) {
+				const original = pages[ index ].querySelector( '.amv-reader__image' ), image = document.createElement( 'img' ), box = original.getBoundingClientRect();
+				image.className = 'amv-reader__transition-image'; image.alt = ''; image.draggable = false;
+				image.src = original.currentSrc || original.src;
+				image.style.backgroundColor = window.getComputedStyle( pages[ index ] ).backgroundColor;
+				image.style.left = ( box.left - rect.left - viewport.clientLeft ) + 'px';
+				image.style.top = ( box.top - rect.top - viewport.clientTop ) + 'px';
+				image.style.width = box.width + 'px'; image.style.height = box.height + 'px';
+				sheet.appendChild( image ); imageBoxes.push( { image: image, box: box } );
+			} );
+			if ( ! transitionContent ) {
+				transitionContent = document.createElement( 'div' ); transitionContent.className = 'amv-reader__transition-content';
+				focusLayer.parentNode.insertBefore( transitionContent, focusLayer ); transitionContent.appendChild( focusLayer );
+			}
+			const contentWidth = focusLayer.style.width, contentMargin = focusLayer.style.marginInline, minimum = viewport.style.minHeight, pointerEvents = transitionContent.style.pointerEvents, busy = root.getAttribute( 'aria-busy' ), previousWidth = root.style.getPropertyValue( '--amv-transition-width' );
+			const milliseconds = effect === 'turn' ? duration : ( effect === 'slide' ? 600 : 380 );
+			const sign = ( binding === 'rtl' ? 1 : -1 ) * ( direction === 'next' ? 1 : -1 );
+			let settled = false, timer = 0, animations = [];
+			const state = { width: viewport.clientWidth, finish: function() {
+				if ( settled ) return; settled = true; navigationEffect = null;
+				window.clearTimeout( timer ); animations.forEach( function( animation ) { animation.cancel(); } );
+				sheet.remove(); viewport.style.minHeight = minimum; focusLayer.style.width = contentWidth; focusLayer.style.marginInline = contentMargin; transitionContent.style.pointerEvents = pointerEvents;
+				root.classList.remove( 'is-view-transitioning' );
+				if ( previousWidth ) root.style.setProperty( '--amv-transition-width', previousWidth ); else root.style.removeProperty( '--amv-transition-width' );
+				if ( busy === null ) root.removeAttribute( 'aria-busy' ); else root.setAttribute( 'aria-busy', busy );
+				locked = false; updateButtons();
+				window.requestAnimationFrame( function() { updateFullscreenSpreadSizing(); applyPageFocus(); updateInlineNavigation(); } );
+			} };
+			locked = true; root.setAttribute( 'aria-busy', 'true' );
+			transitionContent.style.pointerEvents = 'none';
+			activateView( nextView );
+			// Resolve the target's normal layout before pinning any animation frame.
+			updateFullscreenSpreadSizing(); applyPageFocus(); updateInlineNavigation();
+			const targetWidth = focusLayer.getBoundingClientRect().width;
+			const frameWidth = Math.max( rect.width, viewport.getBoundingClientRect().width );
+			focusLayer.style.width = targetWidth + 'px'; focusLayer.style.marginInline = 'auto';
+			navigationEffect = state; state.pinnedLayout = true;
+			viewport.appendChild( sheet );
+			root.style.setProperty( '--amv-transition-width', frameWidth + 'px' ); root.classList.add( 'is-view-transitioning' );
+			const frame = viewport.getBoundingClientRect();
+			imageBoxes.forEach( function( item ) { item.image.style.left = ( item.box.left - frame.left - viewport.clientLeft ) + 'px'; item.image.style.top = ( item.box.top - frame.top - viewport.clientTop ) + 'px'; } );
+			state.width = viewport.clientWidth; updateButtons();
+			setActiveMode( isRootFullscreen() ? 'fullscreen' : 'standard', 'navigation' );
+			try {
+				const options = { duration: milliseconds, easing: effect === 'slide' ? 'linear' : 'ease-in-out', fill: 'both' };
+				if ( effect === 'slide' ) {
+					animations.push( sheet.animate( [ { transform: 'translateX(0)' }, { transform: 'translateX(' + ( sign * 100 ) + '%)' } ], options ) );
+					animations.push( transitionContent.animate( [ { transform: 'translateX(' + ( -sign * 100 ) + '%)' }, { transform: 'translateX(0)' } ], options ) );
+				} else if ( effect === 'fade' ) {
+					animations.push( sheet.animate( [ { opacity: 1 }, { opacity: 0 } ], options ) );
+					// The incoming view stays opaque: complementary blending must not flash the background.
+				} else {
+					sheet.style.transformOrigin = sign > 0 ? 'right center' : 'left center';
+					animations.push( sheet.animate( [ { opacity: 1, transform: 'translateX(0) rotateY(0)' }, { opacity: .42, transform: 'translateX(' + ( sign * 10 ) + '%) rotateY(' + ( -sign * 72 ) + 'deg)' } ], options ) );
+				}
+				animations[ animations.length - 1 ].onfinish = state.finish;
+				animations.forEach( function( animation ) { animation.oncancel = state.finish; } );
+				timer = window.setTimeout( state.finish, milliseconds + 80 );
+			} catch ( error ) { state.finish(); }
+			return true;
+		}
+		function handleMotionPreference() { if ( reducedMotion.matches ) cancelNavigationAnimation(); }
+		if ( reducedMotion.addEventListener ) reducedMotion.addEventListener( 'change', handleMotionPreference );
+		else if ( reducedMotion.addListener ) reducedMotion.addListener( handleMotionPreference );
+
 		root.classList.add( 'is-enhanced' );
 		function pageIsLandscape( index ) { const page = pages[ index ]; if ( ! page ) return false; return layout.dimensionState( { width: page.dataset.imageWidth, height: page.dataset.imageHeight } ) === 'landscape'; }
 		function buildViews() {
@@ -152,6 +254,7 @@
 			if ( active.length === 2 ) { pages[ active[ 0 ] ].classList.add( 'is-spread-first' ); pages[ active[ 1 ] ].classList.add( 'is-spread-second' ); }
 			root.classList.toggle( 'is-spread-view', active.length === 2 );
 			window.requestAnimationFrame( function() { updateFullscreenSpreadSizing(); applyPageFocus(); updateInlineNavigation(); } );
+			warmAdjacentViews();
 			notifyViewChange( 'navigation' );
 		}
 		// Compact paged fullscreen uses the measured stage, not a fixed toolbar reserve.
@@ -193,6 +296,7 @@
 			root.style.setProperty( '--amv-reader-compact-width', Math.min( width, total ) + borderX + 'px' );
 		}
 		function updateFullscreenSpreadSizing() {
+			if ( navigationEffect && navigationEffect.pinnedLayout ) return;
 			updateCompactFullscreenLayout();
 			pages.forEach( function( page ) { page.style.removeProperty( '--amv-reader-fullscreen-page-width' ); } );
 			if ( ! isRootFullscreen() || isVerticalReading() || compactPagedFullscreen() || ! root.classList.contains( 'is-spread-view' ) ) return;
@@ -212,7 +316,7 @@
 				page.style.setProperty( '--amv-reader-fullscreen-page-width', renderedWidth + 'px' );
 			} );
 		}
-		function rebuildViews( preservePage ) { const target = clamp( preservePage, 0, pages.length - 1 ); views = buildViews(); temporaryOverview = false; activateView( viewForPage( target ), target ); updateButtons(); applyZoom(); }
+		function rebuildViews( preservePage ) { cancelNavigationAnimation(); const target = clamp( preservePage, 0, pages.length - 1 ); views = buildViews(); temporaryOverview = false; activateView( viewForPage( target ), target ); updateButtons(); applyZoom(); }
 		function updateLayoutForWidth( width ) {
 			if ( configuredLayout === 'single' ) { if ( spreadActive ) { spreadActive = false; root.classList.remove( 'has-spread-layout' ); rebuildViews( current ); } return; }
 			const threshold = layoutThresholds[ configuredLayout ]; const nextSpread = spreadActive ? width >= threshold.exit : width >= threshold.enter;
@@ -296,7 +400,7 @@
 			root.classList.toggle( 'is-zoomed', zoomScale > 1 ); updateZoomControls( 3 );
 			updateButtons();
 		}
-		function setZoom( value ) { if ( ! zoomEnabled ) return; const vertical = isVerticalReading(); const previousScale = zoomScale; zoomScale = clamp( Math.round( value * 100 ) / 100, 1, vertical ? verticalZoomMaximum : 3 ); if ( zoomScale === 1 ) { panX = 0; panY = 0; } applyZoom(); if ( vertical ) setActiveMode( 'vertical', 'zoom' ); else if ( previousScale <= 1 && zoomScale > 1 ) useMode( 'zoom' ); else if ( previousScale > 1 && zoomScale === 1 ) setActiveMode( isRootFullscreen() ? 'fullscreen' : 'standard', 'zoom-reset' ); }
+		function setZoom( value ) { if ( ! zoomEnabled ) return; cancelNavigationAnimation(); const vertical = isVerticalReading(); const previousScale = zoomScale; zoomScale = clamp( Math.round( value * 100 ) / 100, 1, vertical ? verticalZoomMaximum : 3 ); if ( zoomScale === 1 ) { panX = 0; panY = 0; } applyZoom(); if ( vertical ) setActiveMode( 'vertical', 'zoom' ); else if ( previousScale <= 1 && zoomScale > 1 ) useMode( 'zoom' ); else if ( previousScale > 1 && zoomScale === 1 ) setActiveMode( isRootFullscreen() ? 'fullscreen' : 'standard', 'zoom-reset' ); }
 		function resetZoom() { if ( ! zoomEnabled ) return; const vertical = isVerticalReading(); const canvas = activeCanvas(); if ( canvas ) canvas.style.transform = ''; zoomScale = 1; panX = 0; panY = 0; root.classList.remove( 'is-zoomed', 'is-vertical-zoomed', 'is-panning' ); updateZoomControls( vertical ? verticalZoomMaximum : 3 ); if ( vertical ) applyVerticalZoom( true ); updateButtons(); }
 		function panBy( dx, dy ) { if ( zoomScale <= 1 ) return; panX += dx; panY += dy; applyZoom(); }
 		// Reuse the edge buttons as real guide controls, separate from image-edge taps.
@@ -333,17 +437,37 @@
 		}
 		function updateButtons() { if ( isVerticalReading() ) { updateInlineNavigation(); if ( count ) count.textContent = ( verticalCurrentPage + 1 ) + ' / ' + pages.length; stage.setAttribute( 'aria-label', sprintf( __( 'Near page %d. Scroll vertically to read.', 'mangafocus' ), verticalCurrentPage + 1 ) ); return; } const zoomed = zoomScale > 1; const pageNavigation = usesPageFocusNavigation(); const atEnd = pageNavigation ? focusedPageIndex === pages.length - 1 : currentView === views.length - 1; const atStart = pageNavigation ? focusedPageIndex === 0 : currentView === 0; const nextExitsFullscreen = atEnd && isRootFullscreen() && ! zoomed; const zoomNextExitsFullscreen = atEnd && isRootFullscreen() && zoomed; root.classList.toggle( 'is-first-page', atStart ); Array.prototype.forEach.call( buttons.previous, function( button ) { button.disabled = zoomed || atStart; } ); Array.prototype.forEach.call( buttons.next, function( button ) { button.disabled = zoomed || ( atEnd && ! nextExitsFullscreen ); button.setAttribute( 'aria-label', nextExitsFullscreen ? __( 'Exit fullscreen', 'mangafocus' ) : __( 'Next page', 'mangafocus' ) ); } ); if ( zoomPagePrevious ) zoomPagePrevious.disabled = atStart; if ( zoomPageNext ) { zoomPageNext.disabled = atEnd && ! zoomNextExitsFullscreen; zoomPageNext.setAttribute( 'aria-label', zoomNextExitsFullscreen ? __( 'Reset zoom and exit fullscreen', 'mangafocus' ) : __( 'Reset zoom and go to the next page', 'mangafocus' ) ); } const active = activePageIndexes(); const focusedOnly = pageFocusVisible(); if ( count ) count.textContent = focusedOnly ? ( focusedPageIndex + 1 ) + ' / ' + pages.length : ( active.length === 2 ? ( active[ 0 ] + 1 ) + '–' + ( active[ 1 ] + 1 ) + ' / ' + pages.length : ( active[ 0 ] + 1 ) + ' / ' + pages.length ); stage.setAttribute( 'aria-label', focusedOnly ? sprintf( __( 'Page %d is enlarged. Use the left and right arrow keys or swipe to navigate.', 'mangafocus' ), focusedPageIndex + 1 ) : ( active.length === 2 ? sprintf( __( 'Showing pages %1$d and %2$d. Use the left and right arrow keys or swipe to navigate.', 'mangafocus' ), active[ 0 ] + 1, active[ 1 ] + 1 ) : sprintf( __( 'Showing page %d. Use the left and right arrow keys or swipe to navigate.', 'mangafocus' ), active[ 0 ] + 1 ) ) ); updateInlineNavigation(); }
 		function finalPageIsVisible() { return activePageIndexes().indexOf( pages.length - 1 ) !== -1; }
-		function returnToFirstPage() { const vertical = isVerticalReading(); resetZoom(); temporaryOverview = false; verticalCurrentPage = 0; activateView( viewForPage( 0 ), 0 ); if ( vertical ) root.scrollTop = 0; updateButtons(); setActiveMode( vertical ? 'vertical' : 'standard', 'return-to-start' ); }
+		function returnToFirstPage() { cancelNavigationAnimation( false ); const vertical = isVerticalReading(); resetZoom(); temporaryOverview = false; verticalCurrentPage = 0; activateView( viewForPage( 0 ), 0 ); if ( vertical ) root.scrollTop = 0; updateButtons(); setActiveMode( vertical ? 'vertical' : 'standard', 'return-to-start' ); }
 		function finishViewChange( nextView, readingMode ) { activateView( nextView ); locked = false; updateButtons(); setActiveMode( isVerticalReading() ? 'vertical' : ( isRootFullscreen() ? 'fullscreen' : 'standard' ), 'navigation' ); }
+
 		function change( nextView ) {
-			nextView = clamp( nextView, 0, views.length - 1 ); if ( nextView === currentView || locked || zoomScale > 1 ) return;
-			const readingMode = isRootFullscreen() ? 'fullscreen' : ( activeMode === 'zoom' ? 'zoom' : 'standard' ); useMode( readingMode ); resetZoom();
-			if ( spreadActive ) { locked = true; finishViewChange( nextView, readingMode ); return; }
-			const direction = nextView > currentView ? 'next' : 'previous'; const oldPage = pages[ current ], newPage = pages[ views[ nextView ][ 0 ] ]; locked = true; newPage.classList.add( 'is-active', 'is-under' ); oldPage.classList.add( 'is-leaving', 'is-leaving-' + direction ); root.classList.add( 'is-turning' );
-			window.setTimeout( function() { root.classList.remove( 'is-turning' ); finishViewChange( nextView, readingMode ); }, root.dataset.animation === 'off' ? 0 : duration );
+			nextView = clamp( nextView, 0, views.length - 1 );
+			if ( nextView === currentView || locked || zoomScale > 1 || extensionMode === 'panel' ) return;
+			const readingMode = isRootFullscreen() ? 'fullscreen' : 'standard';
+			useMode( readingMode ); resetZoom();
+			const effect = transitionKind(), direction = nextView > currentView ? 'next' : 'previous';
+			if ( effect === 'none' || reducedMotion.matches ) { finishViewChange( nextView, readingMode ); return; }
+			if ( effect === 'fade' || effect === 'slide' || ( spreadActive && root.dataset.pageTransition === 'turn' ) ) {
+				if ( ! animateViewChange( nextView, effect, direction ) ) finishViewChange( nextView, readingMode );
+				return;
+			}
+			// Legacy spread navigation stays instantaneous until an explicit effect is selected.
+			if ( spreadActive ) { finishViewChange( nextView, readingMode ); return; }
+			const oldPage = pages[ current ], newPage = pages[ views[ nextView ][ 0 ] ], busy = root.getAttribute( 'aria-busy' );
+			let settled = false, timer = 0;
+			const state = { width: root.querySelector( '.amv-reader__pages' ).clientWidth, finish: function( commit ) {
+				if ( settled ) return; settled = true; navigationEffect = null; window.clearTimeout( timer );
+				root.classList.remove( 'is-turning' );
+				if ( busy === null ) root.removeAttribute( 'aria-busy' ); else root.setAttribute( 'aria-busy', busy );
+				if ( commit !== false ) finishViewChange( nextView, readingMode );
+				else { activateView( currentView ); locked = false; updateButtons(); }
+			} };
+			navigationEffect = state; locked = true; root.setAttribute( 'aria-busy', 'true' );
+			newPage.classList.add( 'is-active', 'is-under' ); oldPage.classList.add( 'is-leaving', 'is-leaving-' + direction ); root.classList.add( 'is-turning' );
+			timer = window.setTimeout( state.finish, duration );
 		}
 		function moveFocusedPage( offset ) { const target = clamp( focusedPageIndex + offset, 0, pages.length - 1 ); if ( target === focusedPageIndex || locked || zoomScale > 1 ) return; const readingMode = isRootFullscreen() ? 'fullscreen' : ( activeMode === 'zoom' ? 'zoom' : 'standard' ); const targetView = viewForPage( target ); useMode( readingMode ); resetZoom(); temporaryOverview = false; locked = true; if ( targetView !== currentView ) root.classList.add( 'is-focus-surface-changing' ); activateView( targetView, target ); locked = false; updateButtons(); setActiveMode( isVerticalReading() ? 'vertical' : ( isRootFullscreen() ? 'fullscreen' : 'standard' ), 'navigation' ); window.setTimeout( function() { root.classList.remove( 'is-focus-surface-changing' ); }, 220 ); }
-		function previous() { if ( isVerticalReading() || zoomScale > 1 ) return; if ( usesPageFocusNavigation() ) { moveFocusedPage( -1 ); return; } change( currentView - 1 ); } function next() { if ( isVerticalReading() || zoomScale > 1 ) return; const atEnd = usesPageFocusNavigation() ? focusedPageIndex === pages.length - 1 : currentView === views.length - 1; if ( atEnd && isRootFullscreen() ) { exitRootFullscreen(); return; } if ( usesPageFocusNavigation() ) { moveFocusedPage( 1 ); return; } change( currentView + 1 ); }
+		function previous() { if ( locked || isVerticalReading() || zoomScale > 1 ) return; if ( usesPageFocusNavigation() ) { moveFocusedPage( -1 ); return; } change( currentView - 1 ); } function next() { if ( locked || isVerticalReading() || zoomScale > 1 ) return; const atEnd = usesPageFocusNavigation() ? focusedPageIndex === pages.length - 1 : currentView === views.length - 1; if ( atEnd && isRootFullscreen() ) { exitRootFullscreen(); return; } if ( usesPageFocusNavigation() ) { moveFocusedPage( 1 ); return; } change( currentView + 1 ); }
 		Array.prototype.forEach.call( buttons.previous, function( button ) { button.addEventListener( 'click', previous ); } ); Array.prototype.forEach.call( buttons.next, function( button ) { button.addEventListener( 'click', next ); } );
 		stage.addEventListener( 'keydown', function( event ) {
 			if ( ! readerVisible() ) return;
@@ -383,6 +507,15 @@
 			window.addEventListener( 'resize', applyZoom ); resetZoom();
 		}
 		if ( root.dataset.scrollAssist === 'on' && ! window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches ) window.addEventListener( 'scroll', function() { if ( ! readerVisible() || assisting ) return; window.clearTimeout( scrollTimer ); scrollTimer = window.setTimeout( function() { const rect = stage.getBoundingClientRect(), viewportHeight = window.innerHeight || document.documentElement.clientHeight, visible = Math.min( rect.bottom, viewportHeight ) - Math.max( rect.top, 0 ); if ( visible < Math.min( 160, Math.min( rect.height, viewportHeight ) * .28 ) ) return; const position = [ 'auto', 'top', 'center' ].indexOf( root.dataset.scrollPosition ) !== -1 ? root.dataset.scrollPosition : 'auto', strength = [ 'gentle', 'normal', 'strong' ].indexOf( root.dataset.scrollStrength ) !== -1 ? root.dataset.scrollStrength : 'normal', values = { gentle: { threshold: 150, amount: .45 }, normal: { threshold: 300, amount: .72 }, strong: { threshold: 520, amount: 1 } }[ strength ], centeredTarget = Math.max( 24, ( viewportHeight - rect.height ) / 2 ), target = position === 'top' ? 24 : ( position === 'center' ? centeredTarget : ( rect.height <= viewportHeight * .84 ? centeredTarget : 24 ) ), offset = rect.top - target; if ( Math.abs( offset ) < 8 || Math.abs( offset ) > values.threshold ) return; assisting = true; window.scrollTo( { top: Math.max( 0, window.scrollY + offset * values.amount ), behavior: 'smooth' } ); window.setTimeout( function() { assisting = false; }, 500 ); }, 160 ); }, { passive: true } );
+
+		window.addEventListener( 'resize', function() { cancelNavigationAnimation(); } );
+		if ( typeof window.ResizeObserver === 'function' ) new window.ResizeObserver( function() {
+			const viewport = root.querySelector( '.amv-reader__pages' );
+			if ( navigationEffect && viewport && Math.abs( navigationEffect.width - viewport.clientWidth ) > .5 ) cancelNavigationAnimation();
+		} ).observe( root );
+		[ 'load', 'error' ].forEach( function( type ) { root.addEventListener( type, function( event ) {
+			if ( navigationEffect && event.target.classList && event.target.classList.contains( 'amv-reader__image' ) && activePageIndexes().some( function( index ) { return pages[ index ].contains( event.target ); } ) ) cancelNavigationAnimation();
+		}, true ); } );
 		syncReaderVisibility();
 		activateView( 0 );
 		updateLayoutForWidth( root.getBoundingClientRect().width );
@@ -444,7 +577,7 @@
 		if ( fullscreen ) {
 			function restoreFullscreenScrollPosition() { if ( fullscreenReturnViewportTop === null ) return; const targetViewportTop = fullscreenReturnViewportTop; fullscreenReturnViewportTop = null; assisting = true; window.requestAnimationFrame( function() { window.requestAnimationFrame( function() { const top = Math.max( 0, window.scrollY + root.getBoundingClientRect().top - targetViewportTop ); window.scrollTo( 0, top ); window.setTimeout( function() { assisting = false; }, 260 ); } ); } ); }
 			function restoreFullscreenFocus() { const target = fullscreenReturnFocus; fullscreenReturnFocus = null; if ( ! target || typeof target.focus !== 'function' ) return; window.requestAnimationFrame( function() { window.requestAnimationFrame( function() { target.focus(); } ); } ); }
-			function updateFullscreen() { const wasActive = root.classList.contains( 'is-fullscreen' ); const wasVertical = isVerticalReading(); const active = isRootFullscreen(); syncReaderVisibility(); const completed = wasActive && ! active && ( wasVertical ? verticalCurrentPage === pages.length - 1 : finalPageIsVisible() ); root.classList.toggle( 'is-fullscreen', active ); fullscreen.setAttribute( 'aria-pressed', active ? 'true' : 'false' ); fullscreen.textContent = active ? __( 'Exit fullscreen', 'mangafocus' ) : __( 'Read in fullscreen', 'mangafocus' ); if ( ! active ) { if ( wasVertical ) leaveVerticalReading(); if ( completed ) returnToFirstPage(); else { resetZoom(); setActiveMode( 'standard', 'fullscreen' ); } if ( wasActive ) { restoreFullscreenScrollPosition(); restoreFullscreenFocus(); } } else if ( fullscreenReadingMode === 'vertical' ) enterVerticalReading(); else { updateButtons(); useMode( 'fullscreen' ); } if ( active ) discoverImageDimensions(); window.requestAnimationFrame( function() { updateFullscreenSpreadSizing(); applyPageFocus(); updateInlineNavigation(); } ); if ( active ) stage.focus(); if ( extensionReady && active !== lastPublicFullscreen ) { lastPublicFullscreen = active; dispatchPublicEvent( 'amv:viewer-fullscreenchange', { fullscreen: active, readingMode: publicMode() } ); notifyViewChange( 'fullscreen' ); } }
+			function updateFullscreen() { cancelNavigationAnimation(); const wasActive = root.classList.contains( 'is-fullscreen' ); const wasVertical = isVerticalReading(); const active = isRootFullscreen(); syncReaderVisibility(); warmAdjacentViews(); const completed = wasActive && ! active && ( wasVertical ? verticalCurrentPage === pages.length - 1 : finalPageIsVisible() ); root.classList.toggle( 'is-fullscreen', active ); fullscreen.setAttribute( 'aria-pressed', active ? 'true' : 'false' ); fullscreen.textContent = active ? __( 'Exit fullscreen', 'mangafocus' ) : __( 'Read in fullscreen', 'mangafocus' ); if ( ! active ) { if ( wasVertical ) leaveVerticalReading(); if ( completed ) returnToFirstPage(); else { resetZoom(); setActiveMode( 'standard', 'fullscreen' ); } if ( wasActive ) { restoreFullscreenScrollPosition(); restoreFullscreenFocus(); } } else if ( fullscreenReadingMode === 'vertical' ) enterVerticalReading(); else { updateButtons(); useMode( 'fullscreen' ); } if ( active ) discoverImageDimensions(); window.requestAnimationFrame( function() { updateFullscreenSpreadSizing(); applyPageFocus(); updateInlineNavigation(); } ); if ( active ) stage.focus(); if ( extensionReady && active !== lastPublicFullscreen ) { lastPublicFullscreen = active; dispatchPublicEvent( 'amv:viewer-fullscreenchange', { fullscreen: active, readingMode: publicMode() } ); notifyViewChange( 'fullscreen' ); } }
 			function requestRootFullscreen( trigger, startAtFirstPage ) { if ( document.fullscreenElement === root ) { const exitRequest = document.exitFullscreen(); if ( exitRequest && typeof exitRequest.catch === 'function' ) exitRequest.catch( function() {} ); return; } fullscreenReturnViewportTop = root.getBoundingClientRect().top; fullscreenReturnFocus = trigger || null; if ( startAtFirstPage ) returnToFirstPage(); try { const request = root.requestFullscreen(); if ( request && typeof request.catch === 'function' ) request.catch( function() { fullscreenReturnFocus = null; fullscreenReturnViewportTop = null; useInlineFallback(); } ); } catch ( error ) { fullscreenReturnFocus = null; fullscreenReturnViewportTop = null; useInlineFallback(); } }
 			if ( typeof root.requestFullscreen !== 'function' || typeof document.exitFullscreen !== 'function' ) { fullscreen.hidden = true; if ( coverLauncher ) coverLauncher.hidden = true; useInlineFallback(); }
 			else { fullscreen.addEventListener( 'click', function() { requestRootFullscreen( fullscreen, ! fullscreenStartAtCurrent ); } ); if ( coverLauncher ) coverLauncher.addEventListener( 'click', function() { requestRootFullscreen( coverLauncher, true ); } ); document.addEventListener( 'fullscreenchange', updateFullscreen ); updateFullscreen(); }
@@ -458,13 +591,15 @@
 			getState: publicState,
 			setExtensionMode: function( mode, source ) {
 				if ( typeof mode !== 'string' || ( mode && ! /^[a-z][a-z0-9_-]*$/.test( mode ) ) ) return false;
-				const previous = publicMode(); extensionMode = mode; const currentMode = publicMode();
+				cancelNavigationAnimation();
+				const previous = publicMode(); extensionMode = mode; const currentMode = publicMode(); warmAdjacentViews();
 				if ( previous !== currentMode ) dispatchPublicEvent( 'amv:viewer-modechange', { readingMode: currentMode, previousMode: previous, source: source || 'extension' } );
 				notifyViewChange( source || 'extension' ); return true;
 			},
 			goToPage: function( index ) {
 				const target = Number( index );
 				if ( ! Number.isInteger( target ) || target < 0 || target >= pages.length ) return false;
+				cancelNavigationAnimation( false );
 				const pendingStart = !! verticalStartCleanup;
 				resetZoom(); temporaryOverview = false; verticalCurrentPage = target; activateView( viewForPage( target ), target ); updateButtons();
 				if ( isVerticalReading() ) { if ( pendingStart ) alignVerticalStart( target ); else { const page = pages[ target ]; if ( page ) root.scrollTop += page.getBoundingClientRect().top - root.getBoundingClientRect().top - 16; } }

@@ -100,7 +100,7 @@ function po_quote(string $value): string {
 	return '"' . addcslashes($value, "\\\"\n\r\t") . '"';
 }
 
-$header = "Project-Id-Version: MangaFocus 0.4.0\n"
+$header = "Project-Id-Version: MangaFocus 0.5.0\n"
 	. "Report-Msgid-Bugs-To: https://github.com/cni-works/mangafocus/issues\n"
 	. "POT-Creation-Date: 2026-10-04 00:00+0900\n"
 	. "PO-Revision-Date: 2026-10-04 00:00+0900\n"
@@ -116,7 +116,7 @@ foreach (explode("\n", rtrim($header)) as $line) {
 	$po .= po_quote($line . "\n") . "\n";
 }
 $po .= "\n";
-$pot = "msgid \"\"\nmsgstr \"\"\n" . po_quote("Project-Id-Version: MangaFocus 0.4.0\n") . "\n" . po_quote("Content-Type: text/plain; charset=UTF-8\n") . "\n" . po_quote("X-Domain: mangafocus\n") . "\n\n";
+$pot = "msgid \"\"\nmsgstr \"\"\n" . po_quote("Project-Id-Version: MangaFocus 0.5.0\n") . "\n" . po_quote("Content-Type: text/plain; charset=UTF-8\n") . "\n" . po_quote("X-Domain: mangafocus\n") . "\n\n";
 foreach ($catalog as $english => $japanese) {
 	if ($singular_page === $english || $plural_pages === $english) {
 		continue;

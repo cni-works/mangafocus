@@ -103,6 +103,8 @@ assert "'X（%）'" not in editor and "'Y（%）'" not in editor
 for rel in ['blocks/viewer/index.js','blocks/library-viewer/index.js']:assert "'Viewer ID: '" not in (r/rel).read_text(encoding='utf-8')
 for call in calls:
  translated=po[('',call['msgid'])].get('msgstr','')
+ assert 'コマ読み' not in translated or call['msgid']=='MangaFocus – Panel-by-Panel Manga Reader'
+ assert call['msgid']=='MangaFocus – Panel-by-Panel Manga Reader' or not re.search(r'panel[- ]by[- ]panel|panel reading|read by panel',call['msgid'],re.I),('old mode label still active',call)
  assert '専用ビュ' not in translated,('old panel-reader name still active',call)
 manual=json.loads((r/'docs/manual-settings-phase5.json').read_text(encoding='utf-8'));metadata=json.loads((r/'blocks/viewer/block.json').read_text(encoding='utf-8'))
 assert len(manual)>=54
@@ -127,10 +129,10 @@ for name in ['Description','Installation','Frequently Asked Questions','Screensh
 for rel in ['docs/readme-next-draft.txt','docs/changelog-next-draft.md','docs/manual-settings-phase5.md','docs/manual-settings-phase5.json','docs/translation-inventory-phase5.csv']:
  assert rel not in allow
 assert len(re.findall(r'^\d+\. ',draft.split('== Screenshots ==')[1].split('== Development ==')[0],re.M))==6
-assert 'Stable tag: 0.4.1' in readme and 'Stable tag: 0.3.0' in draft
-main=(r/'mangafocus.php').read_text(encoding='utf-8');assert re.search(r'\* Version:\s*(\S+)',main)[1]=='0.4.1'
-assert "define( 'AI_MANGA_VIEWER_VERSION', '0.4.1' )" in main
-assert translations.info()['project-id-version']=='MangaFocus 0.4.0'
+assert 'Stable tag: 0.5.0' in readme and 'Stable tag: 0.3.0' in draft
+main=(r/'mangafocus.php').read_text(encoding='utf-8');assert re.search(r'\* Version:\s*(\S+)',main)[1]=='0.5.0'
+assert "define( 'AI_MANGA_VIEWER_VERSION', '0.5.0' )" in main
+assert translations.info()['project-id-version']=='MangaFocus 0.5.0'
 # Counterexamples and deterministic regeneration are isolated in a fresh temporary directory.
 with tempfile.TemporaryDirectory(prefix='mangafocus-i18n-check-') as work:
  copy=Path(work)

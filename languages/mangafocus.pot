@@ -1,13 +1,13 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: MangaFocus 0.4.0\n"
+"Project-Id-Version: MangaFocus 0.5.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "X-Domain: mangafocus\n"
 
 msgid "%d days"
 msgstr ""
 
-msgid "A manga reader for WordPress with page, spread, vertical, zoom, and panel-by-panel reading."
+msgid "A manga reader for WordPress with page, spread, vertical, zoom, and Focus Mode."
 msgstr ""
 
 msgid "AI consultation"
@@ -28,7 +28,7 @@ msgstr ""
 msgid "Add a panel to the current page"
 msgstr ""
 
-msgid "Add at least one panel before using panel reading alone."
+msgid "Add at least one panel before using Focus Mode alone."
 msgstr ""
 
 msgid "Adjust the comic position when scrolling stops."
@@ -121,7 +121,7 @@ msgstr ""
 msgid "Choose how readers can read this comic. Disabled modes keep their saved settings."
 msgstr ""
 
-msgid "Choose which page to start from when switching to panel reading after reading partway through the inline viewer."
+msgid "Choose which page to start from when switching to Focus Mode after reading partway through the inline viewer."
 msgstr ""
 
 msgid "Clear selection"
@@ -211,7 +211,7 @@ msgstr ""
 msgid "Display active; editing unavailable"
 msgstr ""
 
-msgid "Display manga images with paged, spread, fullscreen, and Panel-by-Panel reading."
+msgid "Display manga images with paged, spread, fullscreen, and Focus Mode."
 msgstr ""
 
 msgid "Display method"
@@ -238,7 +238,7 @@ msgstr ""
 msgid "Edit this comic"
 msgstr ""
 
-msgid "Enable Panel-by-Panel reading"
+msgid "Enable Focus Mode"
 msgstr ""
 
 msgid "Enable analytics"
@@ -259,12 +259,6 @@ msgstr ""
 msgid "Enable inline viewer"
 msgstr ""
 
-msgid "Enable panel reading"
-msgstr ""
-
-msgid "Enable panel reading mode"
-msgstr ""
-
 msgid "Enable reader event collection"
 msgstr ""
 
@@ -274,7 +268,7 @@ msgstr ""
 msgid "Enlarge configured panels one at a time."
 msgstr ""
 
-msgid "Enlarge panels in sequence with Panel-by-Panel reading"
+msgid "Enlarge panels in sequence with Focus Mode"
 msgstr ""
 
 msgid "Enlarge registered panels in sequence in a dedicated viewer."
@@ -292,7 +286,13 @@ msgstr ""
 msgid "Events are collected only when Pro is available. Disabling this option does not delete existing analytics data."
 msgstr ""
 
+msgid "Exit Focus Mode"
+msgstr ""
+
 msgid "Exit fullscreen"
+msgstr ""
+
+msgid "Fade"
 msgstr ""
 
 msgid "Features"
@@ -305,6 +305,18 @@ msgid "Fit"
 msgstr ""
 
 msgid "Fit to the panel region"
+msgstr ""
+
+msgid "Focus Mode"
+msgstr ""
+
+msgid "Focus Mode also uses this setting when moving between pages."
+msgstr ""
+
+msgid "Focus Mode settings"
+msgstr ""
+
+msgid "Focus Mode start position"
 msgstr ""
 
 msgid "Focus on one page at a time"
@@ -460,10 +472,13 @@ msgstr ""
 msgid "No cover set"
 msgstr ""
 
-msgid "No panels are configured. Add panels before using panel reading alone."
+msgid "No panels are configured. Add panels before using Focus Mode alone."
 msgstr ""
 
 msgid "No registered comics found."
+msgstr ""
+
+msgid "None"
 msgstr ""
 
 msgid "Normal"
@@ -472,7 +487,7 @@ msgstr ""
 msgid "Not installed or inactive"
 msgstr ""
 
-msgid "ON starts at the first panel of the current page. OFF starts at page 1. Closing on the last page returns to page 1; otherwise ON can resume from the same page, including panel-only reading."
+msgid "ON starts at the first panel of the current page. OFF starts at page 1. Closing on the last page returns to page 1; otherwise ON can resume from the same page, including Focus Mode alone."
 msgstr ""
 
 msgid "Off: first page only. On: every page."
@@ -487,7 +502,7 @@ msgstr ""
 msgid "On uninstall"
 msgstr ""
 
-msgid "On: enlarge configured panels one at a time. Off: hide the panel reading launch button. Configure at least one panel to use this mode alone."
+msgid "On: enlarge configured panels one at a time. Off: hide the Focus Mode launch button. Configure at least one panel to use this mode alone."
 msgstr ""
 
 msgid "On: offer fullscreen paged or vertical reading. Off: hide the fullscreen launch button."
@@ -541,34 +556,16 @@ msgstr ""
 msgid "Paged reading"
 msgstr ""
 
-msgid "Paged reading, spreads, page focus, fullscreen, vertical reading, zoom, Panel-by-Panel, Manga Library"
+msgid "Paged reading, spreads, page focus, fullscreen, vertical reading, zoom, Focus Mode, Manga Library"
 msgstr ""
 
-msgid "Pages without panels remain in order as full pages. Add at least one panel before using panel reading alone."
+msgid "Pages without panels remain in order as full pages. Add at least one panel before using Focus Mode alone."
 msgstr ""
 
 msgid "Panel"
 msgstr ""
 
-msgid "Panel reading also uses this setting when moving between pages."
-msgstr ""
-
-msgid "Panel reading mode"
-msgstr ""
-
-msgid "Panel reading settings"
-msgstr ""
-
-msgid "Panel reading start position"
-msgstr ""
-
 msgid "Panel set to edit"
-msgstr ""
-
-msgid "Panel-by-Panel"
-msgstr ""
-
-msgid "Panel-by-Panel viewer"
 msgstr ""
 
 msgid "Pending"
@@ -604,13 +601,13 @@ msgstr ""
 msgid "Read all pages by scrolling from top to bottom."
 msgstr ""
 
-msgid "Read by panel"
-msgstr ""
-
 msgid "Read directly on the page"
 msgstr ""
 
 msgid "Read from the first page"
+msgstr ""
+
+msgid "Read in Focus Mode"
 msgstr ""
 
 msgid "Read in fullscreen"
@@ -784,19 +781,22 @@ msgstr ""
 msgid "Single page"
 msgstr ""
 
+msgid "Slide"
+msgstr ""
+
 msgid "Spread"
 msgstr ""
 
 msgid "Spread (unavailable)"
 msgstr ""
 
+msgid "Start Focus Mode from the current page"
+msgstr ""
+
 msgid "Start from the current page"
 msgstr ""
 
 msgid "Start fullscreen from the current page"
-msgstr ""
-
-msgid "Start panel reading from the current page"
 msgstr ""
 
 msgid "Strong"
@@ -889,10 +889,13 @@ msgstr ""
 msgid "Used for inline and fullscreen paged reading."
 msgstr ""
 
+msgid "Used for inline and fullscreen reading. Focus Mode has its own page counter."
+msgstr ""
+
 msgid "Used for inline and fullscreen reading. Panel magnification is configured separately."
 msgstr ""
 
-msgid "Used for inline and fullscreen reading. Panel reading has its own page counter."
+msgid "Used for normal page navigation, including entire spreads. Focus Mode, vertical scrolling and fullscreen page focus keep their own effects."
 msgstr ""
 
 msgid "Used for page and panel navigation. Vertical reading scrolls from top to bottom."
@@ -922,10 +925,10 @@ msgstr ""
 msgid "Viewer details"
 msgstr ""
 
-msgid "When disabled, fullscreen starts from the first page. The cover launcher always starts from the first page."
+msgid "When disabled, Focus Mode starts from the beginning regardless of the page currently open."
 msgstr ""
 
-msgid "When disabled, panel reading starts from the beginning regardless of the page currently open."
+msgid "When disabled, fullscreen starts from the first page. The cover launcher always starts from the first page."
 msgstr ""
 
 msgid "When disabled, the dedicated viewer starts from the beginning regardless of the page currently open."
@@ -940,7 +943,7 @@ msgstr ""
 msgid "When scrolling stops, the comic is gently aligned to a comfortable reading position."
 msgstr ""
 
-msgid "When switching to panel reading"
+msgid "When switching to Focus Mode"
 msgstr ""
 
 msgid "Width (%)"
@@ -994,7 +997,7 @@ msgstr[0] ""
 msgstr[1] ""
 
 msgctxt "block description"
-msgid "Display manga images with paged, spread, fullscreen, and Panel-by-Panel reading."
+msgid "Display manga images with paged, spread, fullscreen, and Focus Mode."
 msgstr ""
 
 msgctxt "block description"

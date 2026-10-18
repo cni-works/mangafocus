@@ -4,7 +4,7 @@
   "title": "MangaFocus",
   "category": "ai-manga-viewer",
   "icon": "book-alt",
-  "description": "Display manga images with paged, spread, fullscreen, and Panel-by-Panel reading.",
+  "description": "Display manga images with paged, spread, fullscreen, and Focus Mode.",
   "keywords": [ "Manga", "Comic", "Viewer", "Page turn", "Booklet" ],
   "textdomain": "mangafocus",
   "attributes": {
@@ -21,6 +21,7 @@
     "enableEdgeClick": { "type": "boolean", "default": true },
     "showGuideArrowOnAllPages": { "type": "boolean", "default": false },
     "enableAnimation": { "type": "boolean", "default": true },
+    "pageTransition": { "type": "string" },
     "enableInline": { "type": "boolean" },
     "enableFullscreen": { "type": "boolean", "default": false },
     "fullscreenStartAtCurrent": { "type": "boolean", "default": false },

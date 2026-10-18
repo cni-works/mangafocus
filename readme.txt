@@ -4,11 +4,11 @@ Tags: manga, comic, viewer, reader, gutenberg
 Requires at least: 6.3
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.4.1
+Stable tag: 0.5.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Publish image-based comics with panel-by-panel reading, page turns, spreads, fullscreen, vertical scrolling, zoom, and Manga Library.
+Publish image-based comics with Focus Mode, page turns, spreads, fullscreen, vertical scrolling, zoom, and Manga Library.
 
 == Description ==
 
@@ -17,14 +17,14 @@ Publish image-based comics with panel-by-panel reading, page turns, spreads, ful
 
 = About MangaFocus =
 
-MangaFocus is a WordPress plugin for publishing comics made from image files. Its panel-by-panel reader lets authors define regions on each page so readers can move through the comic one panel at a time. It also provides page-by-page reading, two-page spreads, fullscreen viewing, vertical scrolling, zoom and pan controls, and reusable Manga Library entries.
+MangaFocus is a WordPress plugin for publishing comics made from image files. Focus Mode enlarges author-defined panels in sequence. It also provides page-by-page reading, two-page spreads, fullscreen viewing, vertical scrolling, zoom and pan controls, and reusable Manga Library entries.
 
 The plugin does not generate images and does not send content to an AI API. It can display AI-assisted artwork, conventionally created comics, company introductions, brochures, and other image-based publications.
 
 = Free features =
 
 * A MangaFocus block for posts and pages
-* Panel-by-panel reading with author-defined panel regions
+* Focus Mode with author-defined panel regions
 * Separate optional panel regions for mobile screens
 * Single-page, two-page spread, and responsive automatic layouts
 * Optional standalone cover pages and standalone handling for landscape images
@@ -32,10 +32,10 @@ The plugin does not generate images and does not send content to an AI API. It c
 * Fullscreen page navigation and vertical scrolling
 * A fullscreen mode that focuses on one page at a time within a spread
 * Zoom, pan, keyboard, swipe, and page-edge controls
-* Independent inline, fullscreen, and panel reading modes, with cover launch buttons for enabled modes
+* Independent inline, fullscreen, and Focus Mode options, with cover launch buttons for enabled modes
 * Reuse through Manga Library, the Registered Viewer block, and shortcodes
 
-The one-page-at-a-time spread mode focuses on each complete page in reading order. Panel-by-panel reading instead follows the author-defined regions within each page.
+The one-page-at-a-time spread mode focuses on each complete page in reading order. Focus Mode instead follows the author-defined regions within each page.
 
 = Creating and reusing comics =
 
@@ -57,7 +57,7 @@ Fullscreen reading supports normal page navigation or continuous vertical scroll
 
 Pro is being prepared for release. Free works independently.
 
-The Core plugin can be extended by a compatible Pro add-on. Pro features include calls to action, analytics reports, AI consultation material, and AI manga production support. Panel-by-panel reading is included in Free/Core.
+The Core plugin can be extended by a compatible Pro add-on. Pro features include calls to action, analytics reports, AI consultation material, and AI manga production support. Focus Mode is included in Free/Core.
 
 When the Pro add-on is inactive, published content falls back to the regular Free Viewer. Saved Pro settings remain stored so that a compatible add-on can use them again later.
 
@@ -76,7 +76,7 @@ If a site owner uses an image URL hosted on another site, the reader's browser c
 1. Install and activate MangaFocus.
 2. Add the MangaFocus block to a post or page.
 3. Select the page images in reading order.
-4. Configure the page layout, binding direction, fullscreen mode, vertical scrolling, zoom, and Panel-by-Panel reading.
+4. Configure the page layout, binding direction, fullscreen mode, vertical scrolling, zoom, and Focus Mode.
 5. Preview the desktop and mobile layouts, then publish the post.
 
 To reuse the same comic in multiple locations, copy a Direct Viewer into Manga Library with “Register in Manga Library.” Then add the Registered Viewer block to a post and select the comic, or use the shortcode shown in the Manga Library list.
@@ -101,11 +101,11 @@ No. Registration creates an independent copy. The Direct Viewer and Manga Librar
 
 = What is the difference between a spread and focusing on one page at a time? =
 
-A spread shows two pages together. “Focus on one page at a time” keeps the spread structure while focusing on each complete page in fullscreen. Panel-by-Panel reading instead enlarges the author-defined regions within each page.
+A spread shows two pages together. “Focus on one page at a time” keeps the spread structure while focusing on each complete page in fullscreen. Focus Mode instead enlarges the author-defined regions within each page.
 
 = Can I use MangaFocus without the Pro add-on? =
 
-Yes. Free/Core includes Panel-by-Panel reading, page navigation, spreads, automatic layouts, fullscreen viewing, vertical scrolling, zoom, Manga Library, Registered Viewer, and shortcodes.
+Yes. Free/Core includes Focus Mode, page navigation, spreads, automatic layouts, fullscreen viewing, vertical scrolling, zoom, Manga Library, Registered Viewer, and shortcodes.
 
 = What happens if I deactivate the Pro add-on? =
 
@@ -134,9 +134,15 @@ The distributed plugin contains its human-readable PHP, JavaScript, and CSS sour
 
 The maintained development repository is available at https://github.com/cni-works/mangafocus.
 
-The release build tool is available in the public development repository at https://github.com/cni-works/mangafocus/blob/3c13166c04880ebe4342dfcdb4f4bd9dbbcc70eb/scripts/build-release.ps1 and is not included in the distributed plugin. To run it, check out the corresponding repository revision and run `powershell -File scripts/build-release.ps1` from the repository root.
+Build tool (excluded from the ZIP): https://github.com/cni-works/mangafocus/blob/3c13166c04880ebe4342dfcdb4f4bd9dbbcc70eb/scripts/build-release.ps1. Run `powershell -File scripts/build-release.ps1` from the corresponding repository revision.
 
 == Changelog ==
+
+= 0.5.0 =
+
+* Renamed panel reading to Focus Mode; it enlarges configured panels in sequence.
+
+* Added page-turn, fade, slide and instant transitions, preserving legacy settings and reduced-motion support.
 
 = 0.4.1 =
 

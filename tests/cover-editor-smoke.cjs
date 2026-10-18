@@ -15,7 +15,7 @@ function run(){
  assert.doesNotMatch(source,/PluginDocumentSettingPanel|registerPlugin|removeEditorPanel|toggleEditorPanelEnabled/,'No document UI or native panel mutation');
  for(const locale of ['en','ja']){
   const h=harness(locale),original=JSON.stringify(h.attrs);let tree=h.render();h.runEffects();
-  assert.deepEqual(h.panels(tree).map(n=>n.props.title),['Cover image','Page images','Inline viewer','Fullscreen mode','Panel reading mode','General settings'].map(h.t));
+  assert.deepEqual(h.panels(tree).map(n=>n.props.title),['Cover image','Page images','Inline viewer','Fullscreen mode','Focus Mode','General settings'].map(h.t));
   assert.equal(h.coverPanel(tree).props.initialOpen,true);
   assert.ok(JSON.stringify(h.coverPanel(tree)).includes(h.t('First-page preview (not a saved cover)')));
   h.select(tree,7);assert.equal(h.saved,0,'Only edited state');tree=h.render();assert.ok(JSON.stringify(h.coverPanel(tree)).includes('cover-7.svg'));assert.deepEqual(h.standardPreview(),{id:7,url:'https://example.test/cover-7.svg'},'Unsaved block change updates native preview state');h.standardChange(8);tree=h.render();assert.ok(JSON.stringify(h.coverPanel(tree)).includes('cover-8.svg'),'Unsaved native change updates selected block immediately');assert.equal(h.saved,0);assert.deepEqual(h.standardPreview(),{id:8,url:'https://example.test/cover-8.svg'});
@@ -32,7 +32,7 @@ function run(){
   assert.equal(JSON.stringify(h.pages),beforePages);assert.ok(h.edits.every(v=>Object.keys(v).join()==='featured_media'));
   if(locale==='ja')for(const key of ['Cover image','Select cover image','Change cover image','Remove cover image','Set the cover here. The standard Featured image panel is also available as a fallback and uses the same image.'])assert.notEqual(h.t(key),key);
  }
- const pro=editorHarness('en',true,true);const tree=pro.render();assert.deepEqual(pro.panels(tree).slice(0,6).map(n=>n.props.title),['Cover image','Page images','Inline viewer','Fullscreen mode','Panel reading mode','General settings']);assert.equal(pro.panels(tree).length,7,'Pro CTA remains after core settings');
+ const pro=editorHarness('en',true,true);const tree=pro.render();assert.deepEqual(pro.panels(tree).slice(0,6).map(n=>n.props.title),['Cover image','Page images','Inline viewer','Fullscreen mode','Focus Mode','General settings']);assert.equal(pro.panels(tree).length,7,'Pro CTA remains after core settings');
  console.log('PASS: real block Edit Inspector cover first, six groups including cover, featured_media select/change/unlink, save success/failure doubles, deselect/reselect/native sync, ordinary post/page isolation, no panel mutations, Pro CTA context, en/ja.');
 }
 module.exports={harness,run};if(require.main===module)run();

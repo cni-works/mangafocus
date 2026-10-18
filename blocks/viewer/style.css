@@ -26,7 +26,7 @@
 .amv-reader.is-enhanced .amv-reader__page.is-active{position:relative;z-index:2;display:block}
 .amv-reader.is-enhanced .amv-reader__page.is-under{position:relative;z-index:1;display:block}
 .amv-reader.is-enhanced .amv-reader__page.is-leaving{position:absolute;z-index:3;inset:0;display:block;backface-visibility:hidden;transform-style:preserve-3d}
-.amv-reader[data-animation="on"].is-turning .amv-reader__page.is-leaving{animation:amv-reader-turn .36s cubic-bezier(.22,.68,.24,1) both}
+.amv-reader[data-animation="on"].is-turning .amv-reader__page.is-leaving,.amv-reader[data-page-transition="turn"].is-turning .amv-reader__page.is-leaving{animation:amv-reader-turn .36s cubic-bezier(.22,.68,.24,1) both}
 .amv-reader[data-binding="rtl"] .amv-reader__page.is-leaving-next,.amv-reader[data-binding="ltr"] .amv-reader__page.is-leaving-previous{--amv-reader-turn:-72deg;--amv-reader-shift:10%;transform-origin:right center}
 .amv-reader[data-binding="rtl"] .amv-reader__page.is-leaving-previous,.amv-reader[data-binding="ltr"] .amv-reader__page.is-leaving-next{--amv-reader-turn:72deg;--amv-reader-shift:-10%;transform-origin:left center}
 @keyframes amv-reader-turn{0%{opacity:1;transform:translateX(0) rotateY(0);filter:brightness(1)}58%{opacity:.92;filter:brightness(.94)}100%{opacity:.42;transform:translateX(var(--amv-reader-shift)) rotateY(var(--amv-reader-turn));filter:brightness(.86)}}
@@ -120,3 +120,11 @@
 .amv-reader.is-fullscreen.has-compact-fullscreen-layout:not(.is-vertical-reading)[data-binding="rtl"] > .amv-reader__stage > .amv-reader__edge--previous::before{content:"\25B6"}
 .amv-reader.is-fullscreen.has-compact-fullscreen-layout:not(.is-vertical-reading)[data-binding="rtl"] > .amv-reader__stage > .amv-reader__edge--next{grid-column:1}
 .amv-reader.is-fullscreen.has-compact-fullscreen-layout:not(.is-vertical-reading)[data-binding="rtl"] > .amv-reader__stage > .amv-reader__edge--next::before{content:"\25C0"}
+
+/* Normal navigation effects use image-only outgoing visuals, never extension DOM. */
+.amv-reader__transition-content{position:relative;width:100%}
+.amv-reader__transition-sheet{position:absolute;z-index:4;inset:0;overflow:hidden;pointer-events:none;background:inherit;backface-visibility:hidden;transform-style:preserve-3d}
+.amv-reader__transition-image{position:absolute;display:block;max-width:none!important;max-height:none!important;margin:0!important;border:0!important;pointer-events:none}
+
+.amv-reader.is-view-transitioning .amv-reader__stage,.amv-reader.is-view-transitioning .amv-reader__pages{max-width:min(100%,var(--amv-transition-width))}
+.amv-reader.is-view-transitioning .amv-reader__focus-layer{max-width:none;transition:none}

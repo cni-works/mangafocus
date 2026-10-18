@@ -1,14 +1,14 @@
 ﻿english,context,plural,japanese,status,references
 %d days,,,%d日,active,includes/settings.php:150
 %s page,,%s pages,%sページ,active,mangafocus.php:272
-"A manga reader for WordPress with page, spread, vertical, zoom, and panel-by-panel reading.",,,WordPressでページ送り・見開き・縦読み・ズーム・コマ読みを利用できる漫画ビューアーです。,active,mangafocus.php:4
+"A manga reader for WordPress with page, spread, vertical, zoom, and Focus Mode.",,,WordPressでページ送り・見開き・縦読み・ズーム・フォーカスモードを利用できる漫画ビューアーです。,active,mangafocus.php:4
 AI consultation,,,AI相談,active,includes/settings.php:191
 AI manga production support,,,AI漫画制作サポート,active,includes/settings.php:192
 Active,,,有効,active,includes/settings.php:144; includes/settings.php:162
 Add New,,,新規追加,active,mangafocus.php:113
 Add a mobile panel,,,スマートフォン用のコマを追加,active,assets/panel-reader/editor.js:44
 Add a panel to the current page,,,現在のページにコマを追加,active,assets/panel-reader/editor.js:44
-Add at least one panel before using panel reading alone.,,,コマ読みのみを利用する場合は、先にコマを追加してください。,active,blocks/viewer/index.js:81; mangafocus.php:469
+Add at least one panel before using Focus Mode alone.,,,フォーカスモードのみを利用する場合は、先にコマを追加してください。,active,blocks/viewer/index.js:81; mangafocus.php:470
 Adjust the comic position when scrolling stops.,,,スクロールが止まったとき、漫画が見やすい位置に収まるよう自動調整します。,retained_legacy,
 Adjusts region fitting only. Full-page display does not use this value. Lower it if small panels are enlarged too much.,,,コマ範囲の表示にのみ適用します。ページ全体表示では使用しません。小さなコマが大きすぎる場合は値を下げてください。,active,assets/panel-reader/editor.js:48
 "After document scrolling stops, adjust the comic position in the viewport. This is not automatic alignment on page turns.",,,文書のスクロールが止まったとき、画面内の漫画の位置を調整します。ページ送り時の自動位置合わせではありません。,active,blocks/viewer/index.js:165
@@ -39,10 +39,10 @@ Change cover image,,,表紙画像を変更,active,blocks/viewer/index.js:34
 Checking image information. Spread and automatic layouts remain available while checking.,,,画像情報を確認中です。確認中は見開き・自動を選択できます。,active,blocks/viewer/index.js:186
 Choose again from Manga Library,,,漫画ライブラリから選び直す,active,blocks/library-viewer/index.js:138
 Choose how readers can read this comic. Disabled modes keep their saved settings.,,,読者が利用できる読み方を選びます。OFFにしても各モードの設定値は保持されます。,retained_legacy,
-Choose which page to start from when switching to panel reading after reading partway through the inline viewer.,,,通常ビュアーで途中まで読んでからコマ読みに切り替えた際、どのページから読み始めるかを選びます。,active,assets/panel-reader/editor.js:52
+Choose which page to start from when switching to Focus Mode after reading partway through the inline viewer.,,,通常ビュアーで途中まで読んでからフォーカスモードに切り替えた際、どのページから読み始めるかを選びます。,active,assets/panel-reader/editor.js:52
 Clear selection,,,選択を解除,active,blocks/library-viewer/index.js:139
 Click to copy the shortcode,,,クリックしてショートコードをコピー,active,mangafocus.php:293
-Close viewer,,,ビューアーを閉じる,active,assets/panel-reader/frontend.js:41
+Close viewer,,,ビューアーを閉じる,retained_legacy,
 Collection active; reports unavailable,,,収集継続・レポート利用不可,active,includes/settings.php:108
 Comic,,,コミック,active,blocks/viewer/index.js:63
 Comic editing preview,,,漫画内容の編集プレビュー,active,blocks/viewer/index.js:198
@@ -56,7 +56,7 @@ Copy the current pages and Viewer settings as an independent comic. Saved extens
 Core version,,,Coreバージョン,active,includes/settings.php:160
 Could not copy.,,,コピーできませんでした。,active,mangafocus.php:293
 Could not load Manga Library.,,,漫画ライブラリを読み込めませんでした。,active,blocks/library-viewer/index.js:92
-Could not register the comic in Manga Library.,,,漫画ライブラリへの登録に失敗しました。,active,blocks/viewer/index.js:135; mangafocus.php:477; mangafocus.php:486
+Could not register the comic in Manga Library.,,,漫画ライブラリへの登録に失敗しました。,active,blocks/viewer/index.js:135; mangafocus.php:478; mangafocus.php:487
 Cover,,,表紙,active,mangafocus.php:223
 Cover image,,,表紙画像,active,blocks/viewer/index.js:58; mangafocus.php:122
 Cover selected. Its preview is loading or unavailable.,,,表紙は選択されています。プレビューは読み込み中、または取得できません。,active,blocks/viewer/index.js:198; blocks/viewer/index.js:31
@@ -69,7 +69,7 @@ Delete all analytics tables and settings,,,解析テーブルと設定をすべ�
 "Delete all saved sessions, page progress, and events. This action cannot be undone. Settings and tables remain.",,,保存済みのセッション、ページ到達、イベントをすべて削除します。この操作は元に戻せません。設定とテーブルは残ります。,active,includes/analytics/settings.php:40
 Detailed data retention,,,詳細データの保存期間,active,includes/analytics/settings.php:33; includes/settings.php:175
 Display active; editing unavailable,,,表示継続・編集不可,active,includes/settings.php:101
-"Display manga images with paged, spread, fullscreen, and Panel-by-Panel reading.",,,漫画画像をページ送り、見開き、全画面、コマ読みで表示します。,active,blocks/viewer/index.js:63
+"Display manga images with paged, spread, fullscreen, and Focus Mode.",,,漫画画像をページ送り、見開き、全画面、フォーカスモードで表示します。,active,blocks/viewer/index.js:63
 Display method,,,表示方法,active,assets/panel-reader/editor.js:47
 Draft,,,下書き,active,blocks/library-viewer/index.js:25
 Drag over the image to create a region,,,画像上をドラッグして枠を作成,active,assets/panel-reader/editor.js:44
@@ -78,29 +78,33 @@ Edit comic,,,漫画を編集,active,mangafocus.php:116
 Edit page images,,,ページ画像を編集,active,blocks/viewer/index.js:125
 Edit registered comic,,,登録した漫画を編集,active,blocks/viewer/index.js:145
 Edit this comic,,,この漫画を編集,active,mangafocus.php:313
-Enable Panel-by-Panel reading,,,コマ読みを有効化,retained_legacy,
+Enable Focus Mode,,,フォーカスモードを有効にする,active,assets/panel-reader/editor.js:56; blocks/viewer/index.js:177
 Enable analytics,,,解析を有効にする,active,mangafocus.php:286
 Enable free zoom and pan,,,自由ズームと移動を有効化,active,blocks/viewer/index.js:193
 Enable fullscreen display,,,全画面表示を有効にする,retained_legacy,
 Enable fullscreen mode,,,全画面モードを有効にする,active,blocks/viewer/index.js:169
 Enable inline display,,,通常表示を有効にする,retained_legacy,
 Enable inline viewer,,,通常ビュアーを有効にする,active,blocks/viewer/index.js:162
-Enable panel reading,,,コマ読みを有効にする,retained_legacy,
-Enable panel reading mode,,,コマ読みモードを有効にする,active,assets/panel-reader/editor.js:56; blocks/viewer/index.js:177
 Enable reader event collection,,,読者イベントの収集を有効にする,active,includes/analytics/settings.php:32
 Enlarge,,,拡大して表示,retained_legacy,
 Enlarge configured panels one at a time.,,,設定したコマを1コマずつ拡大して読むモードです。,active,assets/panel-reader/editor.js:56
-Enlarge panels in sequence with Panel-by-Panel reading,,,コマ読みでコマを順番に拡大表示,active,includes/settings.php:186
+Enlarge panels in sequence with Focus Mode,,,フォーカスモードでコマを順番に拡大表示,active,includes/settings.php:186
 Enlarge registered panels in sequence in a dedicated viewer.,,,登録したコマを専用ビューアーで順に大きく表示します。,retained_legacy,
 Enlarge the panel region,,,コマ範囲を拡大,active,assets/panel-reader/editor.js:73
-Enter a comic title.,,,漫画タイトルを入力してください。,active,mangafocus.php:452
+Enter a comic title.,,,漫画タイトルを入力してください。,active,mangafocus.php:453
 Entire spread,,,見開き全体,active,blocks/viewer/index.js:174
 Events are collected only when Pro is available. Disabling this option does not delete existing analytics data.,,,Proが利用可能な場合だけ収集します。OFFにしても過去の解析データは削除されません。,active,includes/analytics/settings.php:32
-Exit fullscreen,,,全画面を終了,active,blocks/viewer/view.js:334; blocks/viewer/view.js:447
+Exit Focus Mode,,,フォーカスモードを終了,active,assets/panel-reader/frontend.js:41; includes/panel-reader/renderer.php:45
+Exit fullscreen,,,全画面を終了,active,blocks/viewer/view.js:438; blocks/viewer/view.js:580
+Fade,,,フェード,active,blocks/viewer/index.js:192
 Features,,,機能,active,includes/settings.php:183
 First-page preview (not a saved cover),,,1ページ目の代替プレビュー（表紙未設定）,active,blocks/viewer/index.js:33
 Fit,,,全体,active,blocks/viewer/index.js:126; blocks/viewer/render.php:133
 Fit to the panel region,,,指定したコマ範囲に合わせる,active,assets/panel-reader/editor.js:47
+Focus Mode,,,フォーカスモード,active,assets/panel-reader/editor.js:55; blocks/viewer/index.js:176; blocks/viewer/index.js:63; includes/panel-reader/renderer.php:44; includes/settings.php:186
+Focus Mode also uses this setting when moving between pages.,,,フォーカスモードで別のページへ移動するときの演出にも、この設定を使用します。,retained_legacy,
+Focus Mode settings,,,フォーカスモードの設定,retained_legacy,
+Focus Mode start position,,,フォーカスモードの開始位置,retained_legacy,
 Focus on one page at a time,,,1ページずつ大きく読む,active,blocks/viewer/index.js:174
 Free Viewer,,,Free Viewer,active,includes/settings.php:185
 Full page,,,ページ全体,active,assets/panel-reader/frontend.js:41; includes/panel-reader/renderer.php:47
@@ -118,7 +122,7 @@ Image zoom and pan,,,画像の拡大と移動,active,blocks/viewer/render.php:13
 Inline display,,,ページ内の表示,retained_legacy,
 Inline display settings,,,通常表示の設定,retained_legacy,
 Inline viewer,,,通常ビュアー,active,blocks/viewer/index.js:161
-Keep at least one reading mode enabled.,,,少なくとも1つの表示モードを有効にしてください。,active,blocks/viewer/index.js:80; mangafocus.php:468
+Keep at least one reading mode enabled.,,,少なくとも1つの表示モードを有効にしてください。,active,blocks/viewer/index.js:80; mangafocus.php:469
 Keep current selection,,,選択を変更しない,active,blocks/library-viewer/index.js:148
 Left (vertical),,,左（縦並び）,active,blocks/viewer/index.js:194
 Left binding,,,左綴じ,active,blocks/viewer/index.js:187
@@ -134,7 +138,7 @@ Manga Analytics data deleted.,,,漫画解析データを削除しました。,ac
 Manga Analytics is currently unavailable,,,漫画解析は現在利用できません,active,mangafocus.php:289
 Manga Library,,,漫画ライブラリ,active,mangafocus.php:109; mangafocus.php:111
 Manga Library cover image URL,,,漫画ライブラリの表紙画像URL,active,mangafocus.php:169
-MangaFocus,,,MangaFocus,active,blocks/viewer/index.js:63; includes/settings.php:158; mangafocus.php:666
+MangaFocus,,,MangaFocus,active,blocks/viewer/index.js:63; includes/settings.php:158; mangafocus.php:667
 MangaFocus Settings,,,MangaFocus 設定,active,includes/settings.php:153; includes/settings.php:28; includes/settings.php:29
 MangaFocus – Panel-by-Panel Manga Reader,,,MangaFocus – コマ読み対応漫画ビューアー,active,mangafocus.php:3
 Maximum comic width (px),,,漫画の最大幅（px）,active,blocks/viewer/index.js:188
@@ -142,26 +146,27 @@ Mobile,,,スマートフォン,active,assets/panel-reader/editor.js:42
 Move down,,,下へ移動,active,blocks/viewer/index.js:160
 Move up,,,上へ移動,active,blocks/viewer/index.js:160
 Navigate by clicking page edges,,,ページ端クリックで送る,active,blocks/viewer/index.js:190
-Near page %d. Scroll vertically to read.,,,%dページ目付近を表示中。上下にスクロールして読めます,active,blocks/viewer/view.js:334
+Near page %d. Scroll vertically to read.,,,%dページ目付近を表示中。上下にスクロールして読めます,active,blocks/viewer/view.js:438
 New comic,,,新しい漫画,active,mangafocus.php:115
 Next,,,次へ,active,assets/panel-reader/editor.js:45
-Next page,,,次のページ,active,blocks/viewer/index.js:198; blocks/viewer/render.php:269; blocks/viewer/render.php:290; blocks/viewer/view.js:334
+Next page,,,次のページ,active,blocks/viewer/index.js:198; blocks/viewer/render.php:270; blocks/viewer/render.php:291; blocks/viewer/view.js:438
 Next panel,,,次のコマ,active,assets/panel-reader/frontend.js:41; includes/panel-reader/renderer.php:46; includes/panel-reader/renderer.php:47
 No comics are available for selection.,,,選択できる漫画がありません。,active,blocks/library-viewer/index.js:146
 No comics found in Trash.,,,ゴミ箱に漫画はありません。,active,mangafocus.php:121
 No cover image is set. The first page is displayed instead; it is not saved as a cover.,,,表紙画像が未設定です。漫画の1ページ目を代わりに表示しますが、表紙画像としては保存されません。,active,blocks/viewer/index.js:32
 No cover is set. The first page is used as a preview instead.,,,表紙画像が未設定の場合は、1ページ目の画像を代わりに表示します。,retained_legacy,
-No cover set,,,表紙未設定,active,blocks/viewer/render.php:249; mangafocus.php:311
-No panels are configured. Add panels before using panel reading alone.,,,コマが設定されていません。コマ読みのみを利用する場合は、先にコマを追加してください。,active,blocks/viewer/index.js:180
+No cover set,,,表紙未設定,active,blocks/viewer/render.php:250; mangafocus.php:311
+No panels are configured. Add panels before using Focus Mode alone.,,,コマが設定されていません。フォーカスモードのみを利用する場合は、先にコマを追加してください。,active,blocks/viewer/index.js:180
 No registered comics found.,,,登録済みの漫画はありません。,active,mangafocus.php:120
+None,,,なし,active,blocks/viewer/index.js:192
 Normal,,,標準,active,blocks/viewer/index.js:166
 Not installed or inactive,,,未導入または無効,active,includes/settings.php:144
-"ON starts at the first panel of the current page. OFF starts at page 1. Closing on the last page returns to page 1; otherwise ON can resume from the same page, including panel-only reading.",,,ONでは現在のページの先頭コマ、OFFでは1ページ目から開始します。最終ページで閉じると1ページ目に戻ります。それ以外では、コマ読みのみの場合もONで同じページから再開できます。,retained_legacy,
+"ON starts at the first panel of the current page. OFF starts at page 1. Closing on the last page returns to page 1; otherwise ON can resume from the same page, including Focus Mode alone.",,,ONでは現在のページの先頭コマ、OFFでは1ページ目から開始します。最終ページで閉じると1ページ目に戻ります。それ以外では、フォーカスモードのみの場合もONで同じページから再開できます。,retained_legacy,
 Off: first page only. On: every page.,,,OFF：先頭ページのみ。ON：全ページに表示します。,active,blocks/viewer/index.js:191
 "On smartphones, pages without mobile panels are shown as full pages. Desktop panels are not used as a fallback.",,,スマートフォンでは、スマートフォン用コマがないページはページ全体を表示します。PC用コマへの自動切り替えは行いません。,active,assets/panel-reader/editor.js:41
 "On the published page, show only the cover and a “Read manga” button, then open the reader in fullscreen. Use the editor preview below to edit the comic as usual.",,,公開画面では表紙と「漫画を読む」ボタンだけを表示し、全画面で読み始めます。下の編集プレビューでは従来どおり漫画内容を編集できます。,retained_legacy,
 On uninstall,,,アンインストール時,active,includes/analytics/settings.php:34
-On: enlarge configured panels one at a time. Off: hide the panel reading launch button. Configure at least one panel to use this mode alone.,,,ON：設定したコマを1コマずつ拡大表示します。OFF：コマ読みの起動ボタンを表示しません。コマ読みだけを使うには、コマを1つ以上設定してください。,active,blocks/viewer/index.js:177
+On: enlarge configured panels one at a time. Off: hide the Focus Mode launch button. Configure at least one panel to use this mode alone.,,,ON：設定したコマを1コマずつ拡大表示します。OFF：フォーカスモードの起動ボタンを表示しません。フォーカスモードだけを使うには、コマを1つ以上設定してください。,active,blocks/viewer/index.js:177
 On: offer fullscreen paged or vertical reading. Off: hide the fullscreen launch button.,,,ON：全画面でページ送り・縦読みを利用できます。OFF：全画面の起動ボタンを表示しません。,active,blocks/viewer/index.js:169
 On: read within the post or page. Off: show a cover with buttons for the other enabled modes.,,,ON：投稿・固定ページ内で漫画を表示します。OFF：表紙と、有効な他のモードの起動ボタンを表示します。,retained_legacy,
 On: read within the post or page. Off: show a cover with buttons for the other enabled modes. Page images and panel settings are kept.,,,ON：投稿・固定ページ内で漫画を表示します。OFF：表紙と、有効な他のモードの起動ボタンを表示します。ページ画像やコマ設定は保持されます。,active,blocks/viewer/index.js:162
@@ -171,41 +176,35 @@ Open Manga Library,,,漫画ライブラリを開く,active,includes/settings.php
 Open fullscreen from the cover,,,表紙から全画面で読む,retained_legacy,
 PC,,,PC,active,assets/panel-reader/editor.js:42
 Page,,,ページ,active,blocks/viewer/index.js:19
-Page %d,,,%dページ目,active,blocks/viewer/render.php:263
-Page %d is enlarged. Use the left and right arrow keys or swipe to navigate.,,,%dページ目を拡大表示中。左右キーまたはスワイプで送れます,active,blocks/viewer/view.js:334
+Page %d,,,%dページ目,active,blocks/viewer/render.php:264
+Page %d is enlarged. Use the left and right arrow keys or swipe to navigate.,,,%dページ目を拡大表示中。左右キーまたはスワイプで送れます,active,blocks/viewer/view.js:438
 Page images,,,ページ画像,active,blocks/viewer/index.js:160
 Page layout,,,ページレイアウト,active,blocks/viewer/index.js:184
-Page transition animation,,,ページめくり演出,active,blocks/viewer/index.js:192
-Page turn,,,ページめくり,retained_legacy,
-Page viewer,,,ページビューアー,active,blocks/viewer/render.php:255
+Page transition animation,,,ページ切り替え効果,active,blocks/viewer/index.js:192
+Page turn,,,ページめくり,active,blocks/viewer/index.js:192
+Page viewer,,,ページビューアー,active,blocks/viewer/render.php:256
 Paged reading,,,ページ送り,active,blocks/viewer/index.js:172
-"Paged reading, spreads, page focus, fullscreen, vertical reading, zoom, Panel-by-Panel, Manga Library",,,ページ送り、見開き、全画面での1ページ表示、縦読み、ズーム、コマ読み、漫画ライブラリ,active,includes/settings.php:185
-Pages without panels remain in order as full pages. Add at least one panel before using panel reading alone.,,,コマ未設定のページも、ページ全体表示で順番に読みます。コマ読みのみで利用するには、1つ以上のコマを設定してください。,active,assets/panel-reader/editor.js:40; assets/panel-reader/editor.js:56
+"Paged reading, spreads, page focus, fullscreen, vertical reading, zoom, Focus Mode, Manga Library",,,ページ送り、見開き、全画面での1ページ表示、縦読み、ズーム、フォーカスモード、漫画ライブラリ,active,includes/settings.php:185
+Pages without panels remain in order as full pages. Add at least one panel before using Focus Mode alone.,,,コマ未設定のページも、ページ全体表示で順番に読みます。フォーカスモードのみで利用するには、1つ以上のコマを設定してください。,active,assets/panel-reader/editor.js:40; assets/panel-reader/editor.js:56
 Panel,,,コマ,active,assets/panel-reader/editor.js:45
-Panel reading also uses this setting when moving between pages.,,,コマ読みで別のページへ移動するときの演出にも、この設定を使用します。,active,blocks/viewer/index.js:192
-Panel reading mode,,,コマ読みモード,active,assets/panel-reader/editor.js:55; blocks/viewer/index.js:176
-Panel reading settings,,,コマ読みの設定,retained_legacy,
-Panel reading start position,,,コマ読みの開始位置,retained_legacy,
 Panel set to edit,,,編集するコマ設定,active,assets/panel-reader/editor.js:42
-Panel-by-Panel,,,コマ読み,active,blocks/viewer/index.js:63; includes/settings.php:186
-Panel-by-Panel viewer,,,コマ読み画面,active,includes/panel-reader/renderer.php:44
 Pending,,,承認待ち,active,blocks/library-viewer/index.js:26
 Previous,,,前へ,active,assets/panel-reader/editor.js:45
-Previous page,,,前のページ,active,blocks/viewer/index.js:198; blocks/viewer/render.php:256; blocks/viewer/render.php:275
+Previous page,,,前のページ,active,blocks/viewer/index.js:198; blocks/viewer/render.php:257; blocks/viewer/render.php:276
 Previous panel,,,前のコマ,active,assets/panel-reader/frontend.js:41; includes/panel-reader/renderer.php:46; includes/panel-reader/renderer.php:47
 Private,,,非公開,active,blocks/library-viewer/index.js:27
 Pro status,,,Pro状態,active,includes/settings.php:162
 Pro version,,,Proバージョン,active,includes/settings.php:161
 Published,,,公開済み,active,blocks/library-viewer/index.js:24
 Published display preview,,,公開画面の表示プレビュー,active,blocks/viewer/index.js:198
-Read %s in fullscreen,,,%sを全画面で読む,active,blocks/viewer/render.php:241
+Read %s in fullscreen,,,%sを全画面で読む,active,blocks/viewer/render.php:242
 Read all pages by scrolling from top to bottom.,,,全ページを上から下へスクロールして読みます。,active,blocks/viewer/index.js:172
-Read by panel,,,コマ読みを開始,active,blocks/viewer/index.js:198; includes/panel-reader/renderer.php:41; includes/panel-reader/renderer.php:42
 Read directly on the page,,,ページ内でそのまま読む,retained_legacy,
 Read from the first page,,,最初のページから読む,active,assets/panel-reader/editor.js:52
-Read in fullscreen,,,全画面で読む,active,blocks/viewer/render.php:295; blocks/viewer/view.js:447
-Read manga,,,漫画を読む,active,blocks/viewer/index.js:198; blocks/viewer/render.php:252
-Read manga in fullscreen,,,漫画を全画面で読む,active,blocks/viewer/render.php:243
+Read in Focus Mode,,,フォーカスモードで読む,active,blocks/viewer/index.js:198; includes/panel-reader/renderer.php:41; includes/panel-reader/renderer.php:42
+Read in fullscreen,,,全画面で読む,active,blocks/viewer/render.php:296; blocks/viewer/view.js:580
+Read manga,,,漫画を読む,active,blocks/viewer/index.js:198; blocks/viewer/render.php:253
+Read manga in fullscreen,,,漫画を全画面で読む,active,blocks/viewer/render.php:244
 Read manga using the full screen.,,,漫画を画面いっぱいに表示して読むモードです。,retained_legacy,
 Read manga within the post or page.,,,投稿・固定ページ内で漫画を読む表示方法です。,retained_legacy,
 "Readers can zoom with the plus and minus controls or pinch gestures, then drag the enlarged image.",,,読者が＋／－、ピンチ操作で拡大し、拡大中は画像をドラッグして移動できます。,active,blocks/viewer/index.js:193
@@ -221,11 +220,11 @@ Registered in Manga Library. The original Viewer was not changed.,,,漫画ライ
 Registering…,,,登録中…,active,blocks/viewer/index.js:154
 Remove cover image,,,表紙画像を解除,active,blocks/viewer/index.js:35; mangafocus.php:124
 Replace this block with a Registered Viewer,,,このブロックを登録済みViewerへ切り替える,active,blocks/viewer/index.js:147
-Reset zoom and exit fullscreen,,,ズームを解除して全画面を終了,active,blocks/viewer/view.js:334
-Reset zoom and go to the next page,,,ズームを解除して次のページ,active,blocks/viewer/render.php:288; blocks/viewer/view.js:334
-Reset zoom and go to the previous page,,,ズームを解除して前のページ,active,blocks/viewer/render.php:277
-Return to full view,,,全体表示に戻る,active,includes/panel-reader/renderer.php:45
-Return to page view,,,ページ表示に戻る,active,blocks/viewer/view.js:129
+Reset zoom and exit fullscreen,,,ズームを解除して全画面を終了,active,blocks/viewer/view.js:438
+Reset zoom and go to the next page,,,ズームを解除して次のページ,active,blocks/viewer/render.php:289; blocks/viewer/view.js:438
+Reset zoom and go to the previous page,,,ズームを解除して前のページ,active,blocks/viewer/render.php:278
+Return to full view,,,全体表示に戻る,retained_legacy,
+Return to page view,,,ページ表示に戻る,active,blocks/viewer/view.js:231
 Return to panel,,,コマへ戻る,active,assets/panel-reader/frontend.js:41
 Review analytics data deletion,,,解析データの削除について確認,active,includes/settings.php:179
 Review product status and open comic management or analytics settings.,,,製品の状態を確認し、漫画の管理や解析データの設定へ移動できます。,active,includes/settings.php:154
@@ -257,14 +256,15 @@ Show page numbers,,,ページ番号を表示,active,blocks/viewer/index.js:189
 Show the entire spread in the normal view and use the selected mode only in fullscreen.,,,通常表示では見開き全体を表示し、全画面のときだけ選択した読み方を使用します。,active,blocks/viewer/index.js:174
 Show the first page separately,,,先頭ページを単独表示,active,blocks/viewer/index.js:185
 Show the first page separately (cover),,,先頭ページを単独表示（表紙向け）,retained_legacy,
-Showing page %d. Use the left and right arrow keys or swipe to navigate.,,,%dページ目を表示中。左右キーまたはスワイプで送れます,active,blocks/viewer/view.js:334
-Showing pages %1$d and %2$d. Use the left and right arrow keys or swipe to navigate.,,,%1$dページ目と%2$dページ目を表示中。左右キーまたはスワイプで送れます,active,blocks/viewer/view.js:334
+Showing page %d. Use the left and right arrow keys or swipe to navigate.,,,%dページ目を表示中。左右キーまたはスワイプで送れます,active,blocks/viewer/view.js:438
+Showing pages %1$d and %2$d. Use the left and right arrow keys or swipe to navigate.,,,%1$dページ目と%2$dページ目を表示中。左右キーまたはスワイプで送れます,active,blocks/viewer/view.js:438
 Single page,,,1ページ,active,blocks/viewer/index.js:184
+Slide,,,スライド,active,blocks/viewer/index.js:192
 Spread,,,見開き,active,blocks/viewer/index.js:184
 Spread (unavailable),,,見開き（利用できません）,active,blocks/viewer/index.js:184
+Start Focus Mode from the current page,,,現在のページからフォーカスモードを開く,retained_legacy,
 Start from the current page,,,現在のページから開始,retained_legacy,
 Start fullscreen from the current page,,,現在のページから全画面表示を開始,active,blocks/viewer/index.js:173
-Start panel reading from the current page,,,現在のページからコマ読みを開始,retained_legacy,
 Strong,,,強い,active,blocks/viewer/index.js:166
 Swipe left or right to navigate panels,,,左右にスワイプしてコマを送れます,active,includes/panel-reader/renderer.php:46
 The current page set has no pages that can be paired as a spread. Landscape pages and other unmatched pages are shown separately.,,,現在のページ構成には、見開きとして組み合わせ可能なページがありません。横長ページなどは単独表示されます。,active,blocks/viewer/index.js:186
@@ -273,10 +273,10 @@ The first image is page 1 and the last is the back matter. Drag images or use th
 The first image is the cover and the last is the back matter. Drag images or use the arrows to reorder them.,,,先頭は表紙、末尾は巻末です。ドラッグまたは矢印で順番を変更できます。,retained_legacy,
 The first page is a preview until you select a cover in Manga Library.,,,漫画ライブラリで表紙を選ぶまでは、1ページ目を代替表示します。,active,blocks/viewer/index.js:152
 The last save failed. The cover shown here may not be saved yet.,,,直前の保存に失敗しました。表示中の表紙はまだ保存されていない場合があります。,active,blocks/viewer/index.js:37
-The page-turn animation applies to single-page navigation. Spread navigation and vertical scrolling do not use it.,,,単ページのページ送りに適用します。見開きでのページ送りと縦読みには適用しません。,active,blocks/viewer/index.js:192
+The page-turn animation applies to single-page navigation. Spread navigation and vertical scrolling do not use it.,,,単ページのページ送りに適用します。見開きでのページ送りと縦読みには適用しません。,retained_legacy,
 The selected Viewer could not be found. It may have been deleted or its permissions may have changed.,,,選択済みのViewerを確認できません。削除または権限変更の可能性があります。,active,blocks/library-viewer/index.js:104
 The standard Featured image panel edits the same cover. Changes appear in both places.,,,標準の「アイキャッチ画像」パネルも同じ表紙を編集します。変更は両方に反映されます。,retained_legacy,
-There are no comic pages to register.,,,登録できる漫画ページがありません。,active,mangafocus.php:472
+There are no comic pages to register.,,,登録できる漫画ページがありません。,active,mangafocus.php:473
 This also applies when switching from fullscreen. Continuing starts at the first panel of the current page.,,,全画面表示からの切り替えにも適用されます。続ける場合も、現在ページの先頭コマから開始します。,active,assets/panel-reader/editor.js:52
 This block is already registered in Manga Library.,,,このブロックはすでに漫画ライブラリへ登録されています。,active,blocks/viewer/index.js:141
 This comic is registered as a draft. Publish it before replacing this block with a Registered Viewer.,,,下書きとして登録されています。登録した漫画を公開すると、登録済みViewerへ切り替えられます。,active,blocks/viewer/index.js:143
@@ -293,32 +293,33 @@ Use as cover image,,,表紙画像として使用,active,mangafocus.php:125
 Use separate panel regions and reading order on smartphones. Desktop panels are copied only when mobile settings do not yet exist; saved mobile panels are kept.,,,スマートフォン用にコマの範囲と読む順番を設定します。スマートフォン用の設定がまだない場合だけPC用のコマをコピーし、保存済みのコマは保持します。,active,assets/panel-reader/editor.js:41
 Use the current page navigation mode in fullscreen.,,,現在のページ送り方式を全画面で使用します。,active,blocks/viewer/index.js:172
 Use the first page as the cover,,,先頭ページを表紙として使用,retained_legacy,
-Use the left and right arrow keys or swipe to navigate pages,,,ページを左右キーまたはスワイプで送れます,active,blocks/viewer/render.php:255
+Use the left and right arrow keys or swipe to navigate pages,,,ページを左右キーまたはスワイプで送れます,active,blocks/viewer/render.php:256
 Used for inline and fullscreen paged reading.,,,通常・全画面のページ送りで使用します。,active,blocks/viewer/index.js:184; blocks/viewer/index.js:190; blocks/viewer/index.js:191
-Used for inline and fullscreen reading. Panel magnification is configured separately.,,,通常表示・全画面表示で使用します。コマ読みの拡大率は別に設定します。,active,blocks/viewer/index.js:193; blocks/viewer/index.js:194
-Used for inline and fullscreen reading. Panel reading has its own page counter.,,,通常表示・全画面表示で使用します。コマ読みのページ番号は別の表示です。,active,blocks/viewer/index.js:189
-Used for page and panel navigation. Vertical reading scrolls from top to bottom.,,,通常・全画面のページ送りとコマ読みに使用します。縦読みは上から下へ読みます。,active,blocks/viewer/index.js:187
+Used for inline and fullscreen reading. Focus Mode has its own page counter.,,,通常表示・全画面表示で使用します。フォーカスモードのページ番号は別の表示です。,active,blocks/viewer/index.js:189
+Used for inline and fullscreen reading. Panel magnification is configured separately.,,,通常表示・全画面表示で使用します。フォーカスモードの拡大率は別に設定します。,active,blocks/viewer/index.js:193; blocks/viewer/index.js:194
+"Used for normal page navigation, including entire spreads. Focus Mode, vertical scrolling and fullscreen page focus keep their own effects.",,,通常のページ送りと見開き全体の切り替えに使用します。フォーカスモード・縦読み・全画面の1ページ拡大では従来の演出を維持します。,active,blocks/viewer/index.js:192
+Used for page and panel navigation. Vertical reading scrolls from top to bottom.,,,通常・全画面のページ送りとフォーカスモードに使用します。縦読みは上から下へ読みます。,active,blocks/viewer/index.js:187
 Used when Spread or Automatic is selected.,,,見開きまたは自動を選んだ場合に使用します。,retained_legacy,
 Vertical scrolling,,,縦スクロール,active,blocks/viewer/index.js:172
 View analytics,,,解析を見る,active,mangafocus.php:279
 View comic,,,漫画を確認,active,mangafocus.php:117
-View entire spread,,,見開き全体を見る,active,blocks/viewer/render.php:298; blocks/viewer/view.js:129
+View entire spread,,,見開き全体を見る,active,blocks/viewer/render.php:299; blocks/viewer/view.js:231
 Viewer,,,ビューアー,active,blocks/viewer/index.js:63
 Viewer ID:,,,漫画ID：,active,blocks/library-viewer/index.js:55; blocks/viewer/index.js:142; mangafocus.php:273
 Viewer details,,,Viewer情報,active,mangafocus.php:226
+"When disabled, Focus Mode starts from the beginning regardless of the page currently open.",,,OFFの場合、現在のページに関係なく先頭からフォーカスモードを開始します。,retained_legacy,
 "When disabled, fullscreen starts from the first page. The cover launcher always starts from the first page.",,,OFFでは先頭ページから開始します。表紙から全画面で読む場合は常に先頭から開始します。,active,blocks/viewer/index.js:173
-"When disabled, panel reading starts from the beginning regardless of the page currently open.",,,OFFの場合、現在のページに関係なく先頭からコマ読みを開始します。,retained_legacy,
 "When disabled, the dedicated viewer starts from the beginning regardless of the page currently open.",,,OFFの場合は、通常表示で開いているページに関係なく最初から開始します。,retained_legacy,
 "When enabled, desktop panels are used as the initial values and you can adjust mobile regions and order separately.",,,ONにすると、PCのコマを初期値にして、スマホ用の枠と順番を別に調整できます。,retained_legacy,
 "When enabled, edge arrows remain visible after moving to the next page.",,,ONの場合、次ページへ進んだ後もページ端の矢印を表示します。,retained_legacy,
 "When scrolling stops, the comic is gently aligned to a comfortable reading position.",,,スクロールを止めたとき、漫画が読みやすい位置へ少し寄せられます。,retained_legacy,
-When switching to panel reading,,,コマ読みへの切り替え時,active,assets/panel-reader/editor.js:52
+When switching to Focus Mode,,,フォーカスモードへの切り替え時,active,assets/panel-reader/editor.js:52
 Width (%),,,幅（%）,active,assets/panel-reader/editor.js:49
 X (%),,,X座標（%）,active,assets/panel-reader/editor.js:49
 Y (%),,,Y座標（%）,active,assets/panel-reader/editor.js:49
 You do not have permission to change this setting.,,,この設定を変更する権限がありません。,active,includes/analytics/settings.php:17
 You do not have permission to perform this action.,,,この操作を行う権限がありません。,active,includes/analytics/settings.php:53
-You do not have permission to register a comic from this post.,,,この投稿から漫画を登録する権限がありません。,active,mangafocus.php:455
+You do not have permission to register a comic from this post.,,,この投稿から漫画を登録する権限がありません。,active,mangafocus.php:456
 You do not have permission to view this screen.,,,この画面を表示する権限がありません。,active,includes/settings.php:128
 Zoom control position,,,ズームボタンの位置,active,blocks/viewer/index.js:194
 Zoom control position preview,,,ズームボタンの配置プレビュー,active,blocks/viewer/index.js:126
@@ -328,7 +329,7 @@ Zoom out,,,縮小,active,blocks/viewer/render.php:133
 days,,,日,active,includes/analytics/settings.php:33
 spread pair(s) will be created. Landscape and unmatched pages are shown separately.,,,組の見開きが作成されます。横長ページや組み合わせできないページは単独表示されます。,active,blocks/viewer/index.js:186
 —,,,—,active,includes/settings.php:161
-"Display manga images with paged, spread, fullscreen, and Panel-by-Panel reading.",block description,,漫画画像をページ送り、見開き、全画面、コマ読みで表示します。,active,blocks/viewer/block.json:7
+"Display manga images with paged, spread, fullscreen, and Focus Mode.",block description,,漫画画像をページ送り、見開き、全画面、フォーカスモードで表示します。,active,blocks/viewer/block.json:7
 Select and display one registered Viewer from Manga Library.,block description,,漫画ライブラリから登録済みのViewerを1冊選んで表示します。,active,blocks/library-viewer/block.json:7
 Booklet,block keyword,,冊子,active,blocks/viewer/block.json:8
 Comic,block keyword,,コミック,active,blocks/viewer/block.json:8

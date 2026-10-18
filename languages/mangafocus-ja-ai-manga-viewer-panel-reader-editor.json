@@ -12,8 +12,8 @@
                 "lang": "ja",
                 "plural-forms": "nplurals=1; plural=0;"
             },
-            "Pages without panels remain in order as full pages. Add at least one panel before using panel reading alone.": [
-                "コマ未設定のページも、ページ全体表示で順番に読みます。コマ読みのみで利用するには、1つ以上のコマを設定してください。"
+            "Pages without panels remain in order as full pages. Add at least one panel before using Focus Mode alone.": [
+                "コマ未設定のページも、ページ全体表示で順番に読みます。フォーカスモードのみで利用するには、1つ以上のコマを設定してください。"
             ],
             "Configure mobile panels separately": [
                 "スマートフォン用のコマを別に設定"
@@ -90,11 +90,11 @@
             "Height (%)": [
                 "高さ（%）"
             ],
-            "When switching to panel reading": [
-                "コマ読みへの切り替え時"
+            "When switching to Focus Mode": [
+                "フォーカスモードへの切り替え時"
             ],
-            "Choose which page to start from when switching to panel reading after reading partway through the inline viewer.": [
-                "通常ビュアーで途中まで読んでからコマ読みに切り替えた際、どのページから読み始めるかを選びます。"
+            "Choose which page to start from when switching to Focus Mode after reading partway through the inline viewer.": [
+                "通常ビュアーで途中まで読んでからフォーカスモードに切り替えた際、どのページから読み始めるかを選びます。"
             ],
             "This also applies when switching from fullscreen. Continuing starts at the first panel of the current page.": [
                 "全画面表示からの切り替えにも適用されます。続ける場合も、現在ページの先頭コマから開始します。"
@@ -105,11 +105,11 @@
             "Continue from the current page": [
                 "読んでいるページから続ける"
             ],
-            "Panel reading mode": [
-                "コマ読みモード"
+            "Focus Mode": [
+                "フォーカスモード"
             ],
-            "Enable panel reading mode": [
-                "コマ読みモードを有効にする"
+            "Enable Focus Mode": [
+                "フォーカスモードを有効にする"
             ],
             "Enlarge configured panels one at a time.": [
                 "設定したコマを1コマずつ拡大して読むモードです。"

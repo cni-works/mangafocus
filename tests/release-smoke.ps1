@@ -93,7 +93,7 @@ try {
 		$panelEditorSource = [IO.File]::ReadAllText((Join-Path $fixture 'assets/panel-reader/editor.js'))
 		Assert-PanelEditorContract $panelEditorSource
 		# A translated label must not affect the contract; missing state/setters must fail.
-		Assert-PanelEditorContract ($panelEditorSource.Replace('Enable panel reading mode', 'label fixture'))
+		Assert-PanelEditorContract ($panelEditorSource.Replace('Enable Focus Mode', 'label fixture'))
 		Expect-Failure { Assert-PanelEditorContract ($panelEditorSource.Replace('checked: !! attributes.focusReader', 'checked: false')) } 'Panel editor enablement contract missing'
 		Expect-Failure { Assert-PanelEditorContract ($panelEditorSource.Replace("setReadingMode( 'panel', !! value )", 'missingModernSetter()')) } 'Panel editor enablement contract missing'
 		Expect-Failure { Assert-PanelEditorContract ($panelEditorSource.Replace('context.setAttributes( { focusReader: !! value } )', 'missingLegacySetter()')) } 'Panel editor enablement contract missing'

@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: MangaFocus 0.4.0\n"
+"Project-Id-Version: MangaFocus 0.5.0\n"
 "Report-Msgid-Bugs-To: https://github.com/cni-works/mangafocus/issues\n"
 "POT-Creation-Date: 2026-10-04 00:00+0900\n"
 "PO-Revision-Date: 2026-10-04 00:00+0900\n"
@@ -14,8 +14,8 @@ msgstr ""
 msgid "%d days"
 msgstr "%d日"
 
-msgid "A manga reader for WordPress with page, spread, vertical, zoom, and panel-by-panel reading."
-msgstr "WordPressでページ送り・見開き・縦読み・ズーム・コマ読みを利用できる漫画ビューアーです。"
+msgid "A manga reader for WordPress with page, spread, vertical, zoom, and Focus Mode."
+msgstr "WordPressでページ送り・見開き・縦読み・ズーム・フォーカスモードを利用できる漫画ビューアーです。"
 
 msgid "AI consultation"
 msgstr "AI相談"
@@ -35,8 +35,8 @@ msgstr "スマートフォン用のコマを追加"
 msgid "Add a panel to the current page"
 msgstr "現在のページにコマを追加"
 
-msgid "Add at least one panel before using panel reading alone."
-msgstr "コマ読みのみを利用する場合は、先にコマを追加してください。"
+msgid "Add at least one panel before using Focus Mode alone."
+msgstr "フォーカスモードのみを利用する場合は、先にコマを追加してください。"
 
 msgid "Adjust the comic position when scrolling stops."
 msgstr "スクロールが止まったとき、漫画が見やすい位置に収まるよう自動調整します。"
@@ -128,8 +128,8 @@ msgstr "漫画ライブラリから選び直す"
 msgid "Choose how readers can read this comic. Disabled modes keep their saved settings."
 msgstr "読者が利用できる読み方を選びます。OFFにしても各モードの設定値は保持されます。"
 
-msgid "Choose which page to start from when switching to panel reading after reading partway through the inline viewer."
-msgstr "通常ビュアーで途中まで読んでからコマ読みに切り替えた際、どのページから読み始めるかを選びます。"
+msgid "Choose which page to start from when switching to Focus Mode after reading partway through the inline viewer."
+msgstr "通常ビュアーで途中まで読んでからフォーカスモードに切り替えた際、どのページから読み始めるかを選びます。"
 
 msgid "Clear selection"
 msgstr "選択を解除"
@@ -218,8 +218,8 @@ msgstr "詳細データの保存期間"
 msgid "Display active; editing unavailable"
 msgstr "表示継続・編集不可"
 
-msgid "Display manga images with paged, spread, fullscreen, and Panel-by-Panel reading."
-msgstr "漫画画像をページ送り、見開き、全画面、コマ読みで表示します。"
+msgid "Display manga images with paged, spread, fullscreen, and Focus Mode."
+msgstr "漫画画像をページ送り、見開き、全画面、フォーカスモードで表示します。"
 
 msgid "Display method"
 msgstr "表示方法"
@@ -245,8 +245,8 @@ msgstr "登録した漫画を編集"
 msgid "Edit this comic"
 msgstr "この漫画を編集"
 
-msgid "Enable Panel-by-Panel reading"
-msgstr "コマ読みを有効化"
+msgid "Enable Focus Mode"
+msgstr "フォーカスモードを有効にする"
 
 msgid "Enable analytics"
 msgstr "解析を有効にする"
@@ -266,12 +266,6 @@ msgstr "通常表示を有効にする"
 msgid "Enable inline viewer"
 msgstr "通常ビュアーを有効にする"
 
-msgid "Enable panel reading"
-msgstr "コマ読みを有効にする"
-
-msgid "Enable panel reading mode"
-msgstr "コマ読みモードを有効にする"
-
 msgid "Enable reader event collection"
 msgstr "読者イベントの収集を有効にする"
 
@@ -281,8 +275,8 @@ msgstr "拡大して表示"
 msgid "Enlarge configured panels one at a time."
 msgstr "設定したコマを1コマずつ拡大して読むモードです。"
 
-msgid "Enlarge panels in sequence with Panel-by-Panel reading"
-msgstr "コマ読みでコマを順番に拡大表示"
+msgid "Enlarge panels in sequence with Focus Mode"
+msgstr "フォーカスモードでコマを順番に拡大表示"
 
 msgid "Enlarge registered panels in sequence in a dedicated viewer."
 msgstr "登録したコマを専用ビューアーで順に大きく表示します。"
@@ -299,8 +293,14 @@ msgstr "見開き全体"
 msgid "Events are collected only when Pro is available. Disabling this option does not delete existing analytics data."
 msgstr "Proが利用可能な場合だけ収集します。OFFにしても過去の解析データは削除されません。"
 
+msgid "Exit Focus Mode"
+msgstr "フォーカスモードを終了"
+
 msgid "Exit fullscreen"
 msgstr "全画面を終了"
+
+msgid "Fade"
+msgstr "フェード"
 
 msgid "Features"
 msgstr "機能"
@@ -313,6 +313,18 @@ msgstr "全体"
 
 msgid "Fit to the panel region"
 msgstr "指定したコマ範囲に合わせる"
+
+msgid "Focus Mode"
+msgstr "フォーカスモード"
+
+msgid "Focus Mode also uses this setting when moving between pages."
+msgstr "フォーカスモードで別のページへ移動するときの演出にも、この設定を使用します。"
+
+msgid "Focus Mode settings"
+msgstr "フォーカスモードの設定"
+
+msgid "Focus Mode start position"
+msgstr "フォーカスモードの開始位置"
 
 msgid "Focus on one page at a time"
 msgstr "1ページずつ大きく読む"
@@ -467,11 +479,14 @@ msgstr "表紙画像が未設定の場合は、1ページ目の画像を代わ�
 msgid "No cover set"
 msgstr "表紙未設定"
 
-msgid "No panels are configured. Add panels before using panel reading alone."
-msgstr "コマが設定されていません。コマ読みのみを利用する場合は、先にコマを追加してください。"
+msgid "No panels are configured. Add panels before using Focus Mode alone."
+msgstr "コマが設定されていません。フォーカスモードのみを利用する場合は、先にコマを追加してください。"
 
 msgid "No registered comics found."
 msgstr "登録済みの漫画はありません。"
+
+msgid "None"
+msgstr "なし"
 
 msgid "Normal"
 msgstr "標準"
@@ -479,8 +494,8 @@ msgstr "標準"
 msgid "Not installed or inactive"
 msgstr "未導入または無効"
 
-msgid "ON starts at the first panel of the current page. OFF starts at page 1. Closing on the last page returns to page 1; otherwise ON can resume from the same page, including panel-only reading."
-msgstr "ONでは現在のページの先頭コマ、OFFでは1ページ目から開始します。最終ページで閉じると1ページ目に戻ります。それ以外では、コマ読みのみの場合もONで同じページから再開できます。"
+msgid "ON starts at the first panel of the current page. OFF starts at page 1. Closing on the last page returns to page 1; otherwise ON can resume from the same page, including Focus Mode alone."
+msgstr "ONでは現在のページの先頭コマ、OFFでは1ページ目から開始します。最終ページで閉じると1ページ目に戻ります。それ以外では、フォーカスモードのみの場合もONで同じページから再開できます。"
 
 msgid "Off: first page only. On: every page."
 msgstr "OFF：先頭ページのみ。ON：全ページに表示します。"
@@ -494,8 +509,8 @@ msgstr "公開画面では表紙と「漫画を読む」ボタンだけを表示
 msgid "On uninstall"
 msgstr "アンインストール時"
 
-msgid "On: enlarge configured panels one at a time. Off: hide the panel reading launch button. Configure at least one panel to use this mode alone."
-msgstr "ON：設定したコマを1コマずつ拡大表示します。OFF：コマ読みの起動ボタンを表示しません。コマ読みだけを使うには、コマを1つ以上設定してください。"
+msgid "On: enlarge configured panels one at a time. Off: hide the Focus Mode launch button. Configure at least one panel to use this mode alone."
+msgstr "ON：設定したコマを1コマずつ拡大表示します。OFF：フォーカスモードの起動ボタンを表示しません。フォーカスモードだけを使うには、コマを1つ以上設定してください。"
 
 msgid "On: offer fullscreen paged or vertical reading. Off: hide the fullscreen launch button."
 msgstr "ON：全画面でページ送り・縦読みを利用できます。OFF：全画面の起動ボタンを表示しません。"
@@ -537,7 +552,7 @@ msgid "Page layout"
 msgstr "ページレイアウト"
 
 msgid "Page transition animation"
-msgstr "ページめくり演出"
+msgstr "ページ切り替え効果"
 
 msgid "Page turn"
 msgstr "ページめくり"
@@ -548,35 +563,17 @@ msgstr "ページビューアー"
 msgid "Paged reading"
 msgstr "ページ送り"
 
-msgid "Paged reading, spreads, page focus, fullscreen, vertical reading, zoom, Panel-by-Panel, Manga Library"
-msgstr "ページ送り、見開き、全画面での1ページ表示、縦読み、ズーム、コマ読み、漫画ライブラリ"
+msgid "Paged reading, spreads, page focus, fullscreen, vertical reading, zoom, Focus Mode, Manga Library"
+msgstr "ページ送り、見開き、全画面での1ページ表示、縦読み、ズーム、フォーカスモード、漫画ライブラリ"
 
-msgid "Pages without panels remain in order as full pages. Add at least one panel before using panel reading alone."
-msgstr "コマ未設定のページも、ページ全体表示で順番に読みます。コマ読みのみで利用するには、1つ以上のコマを設定してください。"
+msgid "Pages without panels remain in order as full pages. Add at least one panel before using Focus Mode alone."
+msgstr "コマ未設定のページも、ページ全体表示で順番に読みます。フォーカスモードのみで利用するには、1つ以上のコマを設定してください。"
 
 msgid "Panel"
 msgstr "コマ"
 
-msgid "Panel reading also uses this setting when moving between pages."
-msgstr "コマ読みで別のページへ移動するときの演出にも、この設定を使用します。"
-
-msgid "Panel reading mode"
-msgstr "コマ読みモード"
-
-msgid "Panel reading settings"
-msgstr "コマ読みの設定"
-
-msgid "Panel reading start position"
-msgstr "コマ読みの開始位置"
-
 msgid "Panel set to edit"
 msgstr "編集するコマ設定"
-
-msgid "Panel-by-Panel"
-msgstr "コマ読み"
-
-msgid "Panel-by-Panel viewer"
-msgstr "コマ読み画面"
 
 msgid "Pending"
 msgstr "承認待ち"
@@ -611,14 +608,14 @@ msgstr "%sを全画面で読む"
 msgid "Read all pages by scrolling from top to bottom."
 msgstr "全ページを上から下へスクロールして読みます。"
 
-msgid "Read by panel"
-msgstr "コマ読みを開始"
-
 msgid "Read directly on the page"
 msgstr "ページ内でそのまま読む"
 
 msgid "Read from the first page"
 msgstr "最初のページから読む"
+
+msgid "Read in Focus Mode"
+msgstr "フォーカスモードで読む"
 
 msgid "Read in fullscreen"
 msgstr "全画面で読む"
@@ -791,20 +788,23 @@ msgstr "%1$dページ目と%2$dページ目を表示中。左右キーまたは�
 msgid "Single page"
 msgstr "1ページ"
 
+msgid "Slide"
+msgstr "スライド"
+
 msgid "Spread"
 msgstr "見開き"
 
 msgid "Spread (unavailable)"
 msgstr "見開き（利用できません）"
 
+msgid "Start Focus Mode from the current page"
+msgstr "現在のページからフォーカスモードを開く"
+
 msgid "Start from the current page"
 msgstr "現在のページから開始"
 
 msgid "Start fullscreen from the current page"
 msgstr "現在のページから全画面表示を開始"
-
-msgid "Start panel reading from the current page"
-msgstr "現在のページからコマ読みを開始"
 
 msgid "Strong"
 msgstr "強い"
@@ -896,14 +896,17 @@ msgstr "ページを左右キーまたはスワイプで送れます"
 msgid "Used for inline and fullscreen paged reading."
 msgstr "通常・全画面のページ送りで使用します。"
 
-msgid "Used for inline and fullscreen reading. Panel magnification is configured separately."
-msgstr "通常表示・全画面表示で使用します。コマ読みの拡大率は別に設定します。"
+msgid "Used for inline and fullscreen reading. Focus Mode has its own page counter."
+msgstr "通常表示・全画面表示で使用します。フォーカスモードのページ番号は別の表示です。"
 
-msgid "Used for inline and fullscreen reading. Panel reading has its own page counter."
-msgstr "通常表示・全画面表示で使用します。コマ読みのページ番号は別の表示です。"
+msgid "Used for inline and fullscreen reading. Panel magnification is configured separately."
+msgstr "通常表示・全画面表示で使用します。フォーカスモードの拡大率は別に設定します。"
+
+msgid "Used for normal page navigation, including entire spreads. Focus Mode, vertical scrolling and fullscreen page focus keep their own effects."
+msgstr "通常のページ送りと見開き全体の切り替えに使用します。フォーカスモード・縦読み・全画面の1ページ拡大では従来の演出を維持します。"
 
 msgid "Used for page and panel navigation. Vertical reading scrolls from top to bottom."
-msgstr "通常・全画面のページ送りとコマ読みに使用します。縦読みは上から下へ読みます。"
+msgstr "通常・全画面のページ送りとフォーカスモードに使用します。縦読みは上から下へ読みます。"
 
 msgid "Used when Spread or Automatic is selected."
 msgstr "見開きまたは自動を選んだ場合に使用します。"
@@ -929,11 +932,11 @@ msgstr "漫画ID："
 msgid "Viewer details"
 msgstr "Viewer情報"
 
+msgid "When disabled, Focus Mode starts from the beginning regardless of the page currently open."
+msgstr "OFFの場合、現在のページに関係なく先頭からフォーカスモードを開始します。"
+
 msgid "When disabled, fullscreen starts from the first page. The cover launcher always starts from the first page."
 msgstr "OFFでは先頭ページから開始します。表紙から全画面で読む場合は常に先頭から開始します。"
-
-msgid "When disabled, panel reading starts from the beginning regardless of the page currently open."
-msgstr "OFFの場合、現在のページに関係なく先頭からコマ読みを開始します。"
 
 msgid "When disabled, the dedicated viewer starts from the beginning regardless of the page currently open."
 msgstr "OFFの場合は、通常表示で開いているページに関係なく最初から開始します。"
@@ -947,8 +950,8 @@ msgstr "ONの場合、次ページへ進んだ後もページ端の矢印を表�
 msgid "When scrolling stops, the comic is gently aligned to a comfortable reading position."
 msgstr "スクロールを止めたとき、漫画が読みやすい位置へ少し寄せられます。"
 
-msgid "When switching to panel reading"
-msgstr "コマ読みへの切り替え時"
+msgid "When switching to Focus Mode"
+msgstr "フォーカスモードへの切り替え時"
 
 msgid "Width (%)"
 msgstr "幅（%）"
@@ -1000,8 +1003,8 @@ msgid_plural "%s pages"
 msgstr[0] "%sページ"
 
 msgctxt "block description"
-msgid "Display manga images with paged, spread, fullscreen, and Panel-by-Panel reading."
-msgstr "漫画画像をページ送り、見開き、全画面、コマ読みで表示します。"
+msgid "Display manga images with paged, spread, fullscreen, and Focus Mode."
+msgstr "漫画画像をページ送り、見開き、全画面、フォーカスモードで表示します。"
 
 msgctxt "block description"
 msgid "Select and display one registered Viewer from Manga Library."

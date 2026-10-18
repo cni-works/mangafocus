@@ -61,7 +61,7 @@ if ( false === strpos( $main, 'Domain Path: /languages' ) || false === strpos( $
 }
 
 $po = file_get_contents( $root . '/languages/mangafocus-ja.po' );
-if ( false === strpos( $po, 'msgid "Next page"' ) || false === strpos( $po, 'msgstr "次のページ"' ) || false === strpos( $po, 'msgid "Read by panel"' ) || false === strpos( $po, 'msgid_plural "%s pages"' ) || false === strpos( $po, 'msgstr[0] "%sページ"' ) ) {
+if ( false === strpos( $po, 'msgid "Next page"' ) || false === strpos( $po, 'msgstr "次のページ"' ) || false === strpos( $po, 'msgid "Read in Focus Mode"' ) || false === strpos( $po, 'msgid_plural "%s pages"' ) || false === strpos( $po, 'msgstr[0] "%sページ"' ) ) {
 	throw new RuntimeException( 'Japanese PO catalog is incomplete.' );
 }
 

@@ -14,7 +14,7 @@ for(const locale of ['en','ja']) {
   h.reset({...h.fields,enableInline:!!(mask&1),enableFullscreen:!!(mask&2),focusReader:!!(mask&4)});
   tree=h.render();h.runEffects();assert.deepEqual(h.updates,[]);assert.deepEqual(h.attrs.pages,h.fields.pages);
   for(const [label,bit] of switches.map((v,i)=>[v,1<<i]))assert.equal(h.findLabel(tree,label).props.checked,!!(mask&bit));
-  for(const [title,bit,detail,label] of [['Inline viewer',1,'Automatically adjust scroll position',switches[0]],['Fullscreen mode',2,'Fullscreen reading mode',switches[1]],['Panel reading mode',4,'Configure mobile panels separately',switches[2]]]) {
+  for(const [title,bit,detail,label] of [['Inline viewer',1,'Automatically adjust scroll position',switches[0]],['Fullscreen mode',2,'Fullscreen reading mode',switches[1]],['Focus Mode',4,'Configure mobile panels separately',switches[2]]]) {
    const panel=h.find(tree,n=>n.type==='PanelBody'&&n.props.title===t(title));assert.ok(panel,'OFF keeps its panel and switch');
    assert.ok(h.findLabel(panel,label));assert.equal(!!h.findLabel(panel,detail),!!(mask&bit),'Only details follow OFF/ON');
   }

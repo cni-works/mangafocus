@@ -69,12 +69,12 @@ const {harness,names,switches} = require('./inspector-groups-smoke.cjs');
     assert.equal(await page.getByLabel(h.translate(detail,'mangafocus'),{exact:true}).count(),1);
     assert.deepEqual(h.attrs,before);
    }
-   const startLabel=h.translate('When switching to panel reading','mangafocus');
+   const startLabel=h.translate('When switching to Focus Mode','mangafocus');
    const start=page.getByRole('radiogroup',{name:startLabel,exact:true});
    const choices=[['first',false,'Read from the first page'],['current',true,'Continue from the current page']];
    assert.equal(await start.getByRole('radio').count(),2);
    assert.equal(await page.getByRole('combobox',{name:startLabel,exact:true}).count(),0,'No old select or toggle remains');
-   assert.equal(await page.getByRole('checkbox',{name:h.translate('Start panel reading from the current page','mangafocus'),exact:true}).count(),0);
+   assert.equal(await page.getByRole('checkbox',{name:h.translate('Start Focus Mode from the current page','mangafocus'),exact:true}).count(),0);
    await page.exposeFunction('reloadSettingsFixture',()=>{h.reset(JSON.parse(JSON.stringify(h.attrs)));return snapshot();});
    for(const [value,stored,label] of choices){
     const previous=JSON.parse(JSON.stringify(h.attrs));const epochBefore=Number(await page.locator('body').getAttribute('data-epoch'));

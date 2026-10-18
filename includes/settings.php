@@ -182,8 +182,8 @@ function ai_manga_viewer_render_settings_page() {
 			<section class="amv-settings__card" aria-labelledby="amv-settings-features">
 				<h2 id="amv-settings-features"><?php echo esc_html__( 'Features', 'mangafocus' ); ?></h2>
 				<ul class="amv-settings__features">
-					<li><span><strong><?php echo esc_html__( 'Free Viewer', 'mangafocus' ); ?></strong><small><?php echo esc_html__( 'Paged reading, spreads, page focus, fullscreen, vertical reading, zoom, Panel-by-Panel, Manga Library', 'mangafocus' ); ?></small></span><?php echo wp_kses_post( ai_manga_viewer_settings_badge( true ) ); ?></li>
-					<li><span><strong><?php echo esc_html__( 'Panel-by-Panel', 'mangafocus' ); ?></strong><small><?php echo esc_html__( 'Enlarge panels in sequence with Panel-by-Panel reading', 'mangafocus' ); ?></small></span><?php echo wp_kses_post( ai_manga_viewer_settings_feature_badge( $feature_states['panel_reader'] ) ); ?></li>
+					<li><span><strong><?php echo esc_html__( 'Free Viewer', 'mangafocus' ); ?></strong><small><?php echo esc_html__( 'Paged reading, spreads, page focus, fullscreen, vertical reading, zoom, Focus Mode, Manga Library', 'mangafocus' ); ?></small></span><?php echo wp_kses_post( ai_manga_viewer_settings_badge( true ) ); ?></li>
+					<li><span><strong><?php echo esc_html__( 'Focus Mode', 'mangafocus' ); ?></strong><small><?php echo esc_html__( 'Enlarge panels in sequence with Focus Mode', 'mangafocus' ); ?></small></span><?php echo wp_kses_post( ai_manga_viewer_settings_feature_badge( $feature_states['panel_reader'] ) ); ?></li>
 					<?php
 					$feature_labels = array(
 						'cta'            => __( 'CTA', 'mangafocus' ),
