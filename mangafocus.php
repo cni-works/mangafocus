@@ -2,7 +2,7 @@
 /**
  * Plugin Name: MangaFocus – Panel-by-Panel Manga Reader
  * Description: A manga reader for WordPress with page, spread, vertical, zoom, and Focus Mode.
- * Version: 0.5.0
+ * Version: 0.5.1
  * Requires at least: 6.3
  * Requires PHP: 7.4
  * Author: CNI
@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( ! defined( 'AI_MANGA_VIEWER_VERSION' ) ) {
-	define( 'AI_MANGA_VIEWER_VERSION', '0.5.0' );
+	define( 'AI_MANGA_VIEWER_VERSION', '0.5.1' );
 }
 
 if ( ! defined( 'AI_MANGA_VIEWER_PLUGIN_FILE' ) ) {
@@ -154,6 +154,53 @@ function ai_manga_viewer_register_library() {
 	);
 }
 add_action( 'init', 'ai_manga_viewer_register_library' );
+
+/** Keep Classic Editor's preferences intact outside the library's editor GET request. */
+function ai_manga_viewer_library_classic_editor_settings( $settings ) {
+	if ( false !== $settings || ! is_admin() || ! function_exists( 'use_block_editor_for_post' ) ||
+		'GET' !== ( $_SERVER['REQUEST_METHOD'] ?? '' ) ) {
+		return $settings;
+	}
+	global $pagenow;
+	$post_type = '';
+	// Read-only screen routing, not a setting or post mutation.
+	if ( 'post-new.php' === $pagenow && is_string( $_GET['post_type'] ?? null ) ) {
+		$post_type = sanitize_key( wp_unslash( $_GET['post_type'] ) );
+	} elseif ( 'post.php' === $pagenow && 'edit' === ( $_GET['action'] ?? '' ) &&
+		is_scalar( $_GET['post'] ?? null ) ) {
+		$post_type = get_post_type( absint( $_GET['post'] ) );
+	}
+	if ( 'amv_viewer' !== $post_type ) {
+		return $settings;
+	}
+	// Classic Editor otherwise disables all post types at priority 100 when switching is off.
+	// This per-request value is never saved to site options or user preferences.
+	return array( 'editor' => 'block', 'allow-users' => false );
+}
+add_filter( 'classic_editor_plugin_settings', 'ai_manga_viewer_library_classic_editor_settings' );
+
+/** Preserve explicit per-type/per-post editor restrictions from other integrations. */
+function ai_manga_viewer_library_editor_restrictions( $use_block_editor, $subject ) {
+	$post_type = is_string( $subject ) ? $subject : ( $subject->post_type ?? '' );
+	if ( ! $use_block_editor || 'amv_viewer' !== $post_type || ! class_exists( 'Classic_Editor', false ) ||
+		! is_array( ai_manga_viewer_library_classic_editor_settings( false ) ) ) {
+		return $use_block_editor;
+	}
+	// The scoped block-only setting skips Classic Editor's chooser; retain its public veto hooks.
+	$hook = is_string( $subject ) ? 'classic_editor_enabled_editors_for_post_type' : 'classic_editor_enabled_editors_for_post';
+	static $checking = array();
+	if ( ! empty( $checking[$hook] ) ) { return $use_block_editor; }
+	$checking[$hook] = true;
+	try {
+		$editors = apply_filters( $hook, array( 'classic_editor' => false, 'block_editor' => true ), $subject );
+	} finally {
+		unset( $checking[$hook] );
+	}
+	return is_array( $editors ) && ! empty( $editors['block_editor'] );
+}
+add_filter( 'use_block_editor_for_post_type', 'ai_manga_viewer_library_editor_restrictions', 10, 2 );
+add_filter( 'use_block_editor_for_post', 'ai_manga_viewer_library_editor_restrictions', 10, 2 );
+
 
 /** Expose one prepared cover URL so the editor selector does not depend on REST embedding behavior. */
 function ai_manga_viewer_register_library_rest_fields() {

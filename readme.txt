@@ -4,7 +4,7 @@ Tags: manga, comic, viewer, reader, gutenberg
 Requires at least: 6.3
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.5.0
+Stable tag: 0.5.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -137,6 +137,11 @@ The maintained development repository is available at https://github.com/cni-wor
 Build tool (excluded from the ZIP): https://github.com/cni-works/mangafocus/blob/3c13166c04880ebe4342dfcdb4f4bd9dbbcc70eb/scripts/build-release.ps1. Run `powershell -File scripts/build-release.ps1` from the corresponding repository revision.
 
 == Changelog ==
+
+= 0.5.1 =
+
+* Fixed an issue where the manga library editor could open in Classic Editor mode when Classic Editor was set as the default.
+* Manga library entries now use the block editor while respecting editor preferences for other post types.
 
 = 0.5.0 =
 
