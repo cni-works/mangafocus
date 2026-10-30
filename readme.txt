@@ -8,116 +8,99 @@ Stable tag: 0.5.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Publish image-based comics with Focus Mode, page turns, spreads, fullscreen, vertical scrolling, zoom, and Manga Library.
+Publish comics on WordPress with Focus Mode: enlarge panels in reading order, or read whole pages, spreads and fullscreen vertical layouts.
 
 == Description ==
+
+= Comics for your WordPress site =
+
+MangaFocus is a free plugin that adds a dedicated comic viewer to WordPress posts and pages. Select your comic images and let readers browse single pages, two-page spreads, fullscreen views or vertical scrolling.
+
+Its distinctive feature is Focus Mode: readers move through the panel regions you define, enlarged in reading order. This helps readers follow panels on smaller screens.
+
+Use hand-drawn or AI-assisted comics, service introductions, brochures and illustrated guides. MangaFocus displays existing images; it does not generate comic images or automatically send content to an AI API.
 
 * [Official website](https://mangafocus.cn-introduce.com/)
 * [Documentation (Japanese)](https://mangafocus.cn-introduce.com/guide/)
 
-= About MangaFocus =
-
-MangaFocus is a WordPress plugin for publishing comics made from image files. Focus Mode enlarges author-defined panels in sequence. It also provides page-by-page reading, two-page spreads, fullscreen viewing, vertical scrolling, zoom and pan controls, and reusable Manga Library entries.
-
-The plugin does not generate images and does not send content to an AI API. It can display AI-assisted artwork, conventionally created comics, company introductions, brochures, and other image-based publications.
-
 = Free features =
 
-* A MangaFocus block for posts and pages
-* Focus Mode with author-defined panel regions
-* Separate optional panel regions for mobile screens
-* Single-page, two-page spread, and responsive automatic layouts
-* Optional standalone cover pages and standalone handling for landscape images
-* Right-to-left and left-to-right binding
-* Fullscreen page navigation and vertical scrolling
-* A fullscreen mode that focuses on one page at a time within a spread
-* Zoom, pan, keyboard, swipe, and page-edge controls
-* Independent inline, fullscreen, and Focus Mode options, with cover launch buttons for enabled modes
-* Reuse through Manga Library, the Registered Viewer block, and shortcodes
+* **Publish and reuse:** place a MangaFocus block directly in a post or page, or register a comic in Manga Library and reuse it with the Registered Viewer block or a shortcode.
+* **Focus Mode:** define panel regions and their reading order, with optional separate regions for smartphone screens.
+* **Reading layouts:** single pages, two-page spreads and responsive automatic layouts; fullscreen page navigation, vertical scrolling and fullscreen viewing of one complete page at a time.
+* **Presentation:** right-to-left or left-to-right binding; standalone cover and landscape pages; cover launch buttons. Enable inline, fullscreen and Focus Mode independently.
+* **Controls:** zoom, pan, swipe, keyboard and page-edge navigation. Normal page transitions can be instant, page-turn, fade or slide, with reduced-motion support.
 
-The one-page-at-a-time spread mode focuses on each complete page in reading order. Focus Mode instead follows the author-defined regions within each page.
+= Start with a post or a reusable comic =
 
-= Creating and reusing comics =
+For one location, add a MangaFocus block directly to a post or page. This Direct Viewer stores images and settings in that block.
 
-Direct Viewer places a MangaFocus block directly in a post or page and stores the comic configuration with that block.
+For reuse, save the comic in Manga Library and select it with Registered Viewer blocks or shortcodes. Edit the library entry to update those placements. See Installation for both workflows.
 
-Manga Library stores a comic as a reusable entry. Select it with the Registered Viewer block or display it with a shortcode:
+You can also use "Register in Manga Library" on a Direct Viewer. This creates an independent copy of its current configuration; later edits to the original block and the library entry are not synchronized automatically.
 
-`[ai_manga_viewer id="123"]`
+= Choose how readers view the comic =
 
-Registering a Direct Viewer in Manga Library creates an independent copy of its current configuration. Later edits are not synchronized automatically.
+* **Normal reading:** move through whole pages, or a complete two-page spread at a time.
+* **Fullscreen:** use the available screen area for page navigation or continuous vertical scrolling.
+* **Focus on one page at a time:** within a fullscreen spread, enlarge each complete page in reading order.
+* **Focus Mode:** enlarge the author-defined panel regions within each page, in the order you set. Pages without configured panels remain in sequence as full pages.
 
-= Layout and reading modes =
+To configure Focus Mode, select a page in the MangaFocus block, turn on "Enable Focus Mode", then choose "Add panel" and drag over the image. Repeat and use the panel list's Previous and Next controls to set reading order. Preview before publishing. At least one panel is needed to use Focus Mode alone.
 
-Choose a single-page, spread, or automatic layout. Spread and automatic layouts can show the first page as a standalone cover and can keep landscape images on their own page.
+See the [Japanese manual](https://mangafocus.cn-introduce.com/guide/).
 
-Fullscreen reading supports normal page navigation or continuous vertical scrolling. Spread-based comics can also focus on one complete page at a time while fullscreen.
+= Optional Pro add-on =
 
-= Pro add-on =
+Free works independently: comic display, Focus Mode and Manga Library do not require Pro.
 
-Pro is being prepared for release. Free works independently.
+Pro adds calls to action (CTA), comic reading analytics, consultation documents and comic-production prompts for external AI services. The AI helpers prepare text locally for you to review and copy; they do not automatically send it to an AI API or generate images.
 
-The Core plugin can be extended by a compatible Pro add-on. Pro features include calls to action, analytics reports, AI consultation material, and AI manga production support. Focus Mode is included in Free/Core.
-
-When the Pro add-on is inactive, published content falls back to the regular Free Viewer. Saved Pro settings remain stored so that a compatible add-on can use them again later.
+Without Pro, comics use the Free Viewer; saved Pro settings remain for later reuse.
 
 = Data and privacy =
 
-Free/Core does not collect reader events on the public site. It does not send telemetry, use an external analytics service, depend on a CDN, or automatically send content to an external API.
+Free alone does not collect reader events on the public site or automatically send comic content to an external AI API. It does not send telemetry, use an external analytics service or depend on a CDN.
 
-Analytics is disabled by default. If Pro Analytics is used, its data is designed to remain in the local database of the WordPress site. Administrators can configure the retention period and delete stored analytics data.
+Pro Analytics is disabled by default and is designed to store its data in the WordPress site's local database. Administrators can set a retention period and delete stored analytics data. Free includes the analytics table lifecycle, retention schedule and deletion settings to support Pro compatibility and manage retained data; without Pro, no new reader events are collected.
 
-Core contains the local Analytics table lifecycle, retention schedule, and deletion settings required for compatibility and stored-data management. Without the Pro add-on, no new reader events are collected.
-
-If a site owner uses an image URL hosted on another site, the reader's browser connects to that image host to retrieve the file.
+External image URLs connect readers' browsers to the image host.
 
 == Installation ==
 
-1. Install and activate MangaFocus.
-2. Add the MangaFocus block to a post or page.
-3. Select the page images in reading order.
-4. Configure the page layout, binding direction, fullscreen mode, vertical scrolling, zoom, and Focus Mode.
-5. Preview the desktop and mobile layouts, then publish the post.
+Install and activate MangaFocus, then choose a workflow.
 
-To reuse the same comic in multiple locations, copy a Direct Viewer into Manga Library with “Register in Manga Library.” Then add the Registered Viewer block to a post and select the comic, or use the shortcode shown in the Manga Library list.
+= Publish directly in a post or page =
+
+1. Open a post or page in the block editor and add the MangaFocus block.
+2. In "Page images", select comic images in reading order.
+3. Set the reading modes, layout and binding direction. If using Focus Mode, add panel regions as described above.
+4. Preview the desktop and mobile layouts, then publish or update the post or page.
+
+= Register a comic for reuse =
+
+1. Open Manga Library, choose "Add New" and open the "Register New Comic" screen.
+2. Add page images and configure the MangaFocus block's reading settings, then publish the library entry.
+3. In a post or page, add the Registered Viewer block and select the registered comic.
+4. Preview, then publish or update the post or page.
+
+= Use Classic Editor =
+
+Create and edit the comic in Manga Library, which uses the block editor. Copy its shortcode from the library list and paste it into your Classic Editor post or page, for example:
+
+`[ai_manga_viewer id="123"]`
+
+Replace 123 with the registered comic's ID. Posts and pages keep their existing editor preferences; MangaFocus does not change Classic Editor's global settings.
 
 == Frequently Asked Questions ==
 
 = Does MangaFocus generate manga with AI? =
 
-No. MangaFocus displays comic images in a reader on WordPress. It does not generate images.
-
-= Can I use it with conventionally created comic images? =
-
-Yes. It works with conventionally created comics, AI-assisted artwork, company introductions, brochures, and other image-based publications.
-
-= What is the difference between Direct Viewer and Manga Library? =
-
-Direct Viewer stores a comic directly in a post or page. Manga Library manages a comic as a separate reusable entry that can be displayed with the Registered Viewer block or a shortcode.
-
-= Does a Direct Viewer stay synchronized after registration in Manga Library? =
-
-No. Registration creates an independent copy. The Direct Viewer and Manga Library entry are managed separately afterward.
-
-= What is the difference between a spread and focusing on one page at a time? =
-
-A spread shows two pages together. “Focus on one page at a time” keeps the spread structure while focusing on each complete page in fullscreen. Focus Mode instead enlarges the author-defined regions within each page.
-
-= Can I use MangaFocus without the Pro add-on? =
-
-Yes. Free/Core includes Focus Mode, page navigation, spreads, automatic layouts, fullscreen viewing, vertical scrolling, zoom, Manga Library, Registered Viewer, and shortcodes.
-
-= What happens if I deactivate the Pro add-on? =
-
-Published comics continue to display with the regular Free Viewer. Saved Pro settings remain stored and can be used again after a compatible Pro add-on is reactivated.
-
-= Is analytics data sent to an external service? =
-
-Free/Core does not send reader data to an external analytics service. When Pro Analytics is used, data is designed to remain in the WordPress site's local database. Analytics is disabled by default.
+No. It displays images you supply, whether hand-drawn, AI-assisted or made by other methods. Pro's optional AI helpers prepare text for use in an external service, not images.
 
 = Does uninstalling MangaFocus delete comic data? =
 
-Manga Library posts and post metadata are not deleted automatically. Analytics tables and settings are also retained by default. They are deleted only when “Delete on uninstall” has been enabled. The scheduled retention cleanup is removed during uninstall.
+Manga Library posts and post metadata are not deleted automatically. Analytics tables and settings are retained by default and deleted only if "Delete on uninstall" is enabled. The scheduled retention cleanup is removed during uninstall.
 
 == Screenshots ==
 
