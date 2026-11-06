@@ -14,6 +14,7 @@ if ( ! function_exists( 'ai_manga_viewer_get_feature_registry' ) ) {
 	/** Return the allowlisted feature registry. */
 	function ai_manga_viewer_get_feature_registry() {
 		return array(
+			'after_reading'  => array( 'available' => false ),
 			'panel_reader'   => array( 'available' => true ),
 			'cta'            => array( 'available' => false ),
 			'analytics'       => array( 'available' => false ),

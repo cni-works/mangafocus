@@ -9,7 +9,7 @@ if (Get-Variable -Name PSNativeCommandUseErrorActionPreference -ErrorAction Sile
 }
 $projectRoot = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 $runtimeFiles = @(
-    'mangafocus.php', 'readme.txt', 'includes/features.php', 'includes/capabilities.php', 'includes/extensions.php', 'includes/settings.php', 'includes/panel-reader.php', 'includes/panel-reader/renderer.php', 'includes/analytics.php', 'includes/analytics/lifecycle.php', 'includes/analytics/storage.php', 'includes/analytics/settings.php', 'assets/admin-library.css', 'assets/admin-library.js', 'assets/admin-settings.css', 'assets/panel-reader/editor.js', 'assets/panel-reader/frontend.js', 'assets/panel-reader/style.css',
+    'mangafocus.php', 'readme.txt', 'includes/features.php', 'includes/capabilities.php', 'includes/extensions.php', 'includes/library-runtime.php', 'includes/settings.php', 'includes/panel-reader.php', 'includes/panel-reader/renderer.php', 'includes/analytics.php', 'includes/analytics/lifecycle.php', 'includes/analytics/storage.php', 'includes/analytics/settings.php', 'assets/admin-library.css', 'assets/admin-library.js', 'assets/admin-settings.css', 'assets/panel-reader/editor.js', 'assets/panel-reader/frontend.js', 'assets/panel-reader/style.css',
     'blocks/library-viewer/block.json', 'blocks/library-viewer/index.js',
 	'blocks/viewer/block.json', 'blocks/viewer/layout.js', 'blocks/viewer/index.js',
     'blocks/viewer/render.php', 'blocks/viewer/style.css', 'blocks/viewer/view.js',

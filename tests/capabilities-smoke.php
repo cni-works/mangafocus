@@ -18,6 +18,7 @@ function amv_cap_expect( $condition, $message ) { if ( ! $condition ) throw new 
 require dirname( __DIR__ ) . '/includes/capabilities.php';
 
 $expected = array(
+	'after_reading' => array( 'editor' => false, 'runtime' => false ),
 	'panel_reader' => array( 'runtime' => true, 'editor' => true ),
 	'cta' => array( 'runtime' => false, 'editor' => false ),
 	'analytics' => array( 'collection' => false, 'report' => false ),

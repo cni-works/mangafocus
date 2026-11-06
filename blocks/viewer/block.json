@@ -9,6 +9,7 @@
   "textdomain": "mangafocus",
   "attributes": {
     "pages": { "type": "array", "default": [] },
+    "afterReading": { "type": "object" },
     "viewerKey": { "type": "string", "default": "" },
     "instanceKey": { "type": "string", "default": "" },
     "libraryViewerId": { "type": "integer", "default": 0 },

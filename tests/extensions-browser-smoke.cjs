@@ -72,7 +72,7 @@ const unextendedEditor = registered['ai-manga-viewer/viewer'].edit({ attributes:
 assert.ok(unextendedEditor, 'Editor must render without registered extensions');
 assert.equal(JSON.stringify(unextendedEditor).includes('extensionHook'), false, 'Unregistered extensions must not add editor UI');
 
-const html = execFileSync('php', [path.join(__dirname, 'render-smoke.php'), '--spread-fixture'], { encoding: 'utf8' });
+const html = execFileSync('php', [process.env.MANGAFOCUS_RENDER_TEST_BOOTSTRAP || path.join(__dirname, 'render-smoke.php'), '--spread-fixture'], { encoding: 'utf8' });
 
 (async () => {
   const browser = await chromium.launch({ channel: 'msedge', headless: true });

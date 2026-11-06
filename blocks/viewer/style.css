@@ -128,3 +128,46 @@
 
 .amv-reader.is-view-transitioning .amv-reader__stage,.amv-reader.is-view-transitioning .amv-reader__pages{max-width:min(100%,var(--amv-transition-width))}
 .amv-reader.is-view-transitioning .amv-reader__focus-layer{max-width:none;transition:none}
+
+/* Optional terminal UI, installed only by a registered runtime handler. */
+.amv-reader__terminal-finish[hidden]{display:none!important}
+.amv-reader__terminal-finish{display:block;position:sticky;bottom:12px;z-index:10;margin:16px auto;min-height:44px;padding:10px 24px;border:1px solid #64748b;border-radius:8px;background:#fff;color:#1f2937;font:inherit;cursor:pointer}
+.amv-reader__terminal-finish:disabled{opacity:.5;cursor:default}
+.amv-reader__terminal-finish:focus-visible{outline:3px solid #2271b1;outline-offset:3px}
+
+/* Phone fullscreen vertical controls. The drawer stays outside the scrolling stage. */
+.amv-reader__vertical-navigation {
+	--amv-vertical-right: calc(12px + env(safe-area-inset-right, 0px));
+	--amv-vertical-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+	position: fixed; z-index: 24; right: var(--amv-vertical-right); bottom: var(--amv-vertical-bottom);
+}
+.amv-reader__vertical-navigation[hidden],
+.amv-reader__vertical-menu[hidden] { display: none !important; }
+.amv-reader .amv-reader__vertical-toggle {
+	display: grid; place-items: center; box-sizing: border-box;
+	width: 44px; height: 44px; margin: 0; padding: 0;
+	border: 1px solid rgba(255, 255, 255, .65); border-radius: 50%;
+	background: rgba(15, 23, 42, .85); color: #fff; cursor: pointer; touch-action: manipulation;
+}
+.amv-reader .amv-reader__vertical-toggle:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+.amv-reader__vertical-menu {
+	position: absolute; right: 0; bottom: calc(100% + 8px + var(--amv-vertical-menu-clearance, 0px));
+	display: grid; gap: 8px; box-sizing: border-box;
+	width: min(252px, calc(100vw - var(--amv-vertical-right) - 12px - env(safe-area-inset-left, 0px)));
+	max-height: calc(100vh - var(--amv-vertical-bottom) - 64px - env(safe-area-inset-top, 0px) - var(--amv-vertical-menu-clearance, 0px));
+	max-height: calc(100dvh - var(--amv-vertical-bottom) - 64px - env(safe-area-inset-top, 0px) - var(--amv-vertical-menu-clearance, 0px));
+	padding: 8px; overflow: auto; overscroll-behavior: contain;
+	border: 1px solid rgba(255, 255, 255, .45); border-radius: 12px;
+	background: rgba(15, 23, 42, .95); color: #fff;
+}
+.amv-reader.is-fullscreen.is-vertical-reading .amv-reader__vertical-navigation > .amv-reader__vertical-menu > .amv-reader__zoom-controls,
+.amv-reader.is-fullscreen.is-vertical-reading .amv-reader__vertical-navigation > .amv-reader__vertical-menu > .amv-reader__mode-controls {
+	position: static; display: flex !important; flex-direction: row; flex-wrap: wrap;
+	justify-content: center; gap: 4px; width: auto; max-width: none; margin: 0; padding: 0;
+	border: 0; border-radius: 0; background: none; color: inherit; transform: none;
+	box-shadow: none; backdrop-filter: none;
+}
+.amv-reader.is-fullscreen.is-vertical-reading .amv-reader__vertical-menu .amv-reader__zoom-level { color: inherit; }
+.amv-reader.is-fullscreen .amv-reader__vertical-menu button { min-width: 44px; min-height: 44px; touch-action: manipulation; }
+.amv-reader.is-fullscreen .amv-reader__vertical-menu .amv-reader__fullscreen,
+.amv-reader.is-fullscreen .amv-reader__vertical-menu .amv-reader__focus-open { width: 100%; margin: 0; }

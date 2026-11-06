@@ -4,7 +4,7 @@ Tags: manga, comic, viewer, reader, gutenberg
 Requires at least: 6.3
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.5.1
+Stable tag: 0.6.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -117,9 +117,17 @@ The distributed plugin contains its human-readable PHP, JavaScript, and CSS sour
 
 The maintained development repository is available at https://github.com/cni-works/mangafocus.
 
-Build tool (excluded from the ZIP): https://github.com/cni-works/mangafocus/blob/3c13166c04880ebe4342dfcdb4f4bd9dbbcc70eb/scripts/build-release.ps1. Run `powershell -File scripts/build-release.ps1` from the corresponding repository revision.
+The matching source revision contains the build script `scripts/build-release.ps1`. From the repository root, run `powershell -File scripts/build-release.ps1` to build the plugin ZIP. The build script is excluded from the ZIP.
 
 == Changelog ==
+
+= 0.6.0 =
+
+* On phones, fullscreen vertical reading now keeps zoom and exit controls in a collapsible menu so more of the comic stays visible.
+* Improved how the viewer closes and starts again.
+* Made switching between reading modes more reliable.
+* Added support for a compatible Pro add-on to suggest another comic at the end of reading. Free reading works independently.
+* Fixed reading issues and improved compatibility with existing comics and editor settings.
 
 = 0.5.1 =
 

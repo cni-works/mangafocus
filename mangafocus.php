@@ -2,7 +2,7 @@
 /**
  * Plugin Name: MangaFocus – Panel-by-Panel Manga Reader
  * Description: A manga reader for WordPress with page, spread, vertical, zoom, and Focus Mode.
- * Version: 0.5.1
+ * Version: 0.6.0
  * Requires at least: 6.3
  * Requires PHP: 7.4
  * Author: CNI
@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( ! defined( 'AI_MANGA_VIEWER_VERSION' ) ) {
-	define( 'AI_MANGA_VIEWER_VERSION', '0.5.1' );
+	define( 'AI_MANGA_VIEWER_VERSION', '0.6.0' );
 }
 
 if ( ! defined( 'AI_MANGA_VIEWER_PLUGIN_FILE' ) ) {
@@ -27,6 +27,7 @@ if ( ! defined( 'AI_MANGA_VIEWER_PLUGIN_FILE' ) ) {
 require_once plugin_dir_path( __FILE__ ) . 'includes/features.php';
 require_once plugin_dir_path( __FILE__ ) . 'includes/capabilities.php';
 require_once plugin_dir_path( __FILE__ ) . 'includes/extensions.php';
+require_once plugin_dir_path( __FILE__ ) . 'includes/library-runtime.php';
 require_once plugin_dir_path( __FILE__ ) . 'includes/settings.php';
 require_once plugin_dir_path( __FILE__ ) . 'blocks/viewer/render.php';
 require_once plugin_dir_path( __FILE__ ) . 'includes/panel-reader.php';
@@ -59,12 +60,13 @@ function ai_manga_viewer_register_blocks() {
 	$url  = plugin_dir_url( __FILE__ ) . 'blocks/viewer/';
 	$library_path = plugin_dir_path( __FILE__ ) . 'blocks/library-viewer/';
 	$library_url  = plugin_dir_url( __FILE__ ) . 'blocks/library-viewer/';
-	wp_register_script( 'ai-manga-viewer-layout', $url . 'layout.js', array(), filemtime( $path . 'layout.js' ) );
+	wp_register_script( 'ai-manga-viewer-layout', $url . 'layout.js', array(), filemtime( $path . 'layout.js' ), false );
 	wp_register_script(
 		'ai-manga-viewer-editor',
 		$url . 'index.js',
 		array( 'ai-manga-viewer-layout', 'wp-api-fetch', 'wp-blocks', 'wp-i18n', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-data', 'wp-hooks', 'wp-core-data', 'wp-editor' ),
-		filemtime( $path . 'index.js' )
+		filemtime( $path . 'index.js' ),
+		false
 	);
 	wp_register_script( 'ai-manga-viewer-view', $url . 'view.js', array( 'ai-manga-viewer-layout', 'wp-i18n' ), filemtime( $path . 'view.js' ), true );
 	$bootstrap_script = ai_manga_viewer_feature_bootstrap_script() . ai_manga_viewer_capability_bootstrap_script();
@@ -88,7 +90,8 @@ function ai_manga_viewer_register_blocks() {
 		'ai-manga-viewer-library-editor',
 		$library_url . 'index.js',
 		array( 'wp-api-fetch', 'wp-blocks', 'wp-i18n', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-data' ),
-		filemtime( $library_path . 'index.js' )
+		filemtime( $library_path . 'index.js' ),
+		false
 	);
 	wp_add_inline_script( 'ai-manga-viewer-library-editor', $bootstrap_script, 'before' );
 	wp_set_script_translations( 'ai-manga-viewer-library-editor', 'mangafocus', $translations_path );
@@ -158,7 +161,7 @@ add_action( 'init', 'ai_manga_viewer_register_library' );
 /** Keep Classic Editor's preferences intact outside the library's editor GET request. */
 function ai_manga_viewer_library_classic_editor_settings( $settings ) {
 	if ( false !== $settings || ! is_admin() || ! function_exists( 'use_block_editor_for_post' ) ||
-		'GET' !== ( $_SERVER['REQUEST_METHOD'] ?? '' ) ) {
+		'GET' !== sanitize_text_field( wp_unslash( $_SERVER['REQUEST_METHOD'] ?? '' ) ) ) {
 		return $settings;
 	}
 	global $pagenow;
@@ -166,9 +169,12 @@ function ai_manga_viewer_library_classic_editor_settings( $settings ) {
 	// Read-only screen routing, not a setting or post mutation.
 	if ( 'post-new.php' === $pagenow && is_string( $_GET['post_type'] ?? null ) ) {
 		$post_type = sanitize_key( wp_unslash( $_GET['post_type'] ) );
-	} elseif ( 'post.php' === $pagenow && 'edit' === ( $_GET['action'] ?? '' ) &&
+	} elseif ( 'post.php' === $pagenow && 'edit' === sanitize_text_field( wp_unslash( $_GET['action'] ?? '' ) ) &&
 		is_scalar( $_GET['post'] ?? null ) ) {
-		$post_type = get_post_type( absint( $_GET['post'] ) );
+		$post_id = absint( wp_unslash( $_GET['post'] ) );
+		if ( $post_id ) {
+			$post_type = get_post_type( $post_id );
+		}
 	}
 	if ( 'amv_viewer' !== $post_type ) {
 		return $settings;
@@ -487,8 +493,12 @@ function ai_manga_viewer_sanitize_library_attributes( $attributes ) {
 	);
 	if ( isset( $attributes['enableInline'] ) && is_bool( $attributes['enableInline'] ) ) { $sanitized['enableInline'] = $attributes['enableInline']; }
 	if ( isset( $attributes['pageTransition'] ) && is_string( $attributes['pageTransition'] ) && in_array( $attributes['pageTransition'], array( 'none', 'turn', 'fade', 'slide' ), true ) ) { $sanitized['pageTransition'] = $attributes['pageTransition']; }
+	if ( array_key_exists( 'afterReading', $attributes ) ) { $sanitized['afterReading'] = $attributes['afterReading']; }
 	return $sanitized;
 }
+
+/** Optional retained schema; no Pro behavior. */
+function ai_manga_viewer_after_reading_schema_version() { return 1; }
 
 /** Create an independent Manga Library copy of one direct Viewer. */
 function ai_manga_viewer_register_direct_viewer( WP_REST_Request $request ) {
@@ -512,6 +522,8 @@ function ai_manga_viewer_register_direct_viewer( WP_REST_Request $request ) {
 		}
 	}
 	$attributes = ai_manga_viewer_sanitize_library_attributes( $request->get_param( 'attributes' ) );
+	$registration_check = apply_filters( 'ai_manga_viewer_library_registration_check', true, $attributes );
+	if ( is_wp_error( $registration_check ) ) { return $registration_check; }
 	if ( isset( $attributes['enableInline'] ) && false === $attributes['enableInline'] && ! $attributes['enableFullscreen'] ) {
 		if ( ! $attributes['focusReader'] ) { return new WP_Error( 'amv_reading_mode_required', __( 'Keep at least one reading mode enabled.', 'mangafocus' ), array( 'status' => 400 ) ); }
 		if ( ! ai_manga_viewer_has_panel_areas( $attributes, $attributes['pages'] ) ) { return new WP_Error( 'amv_panel_configuration_required', __( 'Add at least one panel before using Focus Mode alone.', 'mangafocus' ), array( 'status' => 400 ) ); }

@@ -1,6 +1,6 @@
 <?php
 /** Local WordPress doubles only; no site or database connection. */
-ob_start(); require __DIR__ . '/render-smoke.php'; ob_end_clean();
+ob_start(); require getenv( 'MANGAFOCUS_RENDER_TEST_BOOTSTRAP' ) ?: __DIR__ . '/render-smoke.php'; ob_end_clean();
 $GLOBALS['test_block_class'] = 'wp-block-ai-manga-viewer-viewer';
 function pt_assert( $condition, $message ) { if ( ! $condition ) { throw new RuntimeException( $message ); } }
 $pt_pages = array();

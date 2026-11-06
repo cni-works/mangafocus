@@ -208,7 +208,7 @@ function ai_manga_viewer_render_viewer( $attributes ) {
 	$max_width     = ai_manga_viewer_number( $attributes['maxWidth'] ?? 650, 320, 1600, 650 );
 	$spread_gap    = 12;
 	$spread_width  = $max_width * 2 + $spread_gap;
-	$stage_id      = wp_unique_id( 'amv-reader-pages-' );
+	$stage_id      = wp_unique_id( 'amv-reader-pages-' . ( 0 === strpos( $instance_key, 'runtime-' ) ? $instance_key . '-' : '' ) );
 	$wrapper_class = 'amv-reader is-first-page' . ( $cover_launcher ? ' amv-reader--cover-launcher' : '' );
 	$wrapper       = get_block_wrapper_attributes( array( 'class' => $wrapper_class, 'style' => '--amv-reader-max-width:' . $max_width . 'px;--amv-reader-spread-max-width:' . $spread_width . 'px;--amv-reader-spread-gap:' . $spread_gap . 'px;' ) );
 	$count         = count( $pages );

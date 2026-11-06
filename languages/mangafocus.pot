@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: MangaFocus 0.5.0\n"
+"Project-Id-Version: MangaFocus 0.6.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "X-Domain: mangafocus\n"
 
@@ -296,6 +296,9 @@ msgid "Fade"
 msgstr ""
 
 msgid "Features"
+msgstr ""
+
+msgid "Finish reading"
 msgstr ""
 
 msgid "First-page preview (not a saved cover)"
@@ -626,6 +629,9 @@ msgid "Read manga within the post or page."
 msgstr ""
 
 msgid "Readers can zoom with the plus and minus controls or pinch gestures, then drag the enlarged image."
+msgstr ""
+
+msgid "Reading controls"
 msgstr ""
 
 msgid "Reading modes"

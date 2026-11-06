@@ -6,6 +6,7 @@ $runtime_files = array(
 	'mangafocus.php',
 	'readme.txt',
 	'includes/settings.php',
+	'includes/library-runtime.php',
 	'includes/analytics/settings.php',
 	'includes/panel-reader/renderer.php',
 	'blocks/viewer/render.php',

@@ -46,6 +46,7 @@ function update_option() { throw new RuntimeException( 'Options must not be writ
 function update_post_meta() { throw new RuntimeException( 'Editor memory/data must not be written.' ); }
 function update_user_option() { throw new RuntimeException( 'User settings must not be written.' ); }
 function sanitize_key( $value ) { return preg_replace( '/[^a-z0-9_-]/', '', strtolower( $value ) ); }
+function sanitize_text_field( $value ) { return is_scalar( $value ) ? trim( strip_tags( (string) $value ) ) : ''; }
 function wp_unslash( $value ) { return is_string( $value ) ? stripslashes( $value ) : $value; }
 function absint( $value ) { return abs( (int) $value ); }
 function check_admin_referer() { $GLOBALS['library_metabox_nonce'] = ( $GLOBALS['library_metabox_nonce'] ?? 0 ) + 1; }
@@ -66,6 +67,21 @@ $GLOBALS['pagenow'] = 'post-new.php'; $_GET = array( 'post_type' => 'amv_viewer'
 if ( in_array( '--no-core-api', $argv, true ) ) {
 	library_check( false === ai_manga_viewer_library_classic_editor_settings( false ), 'Missing Core API changed editor choice.' );
 	echo "PASS: missing block-editor API remains untouched without fatal error.\n"; exit;
+}
+// Malformed route values must not select the library editor or write preferences.
+foreach ( array( array( 'GET' ), 'POST' ) as $invalid_method ) {
+	$_SERVER['REQUEST_METHOD'] = $invalid_method;
+	library_check( false === ai_manga_viewer_library_classic_editor_settings( false ), 'Invalid method selected the library editor.' );
+}
+$_SERVER['REQUEST_METHOD'] = 'GET';
+$GLOBALS['pagenow'] = 'post.php';
+foreach ( array(
+	array( 'action' => array( 'edit' ), 'post' => '11' ),
+	array( 'action' => 'edit', 'post' => array( '11' ) ),
+	array( 'action' => 'edit', 'post' => '0' ),
+) as $invalid_query ) {
+	$_GET = $invalid_query;
+	library_check( false === ai_manga_viewer_library_classic_editor_settings( false ), 'Malformed query selected the library editor.' );
 }
 $with_classic = ! in_array( '--without-classic', $argv, true );
 if ( $with_classic ) { require $reference . '/classic-editor.php'; }

@@ -12,6 +12,9 @@
                 "lang": "ja",
                 "plural-forms": "nplurals=1; plural=0;"
             },
+            "Reading controls": [
+                "読書操作"
+            ],
             "Return to page view": [
                 "ページ表示に戻る"
             ],
@@ -44,6 +47,9 @@
             ],
             "Read in fullscreen": [
                 "全画面で読む"
+            ],
+            "Finish reading": [
+                "読み終える"
             ]
         }
     }

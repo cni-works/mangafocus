@@ -12,6 +12,7 @@
 	};
 	const extensionApiVersion = 1;
 	const publicInstances = new WeakMap();
+	const pendingMounts = new WeakMap();
 	const publicRuntime = window.aiMangaViewer = window.aiMangaViewer || {};
 	publicRuntime.extensionApiVersion = extensionApiVersion;
 	publicRuntime.getInstance = function( target ) {
@@ -21,17 +22,139 @@
 		for ( let index = 0; index < roots.length; index++ ) if ( roots[ index ].dataset.instanceKey === target ) return publicInstances.get( roots[ index ] ) || null;
 		return null;
 	};
+
+	let verticalNavigationId = 0;
+
+	// Per-instance resources. Explicit removeEventListener/clearTimeout remain valid.
+	function createScope() {
+        let disposed = false; const cleanups = new Set(), listeners = new Set(), timers = new Set(), frames = new Set();
+        const scope = {
+            get disposed() { return disposed; },
+            add: function( cleanup ) { if ( disposed ) cleanup(); else cleanups.add( cleanup ); },
+            unlisten: function( target, type, callback, options ) { listeners.forEach( function( record ) { if ( record.target === target && record.type === type && record.callback === callback && record.capture === ( options === true || !! ( options && options.capture ) ) ) { target.removeEventListener( type, record.installed, record.options ); listeners.delete( record ); } } ); },
+            listen: function( target, type, callback, options ) { if ( disposed ) return; const capture = options === true || !! ( options && options.capture ); if ( Array.from( listeners ).some( function( record ) { return record.target === target && record.type === type && record.callback === callback && record.capture === capture; } ) ) return; const record = { target: target, type: type, callback: callback, options: options, capture: capture }; record.installed = function( event ) { if ( options && options.once ) scope.unlisten( target, type, callback, options ); if ( ! disposed ) callback.call( target, event ); }; target.addEventListener( type, record.installed, options ); listeners.add( record ); },
+            timeout: function( callback, delay ) { if ( disposed ) return 0; const id = window.setTimeout( function() { timers.delete( id ); if ( ! disposed ) callback(); }, delay ); timers.add( id ); return id; },
+            frame: function( callback ) { if ( disposed ) return 0; const id = window.requestAnimationFrame( function( time ) { frames.delete( id ); if ( ! disposed ) callback( time ); } ); frames.add( id ); return id; },
+            observer: function( Constructor, callback, options ) { const observer = new Constructor( function() { if ( ! disposed ) callback.apply( null, arguments ); }, options ); scope.add( function() { observer.disconnect(); } ); return observer; },
+            dispose: function() { if ( disposed ) return; disposed = true; timers.forEach( window.clearTimeout ); frames.forEach( window.cancelAnimationFrame ); timers.clear(); frames.clear(); listeners.forEach( function( record ) { record.target.removeEventListener( record.type, record.installed, record.options ); } ); listeners.clear(); Array.from( cleanups ).reverse().forEach( function( cleanup ) { try { cleanup(); } catch ( error ) { /* Release remaining resources. */ } } ); cleanups.clear(); }
+        }; return scope;
+    }
+	publicRuntime.createResourceScope = createScope;
+	publicRuntime.runtimeApiVersion = 2;
+    publicRuntime.canMount = function( root ) { return !! ( root && root.nodeType === 1 && root.querySelector( '.amv-reader__stage' ) && root.querySelector( '.amv-reader__focus-layer' ) && root.querySelector( '.amv-reader__surface' ) && root.querySelectorAll( '.amv-reader__page' ).length ); };
+	    publicRuntime.inspectMount = function( root ) {
+        if ( ! publicRuntime.canMount( root ) ) return null;
+        const image = root.querySelector( '.amv-reader__page .amv-reader__image' );
+        return Object.freeze( { identity: Object.freeze( { viewerKey: root.dataset.viewerKey || '', instanceKey: root.dataset.instanceKey || '' } ), firstImageUrl: image ? image.src : '', availableModes: Object.freeze( [ root.dataset.enableInline !== 'off' ? 'normal' : '', root.querySelector( '.amv-reader__fullscreen' ) ? 'fullscreen' : '', root.dataset.amvPanelReader === 'on' ? 'focus' : '' ].filter( Boolean ) ) } );
+    };
+    publicRuntime.runtimeCapabilities = Object.freeze( { lifecycle: true, terminalNavigation: true, modeState: true, mountValidation: true, readerFocus: true, layoutRefresh: true, modeControl: true, presentationHost: true, presentationOverlay: true } );
+	publicRuntime.mount = function( root ) {
+        try { return init( root ); } catch ( error ) { const pending = pendingMounts.get( root ); if ( pending ) { pending.scope.dispose(); root.replaceChildren.apply( root, Array.from( pending.original.childNodes ).map( function( node ) { return node.cloneNode( true ); } ) ); Array.from( root.attributes ).forEach( function( attr ) { root.removeAttribute( attr.name ); } ); Array.from( pending.original.attributes ).forEach( function( attr ) { root.setAttribute( attr.name, attr.value ); } ); pendingMounts.delete( root ); } throw error; }
+    };
+	publicRuntime.destroy = function( root ) { const api = publicInstances.get( root ); return api ? api.destroy() : false; };
 	const duration = 360;
 	const layout = window.aiMangaViewerLayout;
 	function clamp( value, min, max ) { return Math.max( min, Math.min( max, value ) ); }
+	function init( root ) {
+		if ( ! root || root.nodeType !== 1 ) return null;
+		if ( publicInstances.has( root ) ) return publicInstances.get( root );
+		const stage = root.querySelector( '.amv-reader__stage' );
+		const pages = Array.prototype.slice.call( root.querySelectorAll( '.amv-reader__page' ) );
+		const focusLayer = root.querySelector( '.amv-reader__focus-layer' );
+		const surface = root.querySelector( '.amv-reader__surface' );
+		if ( ! stage || ! focusLayer || ! surface || ! pages.length ) return;
+		const original = root.cloneNode( true ); const scope = createScope(); pendingMounts.set( root, { original: original, scope: scope } );
+		const destroyCallbacks = new Set(), modeProviders = new Map(); let terminalHandler = null, destroyed = false;
+	function createVerticalNavigation( root, controls ) {
+		const scope = createScope();
+		const navigation = document.createElement( 'div' );
+		const toggle = document.createElement( 'button' );
+		const panel = document.createElement( 'div' );
+		const label = __( 'Reading controls', 'mangafocus' );
+		navigation.className = 'amv-reader__vertical-navigation';
+		toggle.className = 'amv-reader__vertical-toggle';
+		toggle.type = 'button';
+		toggle.setAttribute( 'aria-label', label );
+		toggle.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M4 7h6m4 0h6M4 17h10m4 0h2"/><circle cx="12" cy="7" r="2"/><circle cx="16" cy="17" r="2"/></svg>';
+		panel.className = 'amv-reader__vertical-menu';
+		panel.id = 'amv-vertical-menu-' + ( ++verticalNavigationId );
+		panel.setAttribute( 'role', 'group' );
+		panel.setAttribute( 'aria-label', label );
+		toggle.setAttribute( 'aria-controls', panel.id );
+		navigation.append( toggle, panel );
+		root.append( navigation );
+
+		// Move the existing controls and restore their original order on exit.
+		controls.filter( Boolean ).forEach( function( control ) {
+			const slot = document.createComment( 'amv vertical control' );
+			control.before( slot );
+			panel.append( control );
+			scope.add( function() { slot.replaceWith( control ); } );
+		} );
+
+		let scrollInput = null;
+		function fitMenu() {
+			if ( panel.hidden ) return;
+			const finish = root.querySelector( '.amv-reader__terminal-finish:not([hidden]):enabled' );
+			const clearance = finish ? Math.max( 0, navigation.getBoundingClientRect().top - finish.getBoundingClientRect().top ) : 0;
+			panel.style.setProperty( '--amv-vertical-menu-clearance', clearance + 'px' );
+		}
+		function setOpen( open, restoreFocus ) {
+			scrollInput = null;
+			if ( ! open && restoreFocus && panel.contains( document.activeElement ) ) toggle.focus( { preventScroll: true } );
+			panel.hidden = ! open;
+			toggle.setAttribute( 'aria-expanded', String( open ) );
+			fitMenu();
+		}
+		setOpen( false );
+		scope.listen( toggle, 'click', function() { setOpen( panel.hidden, true ); } );
+
+		// Scroll events also fire for zoom anchoring and API navigation.
+		// Require a recent reader input and an actual change in scroll position.
+		function rememberScrollInput( event ) {
+			if ( panel.hidden || ! event.isTrusted || event.defaultPrevented || navigation.contains( event.target ) ) return;
+			scrollInput = { top: root.scrollTop, left: root.scrollLeft, time: performance.now() };
+		}
+		scope.listen( root, 'wheel', function( event ) {
+			if ( ! event.ctrlKey && ( event.deltaY || event.deltaX ) ) rememberScrollInput( event );
+		}, { passive: true } );
+		scope.listen( root, 'touchmove', function( event ) {
+			if ( event.touches.length === 1 ) rememberScrollInput( event );
+		}, { passive: true } );
+		scope.listen( root, 'keydown', function( event ) {
+			if ( event.key === 'Escape' && ! panel.hidden && navigation.contains( event.target ) ) {
+				event.preventDefault();
+				event.stopPropagation();
+				setOpen( false, true );
+				return;
+			}
+			if ( [ 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'PageUp', 'PageDown', 'Home', 'End', ' ' ].includes( event.key ) && ! event.target.closest( 'button, a, input, select, textarea, [contenteditable]' ) ) rememberScrollInput( event );
+		} );
+		scope.listen( root, 'scroll', function() {
+			if ( ! scrollInput || performance.now() - scrollInput.time > 500 ) return;
+			if ( scrollInput.top !== root.scrollTop || scrollInput.left !== root.scrollLeft ) setOpen( false, true );
+		}, { passive: true } );
+
+		return {
+			setVisible: function( visible ) {
+				if ( ! visible ) setOpen( false );
+				navigation.hidden = ! visible;
+			},
+			focus: function() { toggle.focus( { preventScroll: true } ); },
+			clearScrollInput: function() { scrollInput = null; },
+			fitMenu: fitMenu,
+			dispose: function() { scope.dispose(); navigation.remove(); }
+		};
+	}
+
 	function bindSwipe( element, threshold, onSwipe ) {
 		let start = null;
-		element.addEventListener( 'touchstart', function( event ) {
+		scope.listen( element, 'touchstart', function( event ) {
 			start = event.touches.length === 1 ? { id: event.touches[ 0 ].identifier, x: event.touches[ 0 ].clientX, y: event.touches[ 0 ].clientY } : null;
 		}, { passive: true } );
-		element.addEventListener( 'touchmove', function( event ) { if ( event.touches.length !== 1 ) start = null; }, { passive: true } );
-		element.addEventListener( 'touchcancel', function() { start = null; }, { passive: true } );
-		element.addEventListener( 'touchend', function( event ) {
+		scope.listen( element, 'touchmove', function( event ) { if ( event.touches.length !== 1 ) start = null; }, { passive: true } );
+		scope.listen( element, 'touchcancel', function() { start = null; }, { passive: true } );
+		scope.listen( element, 'touchend', function( event ) {
 			const origin = start; start = null;
 			if ( ! origin || event.touches.length ) return;
 			const end = Array.from( event.changedTouches ).find( function( touch ) { return touch.identifier === origin.id; } );
@@ -41,18 +164,14 @@
 			onSwipe( dx );
 		}, { passive: true } );
 	}
-	function init( root ) {
-		const stage = root.querySelector( '.amv-reader__stage' );
-		const pages = Array.prototype.slice.call( root.querySelectorAll( '.amv-reader__page' ) );
-		const focusLayer = root.querySelector( '.amv-reader__focus-layer' );
-		const surface = root.querySelector( '.amv-reader__surface' );
-		if ( ! stage || ! focusLayer || ! surface || ! pages.length ) return;
 		const binding = root.dataset.binding === 'ltr' ? 'ltr' : 'rtl';
 		const configuredLayout = [ 'spread', 'auto' ].indexOf( root.dataset.pageLayout ) !== -1 ? root.dataset.pageLayout : 'single';
 		const singleFirstPage = root.dataset.singleFirstPage !== 'off';
 		const spreadReadingMode = root.dataset.spreadReadingMode === 'pageFocus' ? 'pageFocus' : 'overview';
 		const fullscreenReadingMode = root.dataset.fullscreenReadingMode === 'vertical' ? 'vertical' : 'paged';
 		const verticalZoomMaximum = 2;
+		const compactVertical = window.matchMedia( '(max-width: 600px) and (pointer: coarse), (max-width: 960px) and (max-height: 600px) and (pointer: coarse)' );
+		let verticalNavigation = null;
 		const layoutThresholds = { auto: { enter: 780, exit: 740 }, spread: { enter: 600, exit: 560 } };
 		const pageFocusViewportReserve = 128;
 		const buttons = { previous: root.querySelectorAll( '.amv-reader__button--previous, .amv-reader__edge--previous' ), next: root.querySelectorAll( '.amv-reader__button--next, .amv-reader__edge--next' ) };
@@ -84,6 +203,11 @@
 		let current = 0, currentView = 0, focusedPageIndex = 0, verticalCurrentPage = 0, temporaryOverview = false, views = pages.map( function( page, index ) { return [ index ]; } ), spreadActive = false, locked = false, scrollTimer = null, assisting = false, fullscreenReturnViewportTop = null, fullscreenReturnFocus = null, zoomScale = 1, panX = 0, panY = 0, panPointer = null, touchPan = null, pinch = null, verticalObserver = null, verticalVisibility = {};
 		const viewerKey = root.dataset.viewerKey || '', instanceKey = root.dataset.instanceKey || '';
 		let activeMode = 'standard', extensionMode = '';
+        let presentationHost = root, presentationSuspended = false, retainedPresentation = false, presentationInertBefore = false, synchronizeFullscreen = null;
+        [ 'click', 'pointerdown', 'keydown', 'touchstart', 'touchmove', 'touchend', 'wheel' ].forEach( function( type ) { scope.listen( root, type, function( event ) { if ( presentationSuspended && retainedPresentation ) { if ( event.cancelable ) event.preventDefault(); event.stopImmediatePropagation(); } }, { capture: true, passive: false } ); } );
+        const modeControllers = new Map();
+        const fullscreenAllowed = !! root.querySelector( '.amv-reader__fullscreen' );
+        let terminalFinish = null;
 		let verticalStartCleanup = null;
 		let extensionReady = false, lastPublicView = '', lastPublicFullscreen = false;
 
@@ -149,7 +273,7 @@
 				if ( previousWidth ) root.style.setProperty( '--amv-transition-width', previousWidth ); else root.style.removeProperty( '--amv-transition-width' );
 				if ( busy === null ) root.removeAttribute( 'aria-busy' ); else root.setAttribute( 'aria-busy', busy );
 				locked = false; updateButtons();
-				window.requestAnimationFrame( function() { updateFullscreenSpreadSizing(); applyPageFocus(); updateInlineNavigation(); } );
+				scope.frame( function() { updateFullscreenSpreadSizing(); applyPageFocus(); updateInlineNavigation(); } );
 			} };
 			locked = true; root.setAttribute( 'aria-busy', 'true' );
 			transitionContent.style.pointerEvents = 'none';
@@ -180,13 +304,13 @@
 				}
 				animations[ animations.length - 1 ].onfinish = state.finish;
 				animations.forEach( function( animation ) { animation.oncancel = state.finish; } );
-				timer = window.setTimeout( state.finish, milliseconds + 80 );
+				timer = scope.timeout( state.finish, milliseconds + 80 );
 			} catch ( error ) { state.finish(); }
 			return true;
 		}
 		function handleMotionPreference() { if ( reducedMotion.matches ) cancelNavigationAnimation(); }
-		if ( reducedMotion.addEventListener ) reducedMotion.addEventListener( 'change', handleMotionPreference );
-		else if ( reducedMotion.addListener ) reducedMotion.addListener( handleMotionPreference );
+		if ( reducedMotion.addEventListener ) scope.listen( reducedMotion, 'change', handleMotionPreference );
+		else if ( reducedMotion.addListener ) { reducedMotion.addListener( handleMotionPreference ); scope.add( function() { reducedMotion.removeListener( handleMotionPreference ); } ); }
 
 		root.classList.add( 'is-enhanced' );
 		function pageIsLandscape( index ) { const page = pages[ index ]; if ( ! page ) return false; return layout.dimensionState( { width: page.dataset.imageWidth, height: page.dataset.imageHeight } ) === 'landscape'; }
@@ -253,7 +377,7 @@
 			pages.forEach( function( page, index ) { page.classList.toggle( 'is-active', active.indexOf( index ) !== -1 ); page.classList.remove( 'is-under', 'is-leaving', 'is-leaving-next', 'is-leaving-previous', 'is-spread-first', 'is-spread-second' ); } );
 			if ( active.length === 2 ) { pages[ active[ 0 ] ].classList.add( 'is-spread-first' ); pages[ active[ 1 ] ].classList.add( 'is-spread-second' ); }
 			root.classList.toggle( 'is-spread-view', active.length === 2 );
-			window.requestAnimationFrame( function() { updateFullscreenSpreadSizing(); applyPageFocus(); updateInlineNavigation(); } );
+			scope.frame( function() { updateFullscreenSpreadSizing(); applyPageFocus(); updateInlineNavigation(); } );
 			warmAdjacentViews();
 			notifyViewChange( 'navigation' );
 		}
@@ -328,11 +452,11 @@
 			pages.forEach( function( page ) {
 				if ( Number( page.dataset.imageWidth ) > 0 && Number( page.dataset.imageHeight ) > 0 ) return;
 				const source = page.querySelector( 'img' );
-				function remember( image ) { if ( ! image || ! image.naturalWidth || ! image.naturalHeight ) return; const wasLandscape = pageIsLandscape( Number( page.dataset.pageIndex ) ); page.dataset.imageWidth = String( image.naturalWidth ); page.dataset.imageHeight = String( image.naturalHeight ); if ( spreadActive && wasLandscape !== pageIsLandscape( Number( page.dataset.pageIndex ) ) ) rebuildViews( focusedPageIndex ); else window.requestAnimationFrame( function() { updateFullscreenSpreadSizing(); applyPageFocus(); updateInlineNavigation(); } ); }
+				function remember( image ) { if ( destroyed || ! image || ! image.naturalWidth || ! image.naturalHeight ) return; const wasLandscape = pageIsLandscape( Number( page.dataset.pageIndex ) ); page.dataset.imageWidth = String( image.naturalWidth ); page.dataset.imageHeight = String( image.naturalHeight ); if ( spreadActive && wasLandscape !== pageIsLandscape( Number( page.dataset.pageIndex ) ) ) rebuildViews( focusedPageIndex ); else scope.frame( function() { updateFullscreenSpreadSizing(); applyPageFocus(); updateInlineNavigation(); } ); }
 				if ( source && source.complete ) remember( source );
-				else if ( source ) source.addEventListener( 'load', function() { remember( source ); }, { once: true } );
+				else if ( source ) scope.listen( source, 'load', function() { remember( source ); }, { once: true } );
 				const probeUrl = page.dataset.viewerSrc || ( source ? source.currentSrc || source.src : '' );
-				if ( probeUrl && ( ! source || ! source.complete || ! source.naturalWidth ) ) { const probe = new Image(); probe.onload = function() { remember( probe ); }; probe.src = probeUrl; }
+				if ( probeUrl && ( ! source || ! source.complete || ! source.naturalWidth ) ) { const probe = new Image(); scope.add( function() { probe.onload = probe.onerror = null; probe.removeAttribute( 'src' ); } ); probe.onload = function() { remember( probe ); }; probe.src = probeUrl; }
 			} );
 		}
 		function useMode( mode ) {
@@ -352,7 +476,7 @@
 		function startVerticalObserver() {
 			stopVerticalObserver();
 			if ( ! isVerticalReading() || ! isRootFullscreen() || typeof window.IntersectionObserver !== 'function' ) return;
-			const observer = new window.IntersectionObserver( function( entries ) {
+			const observer = scope.observer( window.IntersectionObserver, function( entries ) {
 				if ( verticalObserver !== observer || ! isVerticalReading() || ! isRootFullscreen() ) return;
 				entries.forEach( function( entry ) {
 					const index = Number( entry.target.dataset.pageIndex ); const visibleHeight = entry.isIntersecting ? entry.intersectionRect.height : 0;
@@ -363,7 +487,7 @@
 			verticalObserver = observer;
 			pages.forEach( function( page ) { observer.observe( page ); } );
 		}
-		function isRootFullscreen() { return document.fullscreenElement === root; }
+		function isRootFullscreen() { return document.fullscreenElement === root || ( fullscreenAllowed && presentationHost !== root && document.fullscreenElement === presentationHost ); }
 		function exitRootFullscreen() { const request = document.exitFullscreen(); if ( request && typeof request.catch === 'function' ) request.catch( function() {} ); }
 		function activeCanvas() { return surface; }
 		function verticalBaseWidth() {
@@ -378,16 +502,26 @@
 			if ( zoomIn ) zoomIn.disabled = zoomScale >= maximum;
 			if ( zoomReset ) zoomReset.disabled = zoomScale <= 1;
 		}
+		let verticalZoomGeneration = 0;
+		function cancelVerticalZoomFrame() {
+			verticalZoomGeneration++;
+			if ( verticalNavigation ) verticalNavigation.clearScrollInput();
+		}
 		function applyVerticalZoom( preserveAnchor ) {
+			cancelVerticalZoomFrame();
 			if ( ! isVerticalReading() ) return;
 			const anchor = pages[ verticalCurrentPage ]; const rootTop = root.getBoundingClientRect().top; const previousTop = anchor ? anchor.getBoundingClientRect().top - rootTop : 0;
 			const width = verticalBaseWidth() * zoomScale;
 			root.style.setProperty( '--amv-reader-vertical-width', width + 'px' );
 			root.classList.toggle( 'is-vertical-zoomed', zoomScale > 1 );
 			updateZoomControls( verticalZoomMaximum );
-			window.requestAnimationFrame( function() {
-				if ( preserveAnchor && anchor ) root.scrollTop += anchor.getBoundingClientRect().top - root.getBoundingClientRect().top - previousTop;
+			const previousScroll = root.scrollTop, generation = verticalZoomGeneration;
+			scope.frame( function() {
+				if ( generation !== verticalZoomGeneration || ! isVerticalReading() || presentationSuspended || root.hidden ) return;
+				// Explicit navigation or reader input takes precedence over an older zoom anchor.
+				if ( preserveAnchor && anchor && root.scrollTop === previousScroll ) root.scrollTop += anchor.getBoundingClientRect().top - root.getBoundingClientRect().top - previousTop;
 				root.scrollLeft = Math.max( 0, ( root.scrollWidth - root.clientWidth ) / 2 );
+				updateTerminalFinish();
 			} );
 		}
 		function zoomLimits() { const canvas = activeCanvas(), viewport = root.querySelector( '.amv-reader__pages' ); if ( ! canvas || ! viewport ) return { x: 0, y: 0 }; if ( pageFocusVisible() ) return { x: Math.max( 0, viewport.clientWidth * ( zoomScale - 1 ) / 2 ), y: Math.max( 0, viewport.clientHeight * ( zoomScale - 1 ) / 2 ) }; return { x: Math.max( 0, ( canvas.clientWidth * zoomScale - viewport.clientWidth ) / 2 ), y: Math.max( 0, ( canvas.clientHeight * zoomScale - viewport.clientHeight ) / 2 ) }; }
@@ -401,13 +535,14 @@
 			updateButtons();
 		}
 		function setZoom( value ) { if ( ! zoomEnabled ) return; cancelNavigationAnimation(); const vertical = isVerticalReading(); const previousScale = zoomScale; zoomScale = clamp( Math.round( value * 100 ) / 100, 1, vertical ? verticalZoomMaximum : 3 ); if ( zoomScale === 1 ) { panX = 0; panY = 0; } applyZoom(); if ( vertical ) setActiveMode( 'vertical', 'zoom' ); else if ( previousScale <= 1 && zoomScale > 1 ) useMode( 'zoom' ); else if ( previousScale > 1 && zoomScale === 1 ) setActiveMode( isRootFullscreen() ? 'fullscreen' : 'standard', 'zoom-reset' ); }
-		function resetZoom() { if ( ! zoomEnabled ) return; const vertical = isVerticalReading(); const canvas = activeCanvas(); if ( canvas ) canvas.style.transform = ''; zoomScale = 1; panX = 0; panY = 0; root.classList.remove( 'is-zoomed', 'is-vertical-zoomed', 'is-panning' ); updateZoomControls( vertical ? verticalZoomMaximum : 3 ); if ( vertical ) applyVerticalZoom( true ); updateButtons(); }
+		function resetZoom( preserveAnchor ) { if ( ! zoomEnabled ) return; const vertical = isVerticalReading(); const canvas = activeCanvas(); if ( canvas ) canvas.style.transform = ''; zoomScale = 1; panX = 0; panY = 0; root.classList.remove( 'is-zoomed', 'is-vertical-zoomed', 'is-panning' ); updateZoomControls( vertical ? verticalZoomMaximum : 3 ); if ( vertical ) applyVerticalZoom( preserveAnchor !== false ); updateButtons(); }
 		function panBy( dx, dy ) { if ( zoomScale <= 1 ) return; panX += dx; panY += dy; applyZoom(); }
 		// Reuse the edge buttons as real guide controls, separate from image-edge taps.
 		function updateInlineNavigation() {
 			updateCompactFullscreenLayout();
 			const inline = readerVisible() && ! isRootFullscreen() && ! isVerticalReading();
-			const cue = inline && root.dataset.edgeClick === 'on' && zoomScale <= 1 && ( root.dataset.guideArrow === 'all' || currentView === 0 );
+			const terminalCue = !! terminalHandler && ( usesPageFocusNavigation() ? focusedPageIndex === pages.length - 1 : currentView === views.length - 1 );
+            const cue = inline && zoomScale <= 1 && ( ( root.dataset.edgeClick === 'on' && ( root.dataset.guideArrow === 'all' || currentView === 0 ) ) || terminalCue );
 			root.classList.toggle( 'has-inline-navigation', inline );
 			root.classList.toggle( 'has-inline-navigation-cue', cue );
 			if ( ! cue ) {
@@ -435,9 +570,39 @@
 			root.classList.toggle( 'is-inline-navigation-outside', outside );
 			root.classList.toggle( 'is-inline-navigation-below', ! outside );
 		}
-		function updateButtons() { if ( isVerticalReading() ) { updateInlineNavigation(); if ( count ) count.textContent = ( verticalCurrentPage + 1 ) + ' / ' + pages.length; stage.setAttribute( 'aria-label', sprintf( __( 'Near page %d. Scroll vertically to read.', 'mangafocus' ), verticalCurrentPage + 1 ) ); return; } const zoomed = zoomScale > 1; const pageNavigation = usesPageFocusNavigation(); const atEnd = pageNavigation ? focusedPageIndex === pages.length - 1 : currentView === views.length - 1; const atStart = pageNavigation ? focusedPageIndex === 0 : currentView === 0; const nextExitsFullscreen = atEnd && isRootFullscreen() && ! zoomed; const zoomNextExitsFullscreen = atEnd && isRootFullscreen() && zoomed; root.classList.toggle( 'is-first-page', atStart ); Array.prototype.forEach.call( buttons.previous, function( button ) { button.disabled = zoomed || atStart; } ); Array.prototype.forEach.call( buttons.next, function( button ) { button.disabled = zoomed || ( atEnd && ! nextExitsFullscreen ); button.setAttribute( 'aria-label', nextExitsFullscreen ? __( 'Exit fullscreen', 'mangafocus' ) : __( 'Next page', 'mangafocus' ) ); } ); if ( zoomPagePrevious ) zoomPagePrevious.disabled = atStart; if ( zoomPageNext ) { zoomPageNext.disabled = atEnd && ! zoomNextExitsFullscreen; zoomPageNext.setAttribute( 'aria-label', zoomNextExitsFullscreen ? __( 'Reset zoom and exit fullscreen', 'mangafocus' ) : __( 'Reset zoom and go to the next page', 'mangafocus' ) ); } const active = activePageIndexes(); const focusedOnly = pageFocusVisible(); if ( count ) count.textContent = focusedOnly ? ( focusedPageIndex + 1 ) + ' / ' + pages.length : ( active.length === 2 ? ( active[ 0 ] + 1 ) + '–' + ( active[ 1 ] + 1 ) + ' / ' + pages.length : ( active[ 0 ] + 1 ) + ' / ' + pages.length ); stage.setAttribute( 'aria-label', focusedOnly ? sprintf( __( 'Page %d is enlarged. Use the left and right arrow keys or swipe to navigate.', 'mangafocus' ), focusedPageIndex + 1 ) : ( active.length === 2 ? sprintf( __( 'Showing pages %1$d and %2$d. Use the left and right arrow keys or swipe to navigate.', 'mangafocus' ), active[ 0 ] + 1, active[ 1 ] + 1 ) : sprintf( __( 'Showing page %d. Use the left and right arrow keys or swipe to navigate.', 'mangafocus' ), active[ 0 ] + 1 ) ) ); updateInlineNavigation(); }
+
+		function presentationMode() { return extensionMode === 'panel' ? 'focus' : isRootFullscreen() ? ( isVerticalReading() ? 'fullscreen-vertical' : usesPageFocusNavigation() ? 'fullscreen-page-focus' : 'fullscreen-paged' ) : 'normal'; }
+        function availableModes() { const modes = []; if ( ! independentModes || root.dataset.enableInline !== 'off' ) modes.push( 'normal' ); if ( fullscreenAllowed ) modes.push( 'fullscreen-paged', fullscreenReadingMode === 'vertical' ? 'fullscreen-vertical' : ( spreadReadingMode === 'pageFocus' ? 'fullscreen-page-focus' : 'fullscreen-paged' ) ); if ( modeControllers.has( 'panel' ) ) modes.push( 'focus' ); return Array.from( new Set( modes ) ); }
+        function modeState() {
+			const state = publicState(); const provider = modeProviders.get( state.readingMode );
+			return Object.assign( {}, state, { presentation: presentationMode(), suspended: presentationSuspended, contentVisible: ! root.hidden && ! presentationSuspended && ( extensionMode === 'panel' || readerVisible() ), availableModes: availableModes(), terminal: isVerticalReading() ? root.scrollTop + root.clientHeight >= root.scrollHeight - 2 && !! pages[ pages.length - 1 ].querySelector( 'img' ) && pages[ pages.length - 1 ].querySelector( 'img' ).complete : ( usesPageFocusNavigation() ? focusedPageIndex === pages.length - 1 : currentView === views.length - 1 ) }, provider ? provider() : {} );
+		}
+		function requestTerminal( source ) {
+			if ( destroyed || presentationSuspended || ! terminalHandler || locked || ( extensionMode !== 'panel' && zoomScale > 1 ) ) return false;
+			const state = modeState(); if ( ! state.terminal ) return false;
+			let claimed = false; try { claimed = terminalHandler( Object.assign( { source: source || 'next' }, state ) ) === true; } catch ( error ) { return false; }
+			if ( claimed ) dispatchPublicEvent( 'amv:viewer-terminal', { state: state, source: source || 'next' } ); return claimed;
+		}
+		function destroy() {
+			if ( destroyed ) return false; destroyed = true;
+			dispatchPublicEvent( 'amv:viewer-before-destroy', { state: publicState() } );
+			destroyCallbacks.forEach( function( callback ) { try { callback(); } catch ( error ) { /* Other modules must still be released. */ } } ); destroyCallbacks.clear();
+			if ( retainedPresentation ) { root.inert = presentationInertBefore; retainedPresentation = false; } cancelNavigationAnimation( false ); stopVerticalObserver();
+			if ( panPointer && stage.releasePointerCapture && stage.hasPointerCapture && stage.hasPointerCapture( panPointer.id ) ) stage.releasePointerCapture( panPointer.id );
+			stopVerticalNavigation();
+			scope.dispose(); terminalHandler = null; modeProviders.clear(); modeControllers.clear();
+			if ( document.fullscreenElement === root ) { try { const exit = document.exitFullscreen(); if ( exit && exit.catch ) exit.catch( function() {} ); } catch ( error ) { /* Cleanup must continue. */ } }
+			publicInstances.delete( root );
+			Array.from( root.attributes ).forEach( function( attr ) { root.removeAttribute( attr.name ); } ); Array.from( original.attributes ).forEach( function( attr ) { root.setAttribute( attr.name, attr.value ); } );
+			root.replaceChildren.apply( root, Array.from( original.childNodes ).map( function( node ) { return node.cloneNode( true ); } ) );
+			dispatchPublicEvent( 'amv:viewer-destroyed', {} ); extensionReady = false; return true;
+		}
+
+		function finishTerminal() { requestTerminal( 'vertical-finish' ); }
+        function updateTerminalFinish() { if ( terminalFinish ) { terminalFinish.hidden = ! terminalHandler || ! isVerticalReading() || ( presentationSuspended && ! retainedPresentation ); terminalFinish.disabled = terminalFinish.hidden || presentationSuspended || ! modeState().terminal; } if ( verticalNavigation ) verticalNavigation.fitMenu(); }
+        function updateButtons() { updateTerminalFinish(); if ( isVerticalReading() ) { updateInlineNavigation(); if ( count ) count.textContent = ( verticalCurrentPage + 1 ) + ' / ' + pages.length; stage.setAttribute( 'aria-label', sprintf( __( 'Near page %d. Scroll vertically to read.', 'mangafocus' ), verticalCurrentPage + 1 ) ); return; } const zoomed = zoomScale > 1; const pageNavigation = usesPageFocusNavigation(); const atEnd = pageNavigation ? focusedPageIndex === pages.length - 1 : currentView === views.length - 1; const atStart = pageNavigation ? focusedPageIndex === 0 : currentView === 0; const nextExitsFullscreen = atEnd && isRootFullscreen() && ! zoomed; const zoomNextExitsFullscreen = atEnd && isRootFullscreen() && zoomed; root.classList.toggle( 'is-first-page', atStart ); Array.prototype.forEach.call( buttons.previous, function( button ) { button.disabled = zoomed || atStart; } ); Array.prototype.forEach.call( buttons.next, function( button ) { button.disabled = zoomed || ( atEnd && ! nextExitsFullscreen && ! terminalHandler ); button.setAttribute( 'aria-label', nextExitsFullscreen ? __( 'Exit fullscreen', 'mangafocus' ) : __( 'Next page', 'mangafocus' ) ); } ); if ( zoomPagePrevious ) zoomPagePrevious.disabled = atStart; if ( zoomPageNext ) { zoomPageNext.disabled = atEnd && ! zoomNextExitsFullscreen; zoomPageNext.setAttribute( 'aria-label', zoomNextExitsFullscreen ? __( 'Reset zoom and exit fullscreen', 'mangafocus' ) : __( 'Reset zoom and go to the next page', 'mangafocus' ) ); } const active = activePageIndexes(); const focusedOnly = pageFocusVisible(); if ( count ) count.textContent = focusedOnly ? ( focusedPageIndex + 1 ) + ' / ' + pages.length : ( active.length === 2 ? ( active[ 0 ] + 1 ) + '–' + ( active[ 1 ] + 1 ) + ' / ' + pages.length : ( active[ 0 ] + 1 ) + ' / ' + pages.length ); stage.setAttribute( 'aria-label', focusedOnly ? sprintf( __( 'Page %d is enlarged. Use the left and right arrow keys or swipe to navigate.', 'mangafocus' ), focusedPageIndex + 1 ) : ( active.length === 2 ? sprintf( __( 'Showing pages %1$d and %2$d. Use the left and right arrow keys or swipe to navigate.', 'mangafocus' ), active[ 0 ] + 1, active[ 1 ] + 1 ) : sprintf( __( 'Showing page %d. Use the left and right arrow keys or swipe to navigate.', 'mangafocus' ), active[ 0 ] + 1 ) ) ); updateInlineNavigation(); }
 		function finalPageIsVisible() { return activePageIndexes().indexOf( pages.length - 1 ) !== -1; }
-		function returnToFirstPage() { cancelNavigationAnimation( false ); const vertical = isVerticalReading(); resetZoom(); temporaryOverview = false; verticalCurrentPage = 0; activateView( viewForPage( 0 ), 0 ); if ( vertical ) root.scrollTop = 0; updateButtons(); setActiveMode( vertical ? 'vertical' : 'standard', 'return-to-start' ); }
+		function returnToFirstPage() { cancelNavigationAnimation( false ); const vertical = isVerticalReading(); resetZoom( false ); temporaryOverview = false; verticalCurrentPage = 0; activateView( viewForPage( 0 ), 0 ); if ( vertical ) root.scrollTop = 0; updateButtons(); setActiveMode( vertical ? 'vertical' : 'standard', 'return-to-start' ); }
 		function finishViewChange( nextView, readingMode ) { activateView( nextView ); locked = false; updateButtons(); setActiveMode( isVerticalReading() ? 'vertical' : ( isRootFullscreen() ? 'fullscreen' : 'standard' ), 'navigation' ); }
 
 		function change( nextView ) {
@@ -464,12 +629,12 @@
 			} };
 			navigationEffect = state; locked = true; root.setAttribute( 'aria-busy', 'true' );
 			newPage.classList.add( 'is-active', 'is-under' ); oldPage.classList.add( 'is-leaving', 'is-leaving-' + direction ); root.classList.add( 'is-turning' );
-			timer = window.setTimeout( state.finish, duration );
+			timer = scope.timeout( state.finish, duration );
 		}
-		function moveFocusedPage( offset ) { const target = clamp( focusedPageIndex + offset, 0, pages.length - 1 ); if ( target === focusedPageIndex || locked || zoomScale > 1 ) return; const readingMode = isRootFullscreen() ? 'fullscreen' : ( activeMode === 'zoom' ? 'zoom' : 'standard' ); const targetView = viewForPage( target ); useMode( readingMode ); resetZoom(); temporaryOverview = false; locked = true; if ( targetView !== currentView ) root.classList.add( 'is-focus-surface-changing' ); activateView( targetView, target ); locked = false; updateButtons(); setActiveMode( isVerticalReading() ? 'vertical' : ( isRootFullscreen() ? 'fullscreen' : 'standard' ), 'navigation' ); window.setTimeout( function() { root.classList.remove( 'is-focus-surface-changing' ); }, 220 ); }
-		function previous() { if ( locked || isVerticalReading() || zoomScale > 1 ) return; if ( usesPageFocusNavigation() ) { moveFocusedPage( -1 ); return; } change( currentView - 1 ); } function next() { if ( locked || isVerticalReading() || zoomScale > 1 ) return; const atEnd = usesPageFocusNavigation() ? focusedPageIndex === pages.length - 1 : currentView === views.length - 1; if ( atEnd && isRootFullscreen() ) { exitRootFullscreen(); return; } if ( usesPageFocusNavigation() ) { moveFocusedPage( 1 ); return; } change( currentView + 1 ); }
-		Array.prototype.forEach.call( buttons.previous, function( button ) { button.addEventListener( 'click', previous ); } ); Array.prototype.forEach.call( buttons.next, function( button ) { button.addEventListener( 'click', next ); } );
-		stage.addEventListener( 'keydown', function( event ) {
+		function moveFocusedPage( offset ) { const target = clamp( focusedPageIndex + offset, 0, pages.length - 1 ); if ( target === focusedPageIndex || locked || zoomScale > 1 ) return; const readingMode = isRootFullscreen() ? 'fullscreen' : ( activeMode === 'zoom' ? 'zoom' : 'standard' ); const targetView = viewForPage( target ); useMode( readingMode ); resetZoom(); temporaryOverview = false; locked = true; if ( targetView !== currentView ) root.classList.add( 'is-focus-surface-changing' ); activateView( targetView, target ); locked = false; updateButtons(); setActiveMode( isVerticalReading() ? 'vertical' : ( isRootFullscreen() ? 'fullscreen' : 'standard' ), 'navigation' ); scope.timeout( function() { root.classList.remove( 'is-focus-surface-changing' ); }, 220 ); }
+		function previous() { if ( locked || isVerticalReading() || zoomScale > 1 ) return; if ( usesPageFocusNavigation() ) { moveFocusedPage( -1 ); return; } change( currentView - 1 ); } function next() { if ( locked || isVerticalReading() || zoomScale > 1 ) return; const atEnd = usesPageFocusNavigation() ? focusedPageIndex === pages.length - 1 : currentView === views.length - 1; if ( atEnd && requestTerminal( 'next' ) ) return; if ( atEnd && isRootFullscreen() ) { exitRootFullscreen(); return; } if ( usesPageFocusNavigation() ) { moveFocusedPage( 1 ); return; } change( currentView + 1 ); }
+		Array.prototype.forEach.call( buttons.previous, function( button ) { scope.listen( button, 'click', previous ); } ); Array.prototype.forEach.call( buttons.next, function( button ) { scope.listen( button, 'click', next ); } );
+		scope.listen( stage, 'keydown', function( event ) {
 			if ( ! readerVisible() ) return;
 			if ( zoomEnabled && ( event.key === '+' || event.key === '=' ) ) { event.preventDefault(); setZoom( zoomScale + .25 ); return; }
 			if ( zoomEnabled && ( event.key === '-' || event.key === '_' ) ) { event.preventDefault(); setZoom( zoomScale - .25 ); return; }
@@ -479,7 +644,7 @@
 			if ( event.key === 'ArrowLeft' ) { event.preventDefault(); binding === 'rtl' ? next() : previous(); } if ( event.key === 'ArrowRight' ) { event.preventDefault(); binding === 'rtl' ? previous() : next(); }
 		} );
 		let edgeClickSuppressedUntil = 0;
-		stage.addEventListener( 'click', function( event ) {
+		scope.listen( stage, 'click', function( event ) {
 			if ( ( isRootFullscreen() && ! compactPagedFullscreen() ) || isVerticalReading() || ! readerVisible() || root.dataset.edgeClick !== 'on' || zoomScale > 1 || event.defaultPrevented || Date.now() < edgeClickSuppressedUntil ) return;
 			if ( event.target.closest && event.target.closest( '[data-amv-page-interactive], button, a, input, select, textarea, [role="button"], [contenteditable="true"]' ) ) return;
 			const viewport = root.querySelector( '.amv-reader__pages' ), rect = viewport && viewport.getBoundingClientRect();
@@ -490,56 +655,56 @@
 		} );
 		bindSwipe( stage, 40, function( dx ) { if ( isVerticalReading() || zoomScale > 1 ) return; if ( ! isRootFullscreen() || compactPagedFullscreen() ) edgeClickSuppressedUntil = Date.now() + 500; ( binding === 'rtl' ? dx > 0 : dx < 0 ) ? next() : previous(); } );
 		if ( zoomEnabled ) {
-			if ( zoomOut ) zoomOut.addEventListener( 'click', function() { setZoom( zoomScale - .25 ); } );
-			if ( zoomIn ) zoomIn.addEventListener( 'click', function() { setZoom( zoomScale + .25 ); } );
-			if ( zoomReset ) zoomReset.addEventListener( 'click', function() { resetZoom(); setActiveMode( isVerticalReading() ? 'vertical' : ( isRootFullscreen() ? 'fullscreen' : 'standard' ), 'zoom-reset' ); } );
-			if ( zoomPagePrevious ) zoomPagePrevious.addEventListener( 'click', function() { if ( zoomScale <= 1 ) return; resetZoom(); previous(); } );
-			if ( zoomPageNext ) zoomPageNext.addEventListener( 'click', function() { if ( zoomScale <= 1 ) return; resetZoom(); next(); } );
-			stage.addEventListener( 'pointerdown', function( event ) { if ( isVerticalReading() || zoomScale <= 1 || event.pointerType === 'touch' || event.button !== 0 || ( event.target.closest && event.target.closest( '[data-amv-page-interactive], .amv-reader__zoom-controls' ) ) ) return; event.preventDefault(); panPointer = { id: event.pointerId, x: event.clientX, y: event.clientY, panX: panX, panY: panY }; root.classList.add( 'is-panning' ); stage.setPointerCapture && stage.setPointerCapture( event.pointerId ); } );
-			stage.addEventListener( 'pointermove', function( event ) { if ( ! panPointer || panPointer.id !== event.pointerId ) return; event.preventDefault(); panX = panPointer.panX + event.clientX - panPointer.x; panY = panPointer.panY + event.clientY - panPointer.y; applyZoom(); } );
+			if ( zoomOut ) scope.listen( zoomOut, 'click', function() { setZoom( zoomScale - .25 ); } );
+			if ( zoomIn ) scope.listen( zoomIn, 'click', function() { setZoom( zoomScale + .25 ); } );
+			if ( zoomReset ) scope.listen( zoomReset, 'click', function() { resetZoom(); setActiveMode( isVerticalReading() ? 'vertical' : ( isRootFullscreen() ? 'fullscreen' : 'standard' ), 'zoom-reset' ); } );
+			if ( zoomPagePrevious ) scope.listen( zoomPagePrevious, 'click', function() { if ( zoomScale <= 1 ) return; resetZoom(); previous(); } );
+			if ( zoomPageNext ) scope.listen( zoomPageNext, 'click', function() { if ( zoomScale <= 1 ) return; resetZoom(); next(); } );
+			scope.listen( stage, 'pointerdown', function( event ) { if ( isVerticalReading() || zoomScale <= 1 || event.pointerType === 'touch' || event.button !== 0 || ( event.target.closest && event.target.closest( '[data-amv-page-interactive], .amv-reader__zoom-controls' ) ) ) return; event.preventDefault(); panPointer = { id: event.pointerId, x: event.clientX, y: event.clientY, panX: panX, panY: panY }; root.classList.add( 'is-panning' ); stage.setPointerCapture && stage.setPointerCapture( event.pointerId ); } );
+			scope.listen( stage, 'pointermove', function( event ) { if ( ! panPointer || panPointer.id !== event.pointerId ) return; event.preventDefault(); panX = panPointer.panX + event.clientX - panPointer.x; panY = panPointer.panY + event.clientY - panPointer.y; applyZoom(); } );
 			function endPointer( event ) { if ( ! panPointer || panPointer.id !== event.pointerId ) return; panPointer = null; root.classList.remove( 'is-panning' ); if ( stage.hasPointerCapture && stage.hasPointerCapture( event.pointerId ) ) stage.releasePointerCapture( event.pointerId ); }
-			stage.addEventListener( 'pointerup', endPointer ); stage.addEventListener( 'pointercancel', endPointer );
-			stage.addEventListener( 'touchstart', function( event ) { if ( event.target.closest && event.target.closest( '[data-amv-page-interactive], .amv-reader__zoom-controls' ) ) return; if ( event.touches.length === 2 ) { const dx = event.touches[ 1 ].clientX - event.touches[ 0 ].clientX, dy = event.touches[ 1 ].clientY - event.touches[ 0 ].clientY; pinch = { distance: Math.hypot( dx, dy ) || 1, scale: zoomScale }; touchPan = null; event.preventDefault(); } else if ( ! isVerticalReading() && event.touches.length === 1 && zoomScale > 1 ) { touchPan = { id: event.touches[ 0 ].identifier, x: event.touches[ 0 ].clientX, y: event.touches[ 0 ].clientY, panX: panX, panY: panY }; root.classList.add( 'is-panning' ); event.preventDefault(); } }, { passive: false } );
-			stage.addEventListener( 'touchmove', function( event ) { if ( pinch && event.touches.length === 2 ) { const dx = event.touches[ 1 ].clientX - event.touches[ 0 ].clientX, dy = event.touches[ 1 ].clientY - event.touches[ 0 ].clientY; setZoom( pinch.scale * Math.hypot( dx, dy ) / pinch.distance ); event.preventDefault(); return; } if ( touchPan && event.touches.length === 1 && event.touches[ 0 ].identifier === touchPan.id ) { panX = touchPan.panX + event.touches[ 0 ].clientX - touchPan.x; panY = touchPan.panY + event.touches[ 0 ].clientY - touchPan.y; applyZoom(); event.preventDefault(); } }, { passive: false } );
+			scope.listen( stage, 'pointerup', endPointer ); scope.listen( stage, 'pointercancel', endPointer );
+			scope.listen( stage, 'touchstart', function( event ) { if ( event.target.closest && event.target.closest( '[data-amv-page-interactive], .amv-reader__zoom-controls' ) ) return; if ( event.touches.length === 2 ) { const dx = event.touches[ 1 ].clientX - event.touches[ 0 ].clientX, dy = event.touches[ 1 ].clientY - event.touches[ 0 ].clientY; pinch = { distance: Math.hypot( dx, dy ) || 1, scale: zoomScale }; touchPan = null; event.preventDefault(); } else if ( ! isVerticalReading() && event.touches.length === 1 && zoomScale > 1 ) { touchPan = { id: event.touches[ 0 ].identifier, x: event.touches[ 0 ].clientX, y: event.touches[ 0 ].clientY, panX: panX, panY: panY }; root.classList.add( 'is-panning' ); event.preventDefault(); } }, { passive: false } );
+			scope.listen( stage, 'touchmove', function( event ) { if ( pinch && event.touches.length === 2 ) { const dx = event.touches[ 1 ].clientX - event.touches[ 0 ].clientX, dy = event.touches[ 1 ].clientY - event.touches[ 0 ].clientY; setZoom( pinch.scale * Math.hypot( dx, dy ) / pinch.distance ); event.preventDefault(); return; } if ( touchPan && event.touches.length === 1 && event.touches[ 0 ].identifier === touchPan.id ) { panX = touchPan.panX + event.touches[ 0 ].clientX - touchPan.x; panY = touchPan.panY + event.touches[ 0 ].clientY - touchPan.y; applyZoom(); event.preventDefault(); } }, { passive: false } );
 			function endTouch() { pinch = null; touchPan = null; root.classList.remove( 'is-panning' ); }
-			stage.addEventListener( 'touchend', endTouch, { passive: true } ); stage.addEventListener( 'touchcancel', endTouch, { passive: true } );
-			stage.addEventListener( 'wheel', function( event ) { if ( ! event.ctrlKey ) return; event.preventDefault(); setZoom( zoomScale + ( event.deltaY < 0 ? .25 : -.25 ) ); }, { passive: false } );
-			window.addEventListener( 'resize', applyZoom ); resetZoom();
+			scope.listen( stage, 'touchend', endTouch, { passive: true } ); scope.listen( stage, 'touchcancel', endTouch, { passive: true } );
+			scope.listen( stage, 'wheel', function( event ) { if ( ! event.ctrlKey ) return; event.preventDefault(); setZoom( zoomScale + ( event.deltaY < 0 ? .25 : -.25 ) ); }, { passive: false } );
+			scope.listen( window, 'resize', applyZoom ); resetZoom();
 		}
-		if ( root.dataset.scrollAssist === 'on' && ! window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches ) window.addEventListener( 'scroll', function() { if ( ! readerVisible() || assisting ) return; window.clearTimeout( scrollTimer ); scrollTimer = window.setTimeout( function() { const rect = stage.getBoundingClientRect(), viewportHeight = window.innerHeight || document.documentElement.clientHeight, visible = Math.min( rect.bottom, viewportHeight ) - Math.max( rect.top, 0 ); if ( visible < Math.min( 160, Math.min( rect.height, viewportHeight ) * .28 ) ) return; const position = [ 'auto', 'top', 'center' ].indexOf( root.dataset.scrollPosition ) !== -1 ? root.dataset.scrollPosition : 'auto', strength = [ 'gentle', 'normal', 'strong' ].indexOf( root.dataset.scrollStrength ) !== -1 ? root.dataset.scrollStrength : 'normal', values = { gentle: { threshold: 150, amount: .45 }, normal: { threshold: 300, amount: .72 }, strong: { threshold: 520, amount: 1 } }[ strength ], centeredTarget = Math.max( 24, ( viewportHeight - rect.height ) / 2 ), target = position === 'top' ? 24 : ( position === 'center' ? centeredTarget : ( rect.height <= viewportHeight * .84 ? centeredTarget : 24 ) ), offset = rect.top - target; if ( Math.abs( offset ) < 8 || Math.abs( offset ) > values.threshold ) return; assisting = true; window.scrollTo( { top: Math.max( 0, window.scrollY + offset * values.amount ), behavior: 'smooth' } ); window.setTimeout( function() { assisting = false; }, 500 ); }, 160 ); }, { passive: true } );
+		if ( root.dataset.scrollAssist === 'on' && ! window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches ) scope.listen( window, 'scroll', function() { if ( ! readerVisible() || root.hidden || assisting ) return; window.clearTimeout( scrollTimer ); scrollTimer = scope.timeout( function() { if ( root.hidden ) return; const rect = stage.getBoundingClientRect(), viewportHeight = window.innerHeight || document.documentElement.clientHeight, visible = Math.min( rect.bottom, viewportHeight ) - Math.max( rect.top, 0 ); if ( visible < Math.min( 160, Math.min( rect.height, viewportHeight ) * .28 ) ) return; const position = [ 'auto', 'top', 'center' ].indexOf( root.dataset.scrollPosition ) !== -1 ? root.dataset.scrollPosition : 'auto', strength = [ 'gentle', 'normal', 'strong' ].indexOf( root.dataset.scrollStrength ) !== -1 ? root.dataset.scrollStrength : 'normal', values = { gentle: { threshold: 150, amount: .45 }, normal: { threshold: 300, amount: .72 }, strong: { threshold: 520, amount: 1 } }[ strength ], centeredTarget = Math.max( 24, ( viewportHeight - rect.height ) / 2 ), target = position === 'top' ? 24 : ( position === 'center' ? centeredTarget : ( rect.height <= viewportHeight * .84 ? centeredTarget : 24 ) ), offset = rect.top - target; if ( Math.abs( offset ) < 8 || Math.abs( offset ) > values.threshold ) return; assisting = true; window.scrollTo( { top: Math.max( 0, window.scrollY + offset * values.amount ), behavior: 'smooth' } ); scope.timeout( function() { assisting = false; }, 500 ); }, 160 ); }, { passive: true } );
 
-		window.addEventListener( 'resize', function() { cancelNavigationAnimation(); } );
-		if ( typeof window.ResizeObserver === 'function' ) new window.ResizeObserver( function() {
+		scope.listen( window, 'resize', function() { cancelNavigationAnimation(); } );
+		if ( typeof window.ResizeObserver === 'function' ) scope.observer( window.ResizeObserver, function() {
 			const viewport = root.querySelector( '.amv-reader__pages' );
 			if ( navigationEffect && viewport && Math.abs( navigationEffect.width - viewport.clientWidth ) > .5 ) cancelNavigationAnimation();
 		} ).observe( root );
-		[ 'load', 'error' ].forEach( function( type ) { root.addEventListener( type, function( event ) {
+		[ 'load', 'error' ].forEach( function( type ) { scope.listen( root, type, function( event ) {
 			if ( navigationEffect && event.target.classList && event.target.classList.contains( 'amv-reader__image' ) && activePageIndexes().some( function( index ) { return pages[ index ].contains( event.target ); } ) ) cancelNavigationAnimation();
 		}, true ); } );
 		syncReaderVisibility();
 		activateView( 0 );
 		updateLayoutForWidth( root.getBoundingClientRect().width );
 		discoverImageDimensions();
-		if ( typeof window.ResizeObserver === 'function' ) new window.ResizeObserver( function( entries ) { if ( entries[ 0 ] ) { updateLayoutForWidth( entries[ 0 ].contentRect.width ); window.requestAnimationFrame( function() { updateFullscreenSpreadSizing(); applyPageFocus(); updateInlineNavigation(); } ); } } ).observe( root );
-		else window.addEventListener( 'resize', function() { updateLayoutForWidth( root.getBoundingClientRect().width ); window.requestAnimationFrame( function() { updateFullscreenSpreadSizing(); applyPageFocus(); updateInlineNavigation(); } ); } );
-		window.addEventListener( 'resize', function() { window.requestAnimationFrame( function() { updateFullscreenSpreadSizing(); applyPageFocus(); updateInlineNavigation(); } ); } );
+		if ( typeof window.ResizeObserver === 'function' ) scope.observer( window.ResizeObserver, function( entries ) { if ( entries[ 0 ] ) { updateLayoutForWidth( entries[ 0 ].contentRect.width ); scope.frame( function() { updateFullscreenSpreadSizing(); applyPageFocus(); updateInlineNavigation(); } ); } } ).observe( root );
+		else scope.listen( window, 'resize', function() { updateLayoutForWidth( root.getBoundingClientRect().width ); scope.frame( function() { updateFullscreenSpreadSizing(); applyPageFocus(); updateInlineNavigation(); } ); } );
+		scope.listen( window, 'resize', function() { scope.frame( function() { updateFullscreenSpreadSizing(); applyPageFocus(); updateInlineNavigation(); if ( verticalNavigation ) updateTerminalFinish(); } ); } );
 		if ( typeof window.ResizeObserver === 'function' ) {
 			let pending = false;
-			const compactObserver = new window.ResizeObserver( function() {
+			const compactObserver = scope.observer( window.ResizeObserver, function() {
 				if ( pending || ! compactPagedFullscreen() ) return;
-				pending = true; window.requestAnimationFrame( function() { pending = false; if ( ! compactPagedFullscreen() ) return; updateFullscreenSpreadSizing(); applyPageFocus(); applyZoom(); } );
+				pending = true; scope.frame( function() { pending = false; if ( ! compactPagedFullscreen() ) return; updateFullscreenSpreadSizing(); applyPageFocus(); applyZoom(); } );
 			} );
 			[ stage, root.querySelector( '.amv-reader__controls' ), root.querySelector( '.amv-reader__mode-controls' ) ].filter( Boolean ).forEach( function( part ) { compactObserver.observe( part ); } );
 		}
 
 		updateButtons();
-		if ( spreadOverview ) spreadOverview.addEventListener( 'click', function() { if ( ! usesPageFocusNavigation() || activePageIndexes().length !== 2 ) return; resetZoom(); temporaryOverview = ! temporaryOverview; applyPageFocus(); updateButtons(); useMode( isRootFullscreen() ? 'fullscreen' : 'standard' ); } );
+		if ( spreadOverview ) scope.listen( spreadOverview, 'click', function() { if ( ! usesPageFocusNavigation() || activePageIndexes().length !== 2 ) return; resetZoom(); temporaryOverview = ! temporaryOverview; applyPageFocus(); updateButtons(); useMode( isRootFullscreen() ? 'fullscreen' : 'standard' ); } );
 		function alignVerticalStart( startPage ) {
 			stopVerticalObserver();
 			const pending = new Set(), images = [], inputEvents = [ 'wheel', 'touchstart', 'pointerdown', 'keydown' ];
 			let cancelled = false, frame = 0;
 			function alignStart() {
-				frame = window.requestAnimationFrame( function() {
+				frame = scope.frame( function() {
 					if ( cancelled || ! isVerticalReading() || ! isRootFullscreen() ) return;
 					const target = pages[ startPage ], rootRect = root.getBoundingClientRect();
 					if ( target ) root.scrollTop += target.getBoundingClientRect().top - rootRect.top - 16;
@@ -551,69 +716,127 @@
 			function releaseStart() { startVerticalObserver(); }
 			verticalStartCleanup = function() {
 				cancelled = true; window.cancelAnimationFrame( frame );
-				inputEvents.forEach( function( type ) { root.removeEventListener( type, releaseStart, true ); } );
-				images.forEach( function( item ) { item.image.removeEventListener( 'load', settled ); item.image.removeEventListener( 'error', settled ); if ( item.loading === null ) item.image.removeAttribute( 'loading' ); else item.image.setAttribute( 'loading', item.loading ); } );
+				inputEvents.forEach( function( type ) { scope.unlisten( root, type, releaseStart, true ); } );
+				images.forEach( function( item ) { scope.unlisten( item.image, 'load', settled ); scope.unlisten( item.image, 'error', settled ); if ( item.loading === null ) item.image.removeAttribute( 'loading' ); else item.image.setAttribute( 'loading', item.loading ); } );
 			};
-			inputEvents.forEach( function( type ) { root.addEventListener( type, releaseStart, { capture: true, passive: true } ); } );
+			inputEvents.forEach( function( type ) { scope.listen( root, type, releaseStart, { capture: true, passive: true } ); } );
 			// Unknown image heights before the requested page must settle once, before alignment.
 			pages.slice( 0, startPage + 1 ).forEach( function( page ) {
 				const image = page.querySelector( 'img' );
 				if ( ! image || image.complete || ( Number( image.getAttribute( 'width' ) ) > 0 && Number( image.getAttribute( 'height' ) ) > 0 ) ) return;
 				pending.add( image ); images.push( { image: image, loading: image.getAttribute( 'loading' ) } );
-				image.addEventListener( 'load', settled ); image.addEventListener( 'error', settled ); image.setAttribute( 'loading', 'eager' );
+				scope.listen( image, 'load', settled ); scope.listen( image, 'error', settled ); image.setAttribute( 'loading', 'eager' );
 			} );
 			if ( ! pending.size ) alignStart();
+		}
+		function disposeVerticalNavigation() {
+			if ( verticalNavigation ) verticalNavigation.dispose();
+			verticalNavigation = null;
+		}
+		function syncVerticalNavigation() {
+			if ( ! isVerticalReading() || ! isRootFullscreen() || ! compactVertical.matches ) {
+				disposeVerticalNavigation();
+				return;
+			}
+			if ( ! verticalNavigation ) {
+				verticalNavigation = createVerticalNavigation( root, [
+					root.querySelector( '.amv-reader__zoom-controls' ),
+					root.querySelector( '.amv-reader__mode-controls' ) || fullscreen
+				] );
+			}
+			verticalNavigation.setVisible( ! presentationSuspended && extensionMode !== 'panel' );
+		}
+		function stopVerticalNavigation() {
+			scope.unlisten( compactVertical, 'change', syncVerticalNavigation );
+			disposeVerticalNavigation();
 		}
 		function enterVerticalReading() {
 			stopVerticalObserver();
 			verticalCurrentPage = readingPageIndex(); resetZoom(); root.classList.add( 'is-vertical-reading' ); applyVerticalZoom( false ); applyPageFocus(); updateButtons(); useMode( 'vertical' );
 			alignVerticalStart( verticalCurrentPage );
+			scope.listen( compactVertical, 'change', syncVerticalNavigation );
+			syncVerticalNavigation();
 		}
 		function leaveVerticalReading() {
+			stopVerticalNavigation();
 			stopVerticalObserver(); root.classList.remove( 'is-vertical-reading', 'is-vertical-zoomed' ); root.style.removeProperty( '--amv-reader-vertical-width' ); root.scrollTop = 0; root.scrollLeft = 0;
 			activateView( viewForPage( verticalCurrentPage ), verticalCurrentPage ); updateButtons();
 		}
 		const fullscreen = root.querySelector( '.amv-reader__fullscreen' );
+		scope.listen( root, 'load', updateTerminalFinish, true );
 		if ( fullscreen ) {
-			function restoreFullscreenScrollPosition() { if ( fullscreenReturnViewportTop === null ) return; const targetViewportTop = fullscreenReturnViewportTop; fullscreenReturnViewportTop = null; assisting = true; window.requestAnimationFrame( function() { window.requestAnimationFrame( function() { const top = Math.max( 0, window.scrollY + root.getBoundingClientRect().top - targetViewportTop ); window.scrollTo( 0, top ); window.setTimeout( function() { assisting = false; }, 260 ); } ); } ); }
-			function restoreFullscreenFocus() { const target = fullscreenReturnFocus; fullscreenReturnFocus = null; if ( ! target || typeof target.focus !== 'function' ) return; window.requestAnimationFrame( function() { window.requestAnimationFrame( function() { target.focus(); } ); } ); }
-			function updateFullscreen() { cancelNavigationAnimation(); const wasActive = root.classList.contains( 'is-fullscreen' ); const wasVertical = isVerticalReading(); const active = isRootFullscreen(); syncReaderVisibility(); warmAdjacentViews(); const completed = wasActive && ! active && ( wasVertical ? verticalCurrentPage === pages.length - 1 : finalPageIsVisible() ); root.classList.toggle( 'is-fullscreen', active ); fullscreen.setAttribute( 'aria-pressed', active ? 'true' : 'false' ); fullscreen.textContent = active ? __( 'Exit fullscreen', 'mangafocus' ) : __( 'Read in fullscreen', 'mangafocus' ); if ( ! active ) { if ( wasVertical ) leaveVerticalReading(); if ( completed ) returnToFirstPage(); else { resetZoom(); setActiveMode( 'standard', 'fullscreen' ); } if ( wasActive ) { restoreFullscreenScrollPosition(); restoreFullscreenFocus(); } } else if ( fullscreenReadingMode === 'vertical' ) enterVerticalReading(); else { updateButtons(); useMode( 'fullscreen' ); } if ( active ) discoverImageDimensions(); window.requestAnimationFrame( function() { updateFullscreenSpreadSizing(); applyPageFocus(); updateInlineNavigation(); } ); if ( active ) stage.focus(); if ( extensionReady && active !== lastPublicFullscreen ) { lastPublicFullscreen = active; dispatchPublicEvent( 'amv:viewer-fullscreenchange', { fullscreen: active, readingMode: publicMode() } ); notifyViewChange( 'fullscreen' ); } }
-			function requestRootFullscreen( trigger, startAtFirstPage ) { if ( document.fullscreenElement === root ) { const exitRequest = document.exitFullscreen(); if ( exitRequest && typeof exitRequest.catch === 'function' ) exitRequest.catch( function() {} ); return; } fullscreenReturnViewportTop = root.getBoundingClientRect().top; fullscreenReturnFocus = trigger || null; if ( startAtFirstPage ) returnToFirstPage(); try { const request = root.requestFullscreen(); if ( request && typeof request.catch === 'function' ) request.catch( function() { fullscreenReturnFocus = null; fullscreenReturnViewportTop = null; useInlineFallback(); } ); } catch ( error ) { fullscreenReturnFocus = null; fullscreenReturnViewportTop = null; useInlineFallback(); } }
+			function restoreFullscreenScrollPosition() { if ( fullscreenReturnViewportTop === null ) return; const targetViewportTop = fullscreenReturnViewportTop; fullscreenReturnViewportTop = null; assisting = true; scope.frame( function() { scope.frame( function() { if ( root.hidden ) { assisting = false; return; } const top = Math.max( 0, window.scrollY + root.getBoundingClientRect().top - targetViewportTop ); window.scrollTo( 0, top ); scope.timeout( function() { assisting = false; }, 260 ); } ); } ); }
+			function restoreFullscreenFocus() { const target = fullscreenReturnFocus; fullscreenReturnFocus = null; if ( ! target || typeof target.focus !== 'function' ) return; scope.frame( function() { scope.frame( function() { target.focus(); } ); } ); }
+			function updateFullscreen() { cancelNavigationAnimation(); const wasActive = root.classList.contains( 'is-fullscreen' ); const wasVertical = isVerticalReading(); const active = isRootFullscreen(); syncReaderVisibility(); warmAdjacentViews(); const completed = wasActive && ! active && ( wasVertical ? verticalCurrentPage === pages.length - 1 : finalPageIsVisible() ); root.classList.toggle( 'is-fullscreen', active ); fullscreen.setAttribute( 'aria-pressed', active ? 'true' : 'false' ); fullscreen.textContent = active ? __( 'Exit fullscreen', 'mangafocus' ) : __( 'Read in fullscreen', 'mangafocus' ); if ( ! active ) { if ( wasVertical ) leaveVerticalReading(); if ( completed ) returnToFirstPage(); else { resetZoom(); setActiveMode( 'standard', 'fullscreen' ); } if ( wasActive ) { restoreFullscreenScrollPosition(); restoreFullscreenFocus(); } } else if ( fullscreenReadingMode === 'vertical' ) enterVerticalReading(); else { updateButtons(); useMode( 'fullscreen' ); } if ( active ) discoverImageDimensions(); scope.frame( function() { updateFullscreenSpreadSizing(); applyPageFocus(); updateInlineNavigation(); } ); if ( active ) stage.focus(); if ( extensionReady && active !== lastPublicFullscreen ) { lastPublicFullscreen = active; dispatchPublicEvent( 'amv:viewer-fullscreenchange', { fullscreen: active, readingMode: publicMode() } ); notifyViewChange( 'fullscreen' ); } }
+			function requestRootFullscreen( trigger, startAtFirstPage ) { if ( isRootFullscreen() ) { const exitRequest = document.exitFullscreen(); if ( exitRequest && typeof exitRequest.catch === 'function' ) exitRequest.catch( function() {} ); return; } fullscreenReturnViewportTop = root.getBoundingClientRect().top; fullscreenReturnFocus = trigger || null; if ( startAtFirstPage ) returnToFirstPage(); try { const request = presentationHost.requestFullscreen(); if ( request && typeof request.catch === 'function' ) request.catch( function() { if ( destroyed ) return; fullscreenReturnFocus = null; fullscreenReturnViewportTop = null; useInlineFallback(); } ); } catch ( error ) { fullscreenReturnFocus = null; fullscreenReturnViewportTop = null; useInlineFallback(); } }
 			if ( typeof root.requestFullscreen !== 'function' || typeof document.exitFullscreen !== 'function' ) { fullscreen.hidden = true; if ( coverLauncher ) coverLauncher.hidden = true; useInlineFallback(); }
-			else { fullscreen.addEventListener( 'click', function() { requestRootFullscreen( fullscreen, ! fullscreenStartAtCurrent ); } ); if ( coverLauncher ) coverLauncher.addEventListener( 'click', function() { requestRootFullscreen( coverLauncher, true ); } ); document.addEventListener( 'fullscreenchange', updateFullscreen ); updateFullscreen(); }
+			else { scope.listen( fullscreen, 'click', function() { requestRootFullscreen( fullscreen, ! fullscreenStartAtCurrent ); } ); if ( coverLauncher ) scope.listen( coverLauncher, 'click', function() { requestRootFullscreen( coverLauncher, true ); } ); scope.listen( document, 'fullscreenchange', updateFullscreen ); synchronizeFullscreen = updateFullscreen; updateFullscreen(); }
 		}
 		const publicApi = Object.freeze( {
+			destroy: destroy,
+			getModeState: modeState,
+            getAvailableModes: availableModes,
+            continueTerminalDefault: function() { if ( destroyed || ! modeState().terminal ) return false; const panel = modeControllers.get( 'panel' ); if ( extensionMode === 'panel' && panel && panel.finish ) { panel.finish(); return true; } if ( isRootFullscreen() ) { exitRootFullscreen(); return true; } return false; },
+            setPresentationHost: function( host ) { if ( destroyed || ! host || host.nodeType !== 1 || ! host.contains( root ) || ( document.fullscreenElement && document.fullscreenElement !== host && document.fullscreenElement !== root ) ) return false; if ( Array.from( host.querySelectorAll( '.amv-reader' ) ).some( function( candidate ) { return candidate !== root && publicInstances.has( candidate ); } ) ) return false; presentationHost = host; if ( synchronizeFullscreen ) synchronizeFullscreen(); return true; },
+            registerModeController: function( mode, controller ) { if ( destroyed || mode !== 'panel' || ! controller || typeof controller.activate !== 'function' || modeControllers.has( mode ) ) return null; modeControllers.set( mode, controller ); return function() { if ( modeControllers.get( mode ) === controller ) modeControllers.delete( mode ); }; },
+            getPresentationElement: function() { const controller = modeControllers.get( extensionMode ); return controller && controller.getElement ? controller.getElement() : root; },
+            resumePresentation: function( options ) { if ( destroyed ) return false; const retained = retainedPresentation; presentationSuspended = false; retainedPresentation = false; if ( retained ) { root.inert = presentationInertBefore; const controller = modeControllers.get( extensionMode ); if ( controller && controller.resume ) controller.resume( options ); if ( isVerticalReading() ) startVerticalObserver(); } syncVerticalNavigation(); updateButtons(); return true; },
+            suspendPresentation: function( options ) { if ( destroyed ) return null; const snapshot = modeState(); if ( presentationSuspended ) return snapshot; retainedPresentation = !! ( options && options.keepVisible ); presentationInertBefore = root.inert; presentationSuspended = true; syncVerticalNavigation(); if ( retainedPresentation ) root.inert = true; cancelNavigationAnimation(); cancelVerticalZoomFrame(); stopVerticalObserver(); const controller = modeControllers.get( extensionMode ); if ( controller && controller.suspend ) controller.suspend( { keepVisible: retainedPresentation } ); updateTerminalFinish(); return snapshot; },
+            resumeFromTerminal: function( snapshot, options ) { if ( destroyed || ! snapshot || ! snapshot.identity || snapshot.identity.instanceKey !== instanceKey || ! snapshot.currentPage || ! Number.isInteger( snapshot.currentPage.index ) ) return false; publicApi.resumePresentation( { focus: false } ); const restart = !! ( options && options.restart ); const controller = modeControllers.get( 'panel' ); if ( snapshot.presentation === 'focus' && controller ) { controller.activate( { sequenceIndex: restart ? 0 : snapshot.sequenceIndex, focus: ! options || options.focus !== false } ); updateButtons(); return true; } publicApi.requestMode( snapshot.presentation ); publicApi.goToPage( restart ? 0 : ( snapshot.visiblePages && snapshot.visiblePages.length ? Math.max.apply( null, snapshot.visiblePages.map( function( page ) { return page.index; } ) ) : snapshot.currentPage.index ) ); if ( isVerticalReading() ) { if ( restart ) root.scrollTop = 0; else root.scrollTop = root.scrollHeight; startVerticalObserver(); updateButtons(); } return true; },
+            requestMode: function( requested ) {
+                if ( destroyed || [ 'normal', 'focus', 'fullscreen-paged', 'fullscreen-vertical', 'fullscreen-page-focus' ].indexOf( requested ) === -1 ) return null; if ( presentationSuspended ) publicApi.resumePresentation( { focus: false } ); const panel = modeControllers.get( 'panel' );
+                if ( extensionMode === 'panel' && requested !== 'focus' && panel && panel.close ) panel.close();
+                let actual = requested;
+                if ( requested === 'focus' && panel ) { panel.activate( { sequenceIndex: 0 } ); }
+                else if ( requested.indexOf( 'fullscreen-' ) === 0 && fullscreenAllowed && isRootFullscreen() ) { if ( requested === 'fullscreen-vertical' && fullscreenReadingMode === 'vertical' ) { if ( ! isVerticalReading() ) enterVerticalReading(); } else { if ( isVerticalReading() ) leaveVerticalReading(); setActiveMode( 'fullscreen', 'mode-request' ); } }
+                else { if ( panel && independentModes && root.dataset.enableInline === 'off' ) { panel.activate( { sequenceIndex: 0 } ); } else { if ( extensionMode === 'panel' && panel && panel.close ) panel.close(); if ( isVerticalReading() ) leaveVerticalReading(); resetZoom(); setActiveMode( 'standard', 'mode-request' ); syncReaderVisibility(); if ( ! readerVisible() && ! fullscreenAllowed && ! panel ) useInlineFallback(); } }
+                updateButtons(); actual = presentationMode(); return { requested: requested, mode: actual, fallback: actual !== requested, fullscreen: isRootFullscreen() };
+            },
+			requestTerminal: requestTerminal,
+			onDestroy: function( callback ) { if ( typeof callback !== 'function' || destroyed ) return function() {}; destroyCallbacks.add( callback ); return function() { destroyCallbacks.delete( callback ); }; },
+			registerModeProvider: function( mode, provider ) { if ( destroyed || typeof provider !== 'function' ) return function() {}; modeProviders.set( mode, provider ); return function() { if ( modeProviders.get( mode ) === provider ) modeProviders.delete( mode ); }; },
+			registerTerminalHandler: function( handler ) { if ( destroyed || typeof handler !== 'function' || terminalHandler ) return null; terminalHandler = handler;
+                terminalFinish = document.createElement( 'button' ); terminalFinish.type = 'button'; terminalFinish.className = 'amv-reader__terminal-finish'; terminalFinish.textContent = __( 'Finish reading', 'mangafocus' ); root.appendChild( terminalFinish );
+                scope.listen( terminalFinish, 'click', finishTerminal ); scope.listen( root, 'scroll', updateTerminalFinish, { passive: true } ); updateButtons();
+                return function() { if ( terminalHandler === handler ) { terminalHandler = null; if ( terminalFinish ) { scope.unlisten( terminalFinish, 'click', finishTerminal ); scope.unlisten( root, 'scroll', updateTerminalFinish ); terminalFinish.remove(); terminalFinish = null; } if ( ! destroyed ) updateButtons(); } }; },
 			getRootElement: function() { return root; },
+            focus: function() { if ( destroyed || ! readerVisible() || publicMode() === 'panel' ) return false; stage.focus( { preventScroll: true } ); return document.activeElement === stage; },
+            refreshLayout: function() { if ( destroyed || root.hidden || ( presentationSuspended && retainedPresentation ) ) return false; const width = root.getBoundingClientRect().width; if ( width <= 0 ) return false; updateLayoutForWidth( width ); updateFullscreenSpreadSizing(); applyPageFocus(); updateButtons(); return true; },
 			getPageElement: function( index ) { return Number.isInteger( index ) && index >= 0 && index < pages.length ? pages[ index ] : null; },
 			getIdentity: publicIdentity,
 			getCurrentPage: function() { return publicPage( readingPageIndex() ); },
 			getVisiblePages: publicVisiblePages,
 			getState: publicState,
 			setExtensionMode: function( mode, source ) {
-				if ( typeof mode !== 'string' || ( mode && ! /^[a-z][a-z0-9_-]*$/.test( mode ) ) ) return false;
+				if ( destroyed || typeof mode !== 'string' || ( mode && ! /^[a-z][a-z0-9_-]*$/.test( mode ) ) ) return false;
 				cancelNavigationAnimation();
+				const wasFocus = extensionMode === 'panel';
 				const previous = publicMode(); extensionMode = mode; const currentMode = publicMode(); warmAdjacentViews();
+				syncVerticalNavigation();
+				if ( wasFocus && ! extensionMode && verticalNavigation && ! presentationSuspended ) verticalNavigation.focus();
 				if ( previous !== currentMode ) dispatchPublicEvent( 'amv:viewer-modechange', { readingMode: currentMode, previousMode: previous, source: source || 'extension' } );
 				notifyViewChange( source || 'extension' ); return true;
 			},
 			goToPage: function( index ) {
-				const target = Number( index );
+				if ( destroyed ) return false; const target = Number( index );
 				if ( ! Number.isInteger( target ) || target < 0 || target >= pages.length ) return false;
 				cancelNavigationAnimation( false );
+				if ( verticalNavigation ) verticalNavigation.clearScrollInput();
 				const pendingStart = !! verticalStartCleanup;
-				resetZoom(); temporaryOverview = false; verticalCurrentPage = target; activateView( viewForPage( target ), target ); updateButtons();
+				resetZoom( false ); temporaryOverview = false; verticalCurrentPage = target; activateView( viewForPage( target ), target ); updateButtons();
 				if ( isVerticalReading() ) { if ( pendingStart ) alignVerticalStart( target ); else { const page = pages[ target ]; if ( page ) root.scrollTop += page.getBoundingClientRect().top - root.getBoundingClientRect().top - 16; } }
 				notifyViewChange( 'api' ); return true;
 			},
 			isFullscreen: isRootFullscreen,
-			openFullscreen: function() { if ( ! fullscreen || fullscreen.hidden || isRootFullscreen() ) return false; fullscreen.click(); return true; },
-			closeFullscreen: function() { if ( ! isRootFullscreen() || typeof document.exitFullscreen !== 'function' ) return false; exitRootFullscreen(); return true; }
+			openFullscreen: function() { if ( destroyed || ! fullscreen || fullscreen.hidden || isRootFullscreen() ) return false; fullscreen.click(); return true; },
+			closeFullscreen: function() { if ( destroyed || ! isRootFullscreen() || typeof document.exitFullscreen !== 'function' ) return false; exitRootFullscreen(); return true; }
 		} );
-		publicInstances.set( root, publicApi ); extensionReady = true; lastPublicFullscreen = isRootFullscreen();
-		[ 'pointerdown', 'keydown', 'touchstart', 'wheel', 'click' ].forEach( function( type ) { root.addEventListener( type, function( event ) { dispatchPublicEvent( 'amv:viewer-interaction', { source: event.type, currentPage: publicPage( readingPageIndex() ) } ); }, { passive: true } ); } );
+		pendingMounts.delete( root ); publicInstances.set( root, publicApi ); extensionReady = true; lastPublicFullscreen = isRootFullscreen();
+		[ 'pointerdown', 'keydown', 'touchstart', 'wheel', 'click' ].forEach( function( type ) { scope.listen( root, type, function( event ) { dispatchPublicEvent( 'amv:viewer-interaction', { source: event.type, currentPage: publicPage( readingPageIndex() ) } ); }, { passive: true } ); } );
 		dispatchPublicEvent( 'amv:viewer-ready', { state: publicState() } ); notifyViewChange( 'ready' );
+		return publicApi;
 
 	}
-	document.querySelectorAll( '.wp-block-ai-manga-viewer-viewer' ).forEach( init );
+	document.querySelectorAll( '.wp-block-ai-manga-viewer-viewer' ).forEach( publicRuntime.mount );
 
 } )();

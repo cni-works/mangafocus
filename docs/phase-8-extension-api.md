@@ -111,3 +111,83 @@ Extension API Version 1の同一major内では、公開hook名、event名、publ
 - editor filterは3箇所へdummy elementを返し、同じcontext契約で呼ばれることと、未登録時に追加UIを残さないことを検査する。
 - Frontend APIは複数Viewerの分離、page移動、全画面、汎用イベント、内部Analytics値の非露出をbrowser smokeで検査する。
 - release smokeは`includes/extensions.php`の欠落を失敗として扱う。
+
+## Runtime API 2 (phase 1, local development)
+
+Extension major remains 1. `window.aiMangaViewer.runtimeApiVersion === 2` and
+`runtimeCapabilities` identify optional `lifecycle`, `terminalNavigation`, `modeState`.
+No existing method or event is removed. Product version remains 0.5.1 in this local phase.
+
+- `mount(root)` returns the existing or newly initialized instance; invalid markup returns null/undefined. Failed initialization throws after releasing partial resources.
+- `destroy(root)` / instance `destroy()` return true once, false thereafter. Await actual `fullscreenchange` before mounting while exiting native fullscreen; preserving fullscreen across replacement belongs to phase 4.
+- `getModeState()` returns existing state plus `terminal`; panel mode also supplies sequenceIndex/sequenceCount.
+- `registerTerminalHandler(callback)` accepts one handler per instance and returns its disposer (null when occupied). Callback must return literal true synchronously to claim a user request. Exceptions/false preserve Free's default. No license policy is implied.
+- `requestTerminal(source)` only claims a verified terminal position and emits `amv:viewer-terminal` after successful handling. It is an imperative user-action entry, never called merely upon reaching the final page. A Pro vertical-end button may call it after explicit user input; Free adds no button.
+- `registerModeProvider(mode, getter)` and `onDestroy(cleanup)` return disposers. Add-ons own cleanup of their own resources.
+- `amv:viewer-before-destroy` fires before cleanup and `amv:viewer-destroyed` before return; root is restored to its pre-initialization markup. Ready fires once per mount.
+- `createResourceScope()` supplies listen/unlisten, timeout, frame, observer, add(cleanup), dispose. Disposal is idempotent. Used internally by the panel module and available to cooperating add-ons.
+
+GET `/ai-manga-viewer/v1/library-viewers/{id}` returns schemaVersion/id/title/coverUrl/html,
+not raw block attributes or post metadata. Requires amv_viewer, publish, no password,
+and **literal true** from `ai_manga_viewer_library_public_access` (default true after the 2026-11-02 specification change).
+The filter may deny access but cannot override type/status/password checks. Existing WordPress
+REST authentication/pre-dispatch restrictions remain in effect. No membership-plugin-specific
+auto-detection is provided; restricted sites must apply their own REST access controls. Response is no-store.
+This public access decision is independent of Pro licensing. No public enumeration is provided.
+
+Old Pro 1.0.0 continues ordinary static rendering/API use. Its analytics collector does not
+implement onDestroy: repeated dynamic replacement with the old collector is NOT supported.
+Phase 5 must add that cleanup before production use. Phase 1 provides no Pro end screen,
+mode inheritance, native fullscreen host, settings schema, new analytics metric or license change.
+
+## Runtime API 2 optional additions for Phase 3 (local development)
+
+- `runtimeCapabilities.mountValidation === true` advertises `canMount(root)`. This is a non-mutating structural preflight for detached markup; it does not promise that later initialization cannot fail. Existing mount/destroy and API major/version remain unchanged. Add-ons must check both capability and method, keep the old work until preparation succeeds, and retain a rollback path.
+- The public library GET assigns a fresh `runtime-UUID` instanceKey per response. Source viewerKey/pageKey and saved attributes are unchanged. Runtime placements also use that unique instanceKey in the stage ID / ARIA references. Separate requests for the same work can therefore coexist on one page.
+- Public library access now follows publication/type/password rules with an optional denial filter. This does not license Pro, change modes, or integrate old Pro analytics cleanup.
+- An installed terminal handler makes the normal reader's final-unit navigation controls available, including when guides otherwise appear only on the first view. With no handler, existing guide/edge settings keep their prior behavior.
+
+- Optional `readerFocus` capability advertises instance `focus()`: focus the Core reading stage without scrolling, return false after destroy / when not readable / in panel mode. Add-ons can return keyboard control after closing their own UI without selecting Core-private DOM.
+
+- `inspectMount(root)` (under the optional `mountValidation` capability) returns null or an immutable `{ identity, firstImageUrl }` preflight snapshot. Pro can validate placement identity and prepare the first page image without reading Core-private selectors or attributes.
+
+- Optional `layoutRefresh` capability advertises instance `refreshLayout()`: synchronously recalculate current visible layout after a caller re-shows the public root. Hidden/destroyed roots return false. Scroll assistance and delayed fullscreen scroll restoration ignore a hidden root so an add-on screen cannot be pulled by the background reader.
+
+## Runtime API 2 optional additions for Phase 4 (local development)
+
+Extension major 1 and Runtime API 2 remain unchanged. Detect both `modeControl` and
+`presentationHost` capabilities and the actual methods; an older Free must not start dynamic mode inheritance.
+
+- `getModeState()` adds `presentation`, `availableModes`, `suspended`; existing fields remain.
+- `getAvailableModes()` and `requestMode(name)` negotiate normal/fullscreen-paged/fullscreen-vertical/fullscreen-page-focus/focus. The result identifies requested/actual/fallback/fullscreen. Invalid input returns null. No new native Fullscreen request is made by requestMode.
+- `setPresentationHost(host)` binds a containing, single-reader host without requesting fullscreen. Core controls use that host for the original user gesture. Destroy exits fullscreen only when the reader root itself owns it; the external host owner manages its final exit/removal.
+- `suspendPresentation()`, `resumeFromTerminal(snapshot, {restart, focus})`, and `resumePresentation()` suspend addon-owned presentations, restore the same instance's content, or merely resume its current state. A foreign/malformed snapshot is rejected. No work fetch is required.
+- `continueTerminalDefault()` resumes Free's legacy terminal behavior after an addon declines asynchronous authorization.
+- `registerModeController('panel', controller)` keeps Focus lifecycle operations in the owning module. Body portals, locks, image handlers, sheets, provider/controller registration and scoped resources are collected on suspension/destruction.
+- A terminal handler installs a translated vertical finish button; it becomes usable only at the verified bottom and never opens a screen on scroll alone. No handler means no added button; the original final-next/fullscreen/Focus behavior remains.
+
+Source image probes now release callbacks on destruction and ignore late completions.
+This does not change stored attributes, identifiers or published versions. Current public-loading rules are described below.
+Analytics integration is still unfinished: Pro's dynamic replacement is blocked while collection is enabled until Phase 5.
+## Phase 5 optional integration (local development)
+
+`getModeState().contentVisible` is an optional boolean: a configured reading surface
+(including Focus) is visible, rather than only a cover launcher. Hidden/suspended roots
+return false. Add-ons should avoid starting reader sessions before content is available.
+The major/version and stored block data are unchanged.
+
+Public library GET uses WordPress publication status: amv_viewer + publish + no password.
+No global approval, per-work approval or revision stamp is required. Legacy option/meta values
+are retained but never read or written by this runtime. After-reading uses its saved destination
+IDs; the generic Free REST endpoint remains a public, non-enumerating viewing API.
+
+MangaFocus does not automatically detect membership or third-party access rules. Administrators
+are responsible for publishing/linking appropriate works; restricted sites may need separate
+REST protection. Existing REST denials and the public-access filter remain usable. The filter
+cannot override type/status/password checks. The response is rechecked after rendering;
+success/error responses are private/no-store and vary by Cookie/Origin. No private post meta,
+editor credentials or license evidence is returned.
+
+The updated Pro collector owns onDestroy cleanup, pause/resume and deferred mount activation.
+Older collectors lack that contract and must not perform dynamic replacement while enabled.
+No analytics session internals, license data or edit-context settings are added to public responses.

@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: MangaFocus 0.5.0\n"
+"Project-Id-Version: MangaFocus 0.6.0\n"
 "Report-Msgid-Bugs-To: https://github.com/cni-works/mangafocus/issues\n"
 "POT-Creation-Date: 2026-10-04 00:00+0900\n"
 "PO-Revision-Date: 2026-10-04 00:00+0900\n"
@@ -304,6 +304,9 @@ msgstr "フェード"
 
 msgid "Features"
 msgstr "機能"
+
+msgid "Finish reading"
+msgstr "読み終える"
 
 msgid "First-page preview (not a saved cover)"
 msgstr "1ページ目の代替プレビュー（表紙未設定）"
@@ -634,6 +637,9 @@ msgstr "投稿・固定ページ内で漫画を読む表示方法です。"
 
 msgid "Readers can zoom with the plus and minus controls or pinch gestures, then drag the enlarged image."
 msgstr "読者が＋／－、ピンチ操作で拡大し、拡大中は画像をドラッグして移動できます。"
+
+msgid "Reading controls"
+msgstr "読書操作"
 
 msgid "Reading modes"
 msgstr "表示モード"
