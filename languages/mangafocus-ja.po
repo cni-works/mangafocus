@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: MangaFocus 0.6.0\n"
+"Project-Id-Version: MangaFocus 0.6.1\n"
 "Report-Msgid-Bugs-To: https://github.com/cni-works/mangafocus/issues\n"
 "POT-Creation-Date: 2026-10-04 00:00+0900\n"
 "PO-Revision-Date: 2026-10-04 00:00+0900\n"
@@ -338,6 +338,9 @@ msgstr "Free Viewer"
 msgid "Full page"
 msgstr "ページ全体"
 
+msgid "Fullscreen button label"
+msgstr "全画面ボタンの表示名"
+
 msgid "Fullscreen display settings"
 msgstr "全画面表示の設定"
 
@@ -385,6 +388,9 @@ msgstr "少なくとも1つの表示モードを有効にしてください。"
 
 msgid "Keep current selection"
 msgstr "選択を変更しない"
+
+msgid "Leave blank to use the default label."
+msgstr "空欄の場合は標準の表示名を使います。"
 
 msgid "Left (vertical)"
 msgstr "左（縦並び）"

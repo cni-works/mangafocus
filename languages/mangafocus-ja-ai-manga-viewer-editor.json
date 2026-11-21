@@ -198,6 +198,12 @@
             "On: offer fullscreen paged or vertical reading. Off: hide the fullscreen launch button.": [
                 "ON：全画面でページ送り・縦読みを利用できます。OFF：全画面の起動ボタンを表示しません。"
             ],
+            "Fullscreen button label": [
+                "全画面ボタンの表示名"
+            ],
+            "Leave blank to use the default label.": [
+                "空欄の場合は標準の表示名を使います。"
+            ],
             "Fullscreen reading mode": [
                 "全画面表示の読み方"
             ],

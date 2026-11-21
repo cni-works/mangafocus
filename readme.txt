@@ -4,7 +4,7 @@ Tags: manga, comic, viewer, reader, gutenberg
 Requires at least: 6.3
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.6.0
+Stable tag: 0.6.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -120,6 +120,11 @@ The maintained development repository is available at https://github.com/cni-wor
 The matching source revision contains the build script `scripts/build-release.ps1`. From the repository root, run `powershell -File scripts/build-release.ps1` to build the plugin ZIP. The build script is excluded from the ZIP.
 
 == Changelog ==
+
+= 0.6.1 =
+
+* Customize the fullscreen launch button label in the comic block settings. The label is also preserved when registering a comic in Manga Library.
+* Zoom up to 400% in fullscreen vertical reading.
 
 = 0.6.0 =
 

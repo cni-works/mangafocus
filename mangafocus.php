@@ -2,7 +2,7 @@
 /**
  * Plugin Name: MangaFocus – Panel-by-Panel Manga Reader
  * Description: A manga reader for WordPress with page, spread, vertical, zoom, and Focus Mode.
- * Version: 0.6.0
+ * Version: 0.6.1
  * Requires at least: 6.3
  * Requires PHP: 7.4
  * Author: CNI
@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( ! defined( 'AI_MANGA_VIEWER_VERSION' ) ) {
-	define( 'AI_MANGA_VIEWER_VERSION', '0.6.0' );
+	define( 'AI_MANGA_VIEWER_VERSION', '0.6.1' );
 }
 
 if ( ! defined( 'AI_MANGA_VIEWER_PLUGIN_FILE' ) ) {
@@ -493,6 +493,7 @@ function ai_manga_viewer_sanitize_library_attributes( $attributes ) {
 	);
 	if ( isset( $attributes['enableInline'] ) && is_bool( $attributes['enableInline'] ) ) { $sanitized['enableInline'] = $attributes['enableInline']; }
 	if ( isset( $attributes['pageTransition'] ) && is_string( $attributes['pageTransition'] ) && in_array( $attributes['pageTransition'], array( 'none', 'turn', 'fade', 'slide' ), true ) ) { $sanitized['pageTransition'] = $attributes['pageTransition']; }
+	if ( isset( $attributes['fullscreenButtonLabel'] ) && is_string( $attributes['fullscreenButtonLabel'] ) ) { $sanitized['fullscreenButtonLabel'] = trim( sanitize_text_field( $attributes['fullscreenButtonLabel'] ) ); }
 	if ( array_key_exists( 'afterReading', $attributes ) ) { $sanitized['afterReading'] = $attributes['afterReading']; }
 	return $sanitized;
 }

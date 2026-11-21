@@ -329,3 +329,5 @@ PC	PC
 フォーカスモードを終了	Exit Focus Mode
 読み終える	Finish reading
 読書操作	Reading controls
+全画面ボタンの表示名	Fullscreen button label
+空欄の場合は標準の表示名を使います。	Leave blank to use the default label.

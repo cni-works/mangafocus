@@ -78,6 +78,50 @@ const html = execFileSync(process.env.MANGAFOCUS_PHP || 'php', [fixture, '--pro-
      }
      const level = scope.locator('.amv-reader__zoom-level');
      if (await level.count()) assert.equal(await level.textContent(), '125%');
+     if (zoom && cycle === 0) {
+      const maximum = vertical ? 4 : 3;
+      await stage.evaluate(el => {
+       for (let step = 0; step < 20; step++) el.dispatchEvent(new KeyboardEvent('keydown', {key: '+', bubbles: true, cancelable: true}));
+      });
+      await settle();
+      if (await level.count()) assert.equal(await level.textContent(), maximum * 100 + '%', id + ' upper zoom limit');
+      const zoomIn = scope.locator('.amv-reader__zoom-in');
+      if (await zoomIn.count()) assert.equal(await zoomIn.isDisabled(), true, id + ' upper limit disables enlargement');
+      if (vertical) {
+       const maximumWidth = await viewer.evaluate(el => parseFloat(el.style.getPropertyValue('--amv-reader-vertical-width')));
+       assert.ok(Math.abs(maximumWidth - base * maximum) < .1, id + ' 400% uses the complete enlarged width');
+       const reachable = await viewer.evaluate(el => {
+        const maximum = el.scrollWidth - el.clientWidth;
+        el.scrollLeft = 0;
+        const left = el.scrollLeft;
+        el.scrollLeft = maximum;
+        return {left, right: el.scrollLeft, maximum};
+       });
+       assert.ok(reachable.maximum > 0 && reachable.left === 0 && Math.abs(reachable.right - reachable.maximum) <= 1, id + ' enlarged comic remains horizontally scrollable');
+      }
+      await stage.dispatchEvent('wheel', {ctrlKey: true, deltaY: -100, bubbles: true, cancelable: true});
+      await settle();
+      if (await level.count()) assert.equal(await level.textContent(), maximum * 100 + '%', id + ' wheel respects zoom ceiling');
+      await stage.dispatchEvent('keydown', {key: '0'}); await settle();
+      await stage.evaluate(el => {
+       const touch = x => new Touch({identifier: x, target: el, clientX: x, clientY: 100});
+       el.dispatchEvent(new TouchEvent('touchstart', {touches: [touch(100), touch(200)], bubbles: true, cancelable: true}));
+       el.dispatchEvent(new TouchEvent('touchmove', {touches: [touch(100), touch(900)], bubbles: true, cancelable: true}));
+       el.dispatchEvent(new TouchEvent('touchend', {touches: [], bubbles: true}));
+      });
+      await settle();
+      if (await level.count()) assert.equal(await level.textContent(), maximum * 100 + '%', id + ' pinch respects zoom ceiling');
+      const zoomOut = scope.locator('.amv-reader__zoom-out');
+      if (await zoomOut.count()) {
+       await zoomOut.evaluate(el => el.click()); await settle();
+       if (await level.count()) assert.equal(await level.textContent(), (maximum - .25) * 100 + '%', id + ' zoom out works from ceiling');
+      }
+      const reset = scope.locator('.amv-reader__zoom-reset');
+      if (await reset.count()) {
+       await reset.evaluate(el => el.click()); await settle();
+       if (await level.count()) assert.equal(await level.textContent(), '100%', id + ' reset button restores 100%');
+      }
+     }
      await stage.dispatchEvent('keydown', {key: '0'}); await settle();
      if (vertical) assert.ok(Math.abs(await viewer.evaluate(el => parseFloat(el.style.getPropertyValue('--amv-reader-vertical-width'))) - base) < .1, id + ' reset width');
      if (await level.count()) assert.equal(await level.textContent(), '100%');

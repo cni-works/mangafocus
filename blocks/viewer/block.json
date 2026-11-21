@@ -25,6 +25,7 @@
     "pageTransition": { "type": "string" },
     "enableInline": { "type": "boolean" },
     "enableFullscreen": { "type": "boolean", "default": false },
+    "fullscreenButtonLabel": { "type": "string", "default": "" },
     "fullscreenStartAtCurrent": { "type": "boolean", "default": false },
     "inlineDisplayMode": { "type": "string", "default": "reader" },
     "fullscreenReadingMode": { "type": "string", "default": "paged" },

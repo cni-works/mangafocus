@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: MangaFocus 0.6.0\n"
+"Project-Id-Version: MangaFocus 0.6.1\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "X-Domain: mangafocus\n"
 
@@ -331,6 +331,9 @@ msgstr ""
 msgid "Full page"
 msgstr ""
 
+msgid "Fullscreen button label"
+msgstr ""
+
 msgid "Fullscreen display settings"
 msgstr ""
 
@@ -377,6 +380,9 @@ msgid "Keep at least one reading mode enabled."
 msgstr ""
 
 msgid "Keep current selection"
+msgstr ""
+
+msgid "Leave blank to use the default label."
 msgstr ""
 
 msgid "Left (vertical)"

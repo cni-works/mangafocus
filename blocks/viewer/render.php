@@ -171,6 +171,7 @@ function ai_manga_viewer_render_viewer( $attributes ) {
 	$cover_launcher = ! $reading_modes['inline'];
 	$inline_display_mode = $cover_launcher ? 'coverLauncher' : 'reader';
 	$fullscreen = $reading_modes['fullscreen'];
+	$fullscreen_button_label = is_string( $attributes['fullscreenButtonLabel'] ?? null ) ? trim( sanitize_text_field( $attributes['fullscreenButtonLabel'] ) ) : '';
 	$hidden_reader = $reading_modes['modern'] && $cover_launcher ? ' hidden inert aria-hidden="true"' : '';
 	$fullscreen_reading_mode = 'vertical' === ( $attributes['fullscreenReadingMode'] ?? '' ) ? 'vertical' : 'paged';
 	$zoom          = ! empty( $attributes['enableZoom'] );
@@ -250,7 +251,7 @@ function ai_manga_viewer_render_viewer( $attributes ) {
 			$output .= '<div class="amv-reader__cover-placeholder">' . esc_html__( 'No cover set', 'mangafocus' ) . '</div>';
 		}
 		$output .= '<div class="amv-reader__cover-actions">';
-		if ( $fullscreen ) { $output .= '<button type="button" class="amv-reader__cover-launcher-button" aria-label="' . esc_attr( $button_label ) . '">' . esc_html__( 'Read manga', 'mangafocus' ) . '</button>'; }
+		if ( $fullscreen ) { $output .= '<button type="button" class="amv-reader__cover-launcher-button" aria-label="' . esc_attr( '' !== $fullscreen_button_label ? $fullscreen_button_label : $button_label ) . '">' . esc_html( '' !== $fullscreen_button_label ? $fullscreen_button_label : __( 'Read manga', 'mangafocus' ) ) . '</button>'; }
 		$output .= '</div></div>';
 	}
 	$output .= '<div id="' . esc_attr( $stage_id ) . '" class="amv-reader__stage"' . $hidden_reader . ' tabindex="0" role="group" aria-roledescription="' . esc_attr__( 'Page viewer', 'mangafocus' ) . '" aria-label="' . esc_attr__( 'Use the left and right arrow keys or swipe to navigate pages', 'mangafocus' ) . '">';
@@ -293,7 +294,7 @@ function ai_manga_viewer_render_viewer( $attributes ) {
 	if ( $fullscreen || ( $reading_modes['modern'] && $reading_modes['panel'] ) ) {
 		$output .= '<div class="amv-reader__mode-controls"' . $hidden_reader . '>';
 		if ( $fullscreen ) {
-			$output .= '<button type="button" class="amv-reader__fullscreen" aria-controls="' . esc_attr( $stage_id ) . '" aria-pressed="false">' . esc_html__( 'Read in fullscreen', 'mangafocus' ) . '</button>';
+			$output .= '<button type="button" class="amv-reader__fullscreen" aria-controls="' . esc_attr( $stage_id ) . '" aria-pressed="false">' . esc_html( '' !== $fullscreen_button_label ? $fullscreen_button_label : __( 'Read in fullscreen', 'mangafocus' ) ) . '</button>';
 		}
 		if ( $fullscreen && 'paged' === $fullscreen_reading_mode && 'pageFocus' === $spread_reading_mode && 'single' !== $page_layout ) {
 			$output .= '<button type="button" class="amv-reader__spread-overview" aria-pressed="false" hidden>' . esc_html__( 'View entire spread', 'mangafocus' ) . '</button>';
